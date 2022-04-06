@@ -3,8 +3,14 @@ from psychopy import visual, core
 
 from grating import grating
 from textures import drumTexture
-from components import button
+from components import Button
 from interface import Interface
+
+
+def onStartClicked(interface):
+    texture = drumTexture(interface.frameRate)
+    grating(interface.window, texture, 10, interface.frameRate)
+
 
 def main():
     # create window
@@ -20,7 +26,11 @@ def main():
 
     # # run grating
     # grating(win, texture, 60, frameRate)
-    interface = Interface(components=[])
+    interface = Interface(
+        components=[
+            Button("Start", "white", [0, 199, 129], [350, -268], onStartClicked)
+        ]
+    )
     interface.run()
 
 
