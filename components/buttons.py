@@ -1,15 +1,20 @@
 from typing import Any, List
 from psychopy.visual import Window, TextBox2, circle
 
-
-def noOp(args):
-    return
+from utils import noOp
 
 
 class Button:
     def __init__(
-        self, text: str, color: List[int], fill: List[int], pos: List[int], onClick=noOp
+        self,
+        id: str,
+        text: str,
+        color: List[int],
+        fill: List[int],
+        pos: List[int],
+        onClick=noOp,
     ) -> None:
+        self.id = id
         self.text = text
         self.color = color
         self.fill = fill
@@ -22,7 +27,7 @@ class Button:
             f" {self.text} ",
             "Open Sans",
             units="pix",
-            letterHeight=20,
+            letterHeight=18,
             colorSpace="rgb255",
             color=self.color,
             fillColor=self.fill,
@@ -40,10 +45,12 @@ class Button:
 
 
 class PlayButton:
-    def __init__(self, radius: int, pos: List[int], onClick=noOp,) -> None:
+    def __init__(self, id: str, radius: int, pos: List[int], onClick=noOp,) -> None:
+        self.id = id
         self.radius = radius
         self.pos = pos
         self.onClick = onClick
+        self.state = "play"
 
     def register(self, window):
         self.shapes = [
@@ -56,9 +63,22 @@ class PlayButton:
                 pos=self.pos,
             ),
             circle.Polygon(
-                window, radius=20, fillColor="white", units="pix", pos=self.pos, ori=90
+                window,
+                radius=self.radius / 1.7,
+                fillColor="white",
+                units="pix",
+                pos=self.pos,
+                ori=90,
             ),
         ]
+
+    def toggle(self):
+        self.state = "stop" if self.state == "play" else "play"
+        self.shapes[1].edges = 3 if self.state == "play" else 4
+        self.shapes[1].ori = 90 if self.state == "play" else 45
+        self.shapes[0].fillColor = (
+            [0, 199, 129] if self.state == "play" else [255, 64, 64]
+        )
 
     def draw(self):
         for shape in self.shapes:
