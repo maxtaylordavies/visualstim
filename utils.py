@@ -5,5 +5,5 @@ def checkForEsc():
     return "escape" in event.getKeys()
 
 
-def noOp(args):
+def noOp():
     return

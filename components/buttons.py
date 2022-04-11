@@ -12,6 +12,7 @@ class Button:
         color: List[int],
         fill: List[int],
         pos: List[int],
+        padding=2,
         onClick=noOp,
     ) -> None:
         self.id = id
@@ -19,6 +20,7 @@ class Button:
         self.color = color
         self.fill = fill
         self.pos = pos
+        self.padding = padding
         self.onClick = onClick
 
     def register(self, window):
@@ -32,10 +34,16 @@ class Button:
             color=self.color,
             fillColor=self.fill,
             bold=True,
-            padding=2,
+            padding=self.padding,
             size=[None, None],
             pos=self.pos,
         )
+
+    def changeFill(self, fill):
+        print(f"changing fill to {fill}")
+        self.fill = fill
+        self.shape.fillColor = self.fill
+        self.draw()
 
     def draw(self):
         self.shape.draw()

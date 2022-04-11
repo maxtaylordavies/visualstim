@@ -1,7 +1,7 @@
-from psychopy import visual, core, event
+from psychopy import visual, event
 
-from utils import checkForEsc, noOp
-from components import Button, PlayButton
+from utils import checkForEsc
+from components import Button, PlayButton, Box, Panel, StimulusPanel
 from grating import grating
 from textures import drumTexture
 
@@ -18,6 +18,13 @@ class Interface:
         )
         self.displayWindow = self.controlWindow
         self.frameRate = self.displayWindow.getActualFrameRate()
+        self.mouse = event.Mouse(visible=True, win=self.controlWindow)
+        self.quit = False
+        self.stimulusType = "drum grating"
+
+        def onStimulusTypeSelected(stimulusType):
+            self.stimulusType = stimulusType
+            print(self.stimulusType)
 
         self.components = components + [
             Button(
@@ -30,7 +37,7 @@ class Interface:
                 "white",
                 [255, 170, 21],
                 [215, 270],
-                self.onSwitchScreenClicked,
+                onClick=self.onSwitchScreenClicked,
             ),
             Button(
                 "quit-button",
@@ -38,14 +45,12 @@ class Interface:
                 "white",
                 [255, 64, 64],
                 [340, 270],
-                self.onQuitClicked,
+                onClick=self.onQuitClicked,
             ),
+            StimulusPanel([0, 0], onStimulusTypeSelected),
         ]
         for i in range(len(self.components)):
             self.components[i].register(self.controlWindow)
-
-        self.mouse = event.Mouse(visible=True, win=self.controlWindow)
-        self.quit = False
 
     def getComponentIndexById(self, id: str):
         for i, c in enumerate(self.components):
@@ -90,9 +95,17 @@ class Interface:
             # listen for click events within components
             if self.mouse.getPressed()[0]:
                 for component in self.components:
-                    if component.contains(self.mouse) and not clickHandled:
+                    if (
+                        clickHandled
+                        or isinstance(component, Box)
+                        or not component.contains(self.mouse)
+                    ):
+                        continue
+                    elif isinstance(component, (Panel, StimulusPanel)):
+                        component.handleClick(self.mouse)
+                    else:
                         component.onClick()
-                        clickHandled = True
+                    clickHandled = True
             else:
                 clickHandled = False
 

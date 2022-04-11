@@ -1,10 +1,9 @@
 import numpy as np
-from psychopy import visual, core
+from psychopy import visual, core, gui
 
 
 from components import Button, PlayButton
 from interface import Interface
-
 
 
 def main():
@@ -21,6 +20,7 @@ def main():
 
     # # run grating
     # grating(win, texture, 60, frameRate)
+
     interface = Interface(components=[])
     interface.run()
 
