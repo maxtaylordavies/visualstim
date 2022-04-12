@@ -26,7 +26,7 @@ class StimulusPanel:
                     "drifting grating",
                     WHITE,
                     GREEN,
-                    [-145, 0],
+                    [pos[0] - 145, pos[1]],
                     padding=5,
                     onClick=onClick,
                 ),
@@ -35,7 +35,7 @@ class StimulusPanel:
                     "static grating",
                     WHITE,
                     MEDIUMGREY,
-                    [17, 0],
+                    [pos[0] + 17, pos[1]],
                     padding=5,
                     onClick=onClick,
                 ),
@@ -44,7 +44,7 @@ class StimulusPanel:
                     "    movie   ",
                     WHITE,
                     MEDIUMGREY,
-                    [160, 0],
+                    [pos[0] + 160, pos[1]],
                     padding=5,
                     onClick=onClick,
                 ),
@@ -60,5 +60,5 @@ class StimulusPanel:
     def contains(self, x):
         return self.panel.contains(x)
 
-    def handleClick(self, mouse):
-        self.panel.handleClick(mouse)
+    def onClick(self, mouse):
+        self.panel.onClick(mouse)

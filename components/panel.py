@@ -39,7 +39,7 @@ class Panel:
     def contains(self, x):
         return self.box.contains(x)
 
-    def handleClick(self, mouse):
+    def onClick(self, mouse):
         for b in self.buttons:
             if b.contains(mouse):
                 b.onClick(b)
