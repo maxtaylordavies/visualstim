@@ -1,9 +1,7 @@
 from typing import Any, List
 
+from constants import MEDIUMGREY, GREEN, WHITE
 from components import Panel, Button
-
-GREEN = [0, 199, 129]
-GREY = [196, 196, 196]
 
 
 class StimulusPanel:
@@ -11,7 +9,7 @@ class StimulusPanel:
         def onClick(button: Button):
             for i, b in enumerate(self.panel.buttons):
                 if list(b.shape.fillColor) == GREEN:
-                    self.panel.buttons[i].shape.fillColor = GREY
+                    self.panel.buttons[i].shape.fillColor = MEDIUMGREY
                 self.panel.buttons[i].draw()
             button.shape.fillColor = GREEN
             button.draw()
@@ -21,32 +19,32 @@ class StimulusPanel:
             "select-stimulus",
             "stimulus type",
             pos,
-            [450, 70],
+            [480, 70],
             buttons=[
                 Button(
-                    "stimtype-drum-grating",
-                    "drum grating",
-                    "white",
+                    "stimtype-drifting-grating",
+                    "drifting grating",
+                    WHITE,
                     GREEN,
-                    [-140, 0],
+                    [-145, 0],
                     padding=5,
                     onClick=onClick,
                 ),
                 Button(
-                    "stimtype-other-grating",
-                    "other grating",
-                    "white",
-                    GREY,
-                    [12, 0],
+                    "stimtype-static-grating",
+                    "static grating",
+                    WHITE,
+                    MEDIUMGREY,
+                    [17, 0],
                     padding=5,
                     onClick=onClick,
                 ),
                 Button(
                     "stimtype-movie",
                     "    movie   ",
-                    "white",
-                    GREY,
-                    [152, 0],
+                    WHITE,
+                    MEDIUMGREY,
+                    [160, 0],
                     padding=5,
                     onClick=onClick,
                 ),

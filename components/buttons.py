@@ -1,6 +1,7 @@
 from typing import Any, List
 from psychopy.visual import Window, TextBox2, circle
 
+from constants import GREEN, RED, WHITE
 from utils import noOp
 
 
@@ -67,13 +68,13 @@ class PlayButton:
                 radius=self.radius,
                 units="pix",
                 colorSpace="rgb255",
-                fillColor=[0, 199, 129],
+                fillColor=GREEN,
                 pos=self.pos,
             ),
             circle.Polygon(
                 window,
                 radius=self.radius / 1.7,
-                fillColor="white",
+                fillColor=WHITE,
                 units="pix",
                 pos=self.pos,
                 ori=90,
@@ -84,9 +85,7 @@ class PlayButton:
         self.state = "stop" if self.state == "play" else "play"
         self.shapes[1].edges = 3 if self.state == "play" else 4
         self.shapes[1].ori = 90 if self.state == "play" else 45
-        self.shapes[0].fillColor = (
-            [0, 199, 129] if self.state == "play" else [255, 64, 64]
-        )
+        self.shapes[0].fillColor = GREEN if self.state == "play" else RED
 
     def draw(self):
         for shape in self.shapes:

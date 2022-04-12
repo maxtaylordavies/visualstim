@@ -1,6 +1,8 @@
 from typing import List
 from psychopy.visual import Window, TextBox2
 
+from constants import LIGHTGREY, DARKGREY
+
 
 class Label:
     def __init__(
@@ -19,8 +21,8 @@ class Label:
             units="pix",
             letterHeight=14,
             colorSpace="rgb255",
-            color=[119, 119, 119],
-            fillColor=[230, 230, 230],
+            color=DARKGREY,
+            fillColor=LIGHTGREY,
             bold=True,
             padding=2,
             size=[None, None],

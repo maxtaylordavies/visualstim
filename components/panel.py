@@ -1,5 +1,6 @@
 from typing import List
 
+from constants import LIGHTGREY
 from .buttons import Button
 from .box import Box
 from .label import Label
@@ -19,7 +20,7 @@ class Panel:
         self.pos = pos
         self.size = size
 
-        self.box = Box(f"{id}-box", [230, 230, 230], self.pos, self.size)
+        self.box = Box(f"{id}-box", LIGHTGREY, self.pos, self.size)
         self.label = Label(f"{id}-label", self.label, self.pos, self.size)
         self.buttons = buttons
 
