@@ -91,6 +91,28 @@ class Interface:
         # toggle play button
         # self.components[playButtonIdx].toggle()
 
+    def onClick(self):
+        for component in self.components:
+            if self.clickHandled:
+                break
+            elif component.contains(self.mouse) and hasattr(component, "onClick"):
+                component.onClick(self.mouse)
+                self.clickHandled = True
+
+    def onKeyPress(self, keys):
+        if "escape" in keys:
+            self.quit = True
+            return
+        for key in keys:
+            for component in self.components:
+                if hasattr(component, "onKeyPress"):
+                    component.onKeyPress(key)
+
+    def draw(self):
+        for component in self.components:
+            component.draw()
+        self.controlWindow.flip()
+
     def playDriftingGrating(self):
         texture = drumTexture(self.frameRate)
         grating(self.displayWindow, texture, 10, self.frameRate)
@@ -102,24 +124,18 @@ class Interface:
         time.sleep(5)
 
     def run(self):
-        clickHandled = False
+        self.quit = self.clickHandled = False
         while not self.quit:
-            # draw components onto screen
-            for component in self.components:
-                component.draw()
-            self.controlWindow.flip()
+            # render interface
+            self.draw()
 
-            # listen for click events within components
+            # listen for click events
             if self.mouse.getPressed()[0]:
-                for component in self.components:
-                    if clickHandled:
-                        break
-                    elif component.contains(self.mouse) and component.onClick:
-                        component.onClick(self.mouse)
-                        clickHandled = True
+                self.onClick()
             else:
-                clickHandled = False
+                self.clickHandled = False
 
-            # exit if user has pressed esc
-            if checkForEsc():
-                self.quit = True
+            # listen for keypresses
+            keys = event.getKeys()
+            self.onKeyPress(keys)
+

@@ -7,10 +7,10 @@ from components import Panel, Button
 class StimulusPanel:
     def __init__(self, pos: List[int], callback: Any) -> None:
         def onClick(button: Button):
-            for i, b in enumerate(self.panel.buttons):
-                if list(b.shape.fillColor) == GREEN:
-                    self.panel.buttons[i].shape.fillColor = MEDIUMGREY
-                self.panel.buttons[i].draw()
+            for i, c in enumerate(self.panel.children):
+                if isinstance(c, Button) and list(c.shape.fillColor) == GREEN:
+                    self.panel.children[i].shape.fillColor = MEDIUMGREY
+                self.panel.children[i].draw()
             button.shape.fillColor = GREEN
             button.draw()
             callback(button.text.strip())
@@ -20,7 +20,7 @@ class StimulusPanel:
             "stimulus type",
             pos,
             [480, 70],
-            buttons=[
+            children=[
                 Button(
                     "stimtype-drifting-grating",
                     "drifting grating",
