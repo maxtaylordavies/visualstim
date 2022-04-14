@@ -19,16 +19,31 @@ class Interface:
         self.displayWindow = self.controlWindow
         self.frameRate = self.displayWindow.getActualFrameRate()
         self.mouse = event.Mouse(visible=True, win=self.controlWindow)
-        self.stimulusType = "drifting grating"
         self.quit = False
+
+        self.parameters = {
+            "stimulus type": "drifting grating",
+            "spatial frequency": 10,
+            "temporal frequency": 10,
+        }
 
         def onStimulusTypeSelected(stimulusType):
             self.stimulusType = stimulusType
 
         self.components = [
-            Button("logo-button", "visualstim v0.1", PURPLE, WHITE, [-320, 273]),
-            PlayButton("play-button", 16, [125, 270], self.onStartClicked),
             Button(
+                self.controlWindow,
+                "logo-button",
+                "visualstim v0.1",
+                PURPLE,
+                WHITE,
+                [-320, 273],
+            ),
+            PlayButton(
+                self.controlWindow, "play-button", 16, [125, 270], self.onStartClicked
+            ),
+            Button(
+                self.controlWindow,
                 "switch-screen-button",
                 "switch screen",
                 WHITE,
@@ -37,6 +52,7 @@ class Interface:
                 onClick=self.onSwitchScreenClicked,
             ),
             Button(
+                self.controlWindow,
                 "quit-button",
                 "quit (esc)",
                 WHITE,
@@ -44,11 +60,18 @@ class Interface:
                 [340, 270],
                 onClick=self.onQuitClicked,
             ),
-            StimulusPanel([0, 100], onStimulusTypeSelected),
-            ParametersPanel([0, -50], noOp),
+            StimulusPanel(
+                self.controlWindow,
+                [0, 100],
+                lambda x: self.setParameter("stimulus type", x),
+            ),
+            ParametersPanel(self.controlWindow, [0, -50], self.setParameter),
         ]
         for i in range(len(self.components)):
-            self.components[i].register(self.controlWindow)
+            self.components[i].register()
+
+    def setParameter(self, key, value):
+        self.parameters[key] = value
 
     def getComponentIndexById(self, id: str):
         for i, c in enumerate(self.components):
@@ -75,13 +98,15 @@ class Interface:
         self.quit = True
 
     def onStartClicked(self, mouse: event.Mouse):
+        print(self.parameters)
+
         # toggle play button
         playButtonIdx = self.getComponentIndexById("play-button")
         if playButtonIdx != -1:
             self.components[playButtonIdx].toggle()
 
         # run selected stimulus
-        if self.stimulusType == "drifting grating":
+        if self.parameters["stimulus type"] == "drifting grating":
             self.playDriftingGrating()
         # elif self.stimulusType == "static grating":
         #     self.playStaticGrating()

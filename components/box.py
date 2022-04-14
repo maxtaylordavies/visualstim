@@ -1,20 +1,26 @@
 from typing import List
 
-from psychopy.visual import rect
+from psychopy.visual import rect, Window
 
 
 class Box:
     def __init__(
-        self, id: str, color: List[int], pos: List[int], size: List[int],
+        self,
+        window: Window,
+        id: str,
+        color: List[int],
+        pos: List[int],
+        size: List[int],
     ) -> None:
+        self.window = window
         self.id = id
         self.color = color
         self.pos = pos
         self.size = size
 
-    def register(self, window):
+    def register(self):
         self.shape = rect.Rect(
-            window,
+            self.window,
             units="pix",
             colorSpace="rgb255",
             fillColor=self.color,

@@ -1,11 +1,15 @@
 from typing import Any, List
 
+from psychopy.visual import Window
+
 from constants import MEDIUMGREY, GREEN, WHITE
 from components import Panel, Button
 
 
 class StimulusPanel:
-    def __init__(self, pos: List[int], callback: Any) -> None:
+    def __init__(self, window: Window, pos: List[int], callback: Any) -> None:
+        self.window = window
+
         def onClick(button: Button):
             for i, c in enumerate(self.panel.children):
                 if isinstance(c, Button) and list(c.shape.fillColor) == GREEN:
@@ -16,43 +20,46 @@ class StimulusPanel:
             callback(button.text.strip())
 
         self.panel = Panel(
+            self.window,
             "select-stimulus",
             "stimulus type",
             pos,
-            [480, 70],
             children=[
                 Button(
+                    self.window,
                     "stimtype-drifting-grating",
                     "drifting grating",
                     WHITE,
                     GREEN,
-                    [pos[0] - 145, pos[1]],
+                    pos,
                     padding=5,
                     onClick=onClick,
                 ),
                 Button(
+                    self.window,
                     "stimtype-static-grating",
                     "static grating",
                     WHITE,
                     MEDIUMGREY,
-                    [pos[0] + 17, pos[1]],
+                    pos,
                     padding=5,
                     onClick=onClick,
                 ),
                 Button(
+                    self.window,
                     "stimtype-movie",
                     "    movie   ",
                     WHITE,
                     MEDIUMGREY,
-                    [pos[0] + 160, pos[1]],
+                    pos,
                     padding=5,
                     onClick=onClick,
                 ),
             ],
         )
 
-    def register(self, window):
-        self.panel.register(window)
+    def register(self):
+        self.panel.register()
 
     def draw(self):
         self.panel.draw()

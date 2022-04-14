@@ -6,16 +6,17 @@ from constants import LIGHTGREY, DARKGREY
 
 class Label:
     def __init__(
-        self, id: str, text: str, boxPos: List[int], boxSize: List[int],
+        self, window: Window, id: str, text: str, boxPos: List[int], boxSize: List[int],
     ) -> None:
+        self.window = window
         self.id = id
         self.text = text
         self.boxPos = boxPos
         self.boxSize = boxSize
 
-    def register(self, window: Window):
+    def register(self):
         self.shape = TextBox2(
-            window,
+            self.window,
             f"  {self.text} ",
             "Open Sans",
             units="pix",

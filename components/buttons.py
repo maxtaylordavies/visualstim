@@ -8,6 +8,7 @@ from utils import noOp
 class Button:
     def __init__(
         self,
+        window: Window,
         id: str,
         text: str,
         color: List[int],
@@ -16,6 +17,7 @@ class Button:
         padding=2,
         onClick=noOp,
     ) -> None:
+        self.window = window
         self.id = id
         self.text = text
         self.color = color
@@ -24,9 +26,9 @@ class Button:
         self.padding = padding
         self.onClick = onClick
 
-    def register(self, window):
+    def register(self):
         self.shape = TextBox2(
-            window,
+            self.window,
             f" {self.text} ",
             "Open Sans",
             units="pix",
@@ -52,19 +54,25 @@ class Button:
     def contains(self, x):
         return self.shape.contains(x)
 
+    def size(self):
+        return self.shape.size
+
 
 class PlayButton:
-    def __init__(self, id: str, radius: int, pos: List[int], onClick=noOp,) -> None:
+    def __init__(
+        self, window: Window, id: str, radius: int, pos: List[int], onClick=noOp,
+    ) -> None:
+        self.window = window
         self.id = id
         self.radius = radius
         self.pos = pos
         self.onClick = onClick
         self.state = "play"
 
-    def register(self, window):
+    def register(self):
         self.shapes = [
             circle.Circle(
-                window,
+                self.window,
                 radius=self.radius,
                 units="pix",
                 colorSpace="rgb255",
@@ -72,7 +80,7 @@ class PlayButton:
                 pos=self.pos,
             ),
             circle.Polygon(
-                window,
+                self.window,
                 radius=self.radius / 1.7,
                 fillColor=WHITE,
                 units="pix",

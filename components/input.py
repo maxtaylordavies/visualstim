@@ -7,8 +7,15 @@ from utils import noOp
 
 class TextInput:
     def __init__(
-        self, id: str, text: str, labelText: str, pos: List[int], onChange=noOp,
+        self,
+        window: Window,
+        id: str,
+        text: str,
+        labelText: str,
+        pos: List[int],
+        onChange=noOp,
     ) -> None:
+        self.window = window
         self.id = id
         self.text = text
         self.labelText = labelText
@@ -16,10 +23,9 @@ class TextInput:
         self.onChange = onChange
         self.active = False
 
-    def register(self, window, text="."):
-        self.window = window
+    def register(self, text="."):
         self.input = TextBox2(
-            window,
+            self.window,
             text if text != "." else self.text,
             "Open Sans",
             units="pix",
@@ -36,7 +42,7 @@ class TextInput:
             editable=self.active,
         )
         self.label = TextBox2(
-            window,
+            self.window,
             f"{self.labelText}:",
             "Open Sans",
             units="pix",
@@ -51,10 +57,18 @@ class TextInput:
             size=[None, None],
             pos=self.pos,
         )
+
         self.label.pos[0] -= (self.label.size[0] + self.input.size[0]) / 2
         self.input.pos[0] -= self.label.padding + self.input.padding
+
+        left, right = self.edges()
+        center = (left + right) / 2
+
+        self.label.pos[0] += self.pos[0] - center
+        self.input.pos[0] += self.pos[0] - center
+
         self.mask = rect.Rect(
-            window,
+            self.window,
             units="pix",
             colorSpace="rgb255",
             fillColor=WHITE,
@@ -66,6 +80,9 @@ class TextInput:
         )
 
     def toggle(self):
+        if self.active:
+            self.text = self.input.text
+            self.onChange(self.text)
         self.active = not self.active
         self.update()
 
@@ -75,17 +92,28 @@ class TextInput:
         self.mask.draw()
 
     def update(self):
-        self.register(self.window, text=self.input.text)
+        self.register(text=self.input.text)
         self.draw()
         self.input.hasFocus = self.active
 
     def contains(self, x):
         return self.input.contains(x) or self.label.contains(x) or self.mask.contains(x)
 
+    def edges(self):
+        rightEdge = self.input.pos[0] + (self.input.size[0] / 2)
+        leftEdge = self.label.pos[0] - (self.label.size[0] / 2)
+        return [leftEdge, rightEdge]
+
+    def size(self):
+        leftEdge, rightEdge = self.edges()
+        return [rightEdge - leftEdge, self.input.size[1]]
+
     def onClick(self, args):
         self.toggle()
 
     def onKeyPress(self, key):
+        if not self.active:
+            return
         if key == "return":
             self.input.deleteCaretLeft()
             self.toggle()

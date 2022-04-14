@@ -1,5 +1,7 @@
 from typing import Any, List
 
+from psychopy.visual import Window
+
 from constants import LIGHTGREY
 from .buttons import Button
 from .box import Box
@@ -8,22 +10,46 @@ from .label import Label
 
 class Panel:
     def __init__(
-        self, id: str, label: str, pos: List[int], size: List[int], children: List[Any],
+        self,
+        window: Window,
+        id: str,
+        label: str,
+        pos: List[int],
+        children: List[Any],
+        padding=15,
     ) -> None:
+        self.window = window
         self.id = id
         self.label = label
         self.pos = pos
-        self.size = size
-
-        self.box = Box(f"{id}-box", LIGHTGREY, self.pos, self.size)
-        self.label = Label(f"{id}-label", self.label, self.pos, self.size)
         self.children = children
+        self.padding = padding
 
-    def register(self, window):
-        self.box.register(window)
-        self.label.register(window)
         for c in self.children:
-            c.register(window)
+            c.register()
+
+        # compute dimensions of panel based on children
+        width = sum(map(lambda c: c.size()[0], self.children)) + (
+            self.padding * (len(self.children) + 1)
+        )
+        height = max(map(lambda c: c.size()[1], self.children)) + (self.padding * 2)
+        self.size = [width, height]
+
+        # position children automatically
+        x = self.pos[0] - (self.size[0] / 2)
+        for i in range(len(self.children)):
+            x += self.children[i].size()[0] / 2 + padding
+            self.children[i].pos = [x, self.children[i].pos[1]]
+            x += self.children[i].size()[0] / 2
+
+        self.box = Box(self.window, f"{id}-box", LIGHTGREY, self.pos, self.size)
+        self.label = Label(self.window, f"{id}-label", self.label, self.pos, self.size)
+
+    def register(self):
+        self.box.register()
+        self.label.register()
+        for c in self.children:
+            c.register()
 
     def draw(self):
         self.box.draw()
@@ -38,7 +64,6 @@ class Panel:
         for c in self.children:
             if c.contains(mouse) and hasattr(c, "onClick"):
                 c.onClick(c)
-                return
             elif hasattr(c, "active") and c.active:
                 c.toggle()
 
