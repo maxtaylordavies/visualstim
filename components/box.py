@@ -28,6 +28,12 @@ class Box:
             pos=self.pos,
         )
 
+    def changeColor(self, color: List[int], draw=True):
+        self.color = color
+        self.register()
+        if draw:
+            self.draw()
+
     def draw(self):
         self.shape.draw()
 

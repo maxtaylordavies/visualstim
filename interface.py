@@ -4,7 +4,14 @@ from psychopy import visual, event, core
 
 from constants import WHITE, PURPLE, YELLOW, RED
 from utils import checkForEsc, noOp
-from components import Button, PlayButton, Box, Panel, StimulusPanel, ParametersPanel
+from components import (
+    Button,
+    PlayButton,
+    Box,
+    StimulusPanel,
+    ParametersPanel,
+    SyncSquares,
+)
 from grating import grating
 from textures import drumTexture
 
@@ -29,6 +36,8 @@ class Interface:
 
         def onStimulusTypeSelected(stimulusType):
             self.stimulusType = stimulusType
+
+        print(self.displayWindow.size)
 
         self.components = [
             Button(
@@ -66,7 +75,9 @@ class Interface:
                 lambda x: self.setParameter("stimulus type", x),
             ),
             ParametersPanel(self.controlWindow, [0, -50], self.setParameter),
+            SyncSquares(self.displayWindow, "sync-squares"),
         ]
+
         for i in range(len(self.components)):
             self.components[i].register()
 
