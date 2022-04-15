@@ -1,4 +1,5 @@
 import time
+from typing import Any
 
 from psychopy import visual, event, core
 
@@ -18,6 +19,7 @@ from textures import drumTexture
 
 class Interface:
     def __init__(self, fullscreen=False):
+        # create window
         self.screenNum = 0
         self.fullscreen = fullscreen
         self.controlWindow = visual.Window(
@@ -29,22 +31,28 @@ class Interface:
         )
         self.displayWindow = self.controlWindow
         self.frameRate = self.displayWindow.getActualFrameRate()
+
+        # create mouse object to listen for click events
         self.mouse = event.Mouse(visible=True, win=self.controlWindow)
+
+        # controls whether to close the interface
         self.quit = False
 
+        # stimulation parameters
+        self.stimulusType = "drifting grating"
+
+        def selectStimulusType(x):
+            self.stimulusType = x
+
         self.parameters = {
-            "stimulus type": "drifting grating",
             "spatial frequency": 10,
             "temporal frequency": 10,
             "trigger duration": 5,
-            "stim duration": 10,
+            "stimulus duration": 10,
         }
 
-        def onStimulusTypeSelected(stimulusType):
-            self.stimulusType = stimulusType
-
+        # create components to render
         self.syncSquares = SyncSquares(self.displayWindow, "sync-squares")
-
         self.components = [
             Button(
                 self.controlWindow,
@@ -75,28 +83,27 @@ class Interface:
                 [340, 270],
                 onClick=self.onQuitClicked,
             ),
-            StimulusPanel(
-                self.controlWindow,
-                [0, 100],
-                lambda x: self.setParameter("stimulus type", x),
+            StimulusPanel(self.controlWindow, [0, 100], selectStimulusType,),
+            ParametersPanel(
+                self.controlWindow, [0, -50], self.setParameter, self.parameters
             ),
-            ParametersPanel(self.controlWindow, [0, -50], self.setParameter),
             self.syncSquares,
         ]
 
+        # register components (assign them to the window)
         for i in range(len(self.components)):
             self.components[i].register()
 
-    def setParameter(self, key, value):
+    def setParameter(self, key: str, value: Any) -> None:
         self.parameters[key] = value
 
-    def getComponentIndexById(self, id: str):
+    def getComponentIndexById(self, id: str) -> int:
         for i, c in enumerate(self.components):
             if c.id == id:
                 return i
         return -1
 
-    def onSwitchScreenClicked(self, mouse: event.Mouse):
+    def onSwitchScreenClicked(self, mouse: event.Mouse) -> None:
         self.screenNum = 1 - self.screenNum
         if self.screenNum:
             self.displayWindow = visual.Window(
@@ -104,7 +111,7 @@ class Interface:
                 fullscr=self.fullscreen,
                 units="pix",
                 color=[255, 255, 255],
-                colorSpace="rgb255"
+                colorSpace="rgb255",
             )
             self.frameRate = 30
         else:
@@ -112,10 +119,10 @@ class Interface:
             self.displayWindow = self.controlWindow
             self.frameRate = self.displayWindow.getActualFrameRate()
 
-    def onQuitClicked(self, mouse: event.Mouse):
+    def onQuitClicked(self, mouse: event.Mouse) -> None:
         self.quit = True
 
-    def onStartClicked(self, mouse: event.Mouse):
+    def onStartClicked(self, mouse: event.Mouse) -> None:
         print(self.parameters)
 
         # toggle play button
@@ -124,7 +131,7 @@ class Interface:
             self.components[playButtonIdx].toggle()
 
         # run selected stimulus
-        if self.parameters["stimulus type"] == "drifting grating":
+        if self.stimulusType == "drifting grating":
             self.playDriftingGrating()
         elif self.stimulusType == "static grating":
             self.playStaticGrating()
@@ -134,7 +141,7 @@ class Interface:
         # toggle play button
         self.components[playButtonIdx].toggle()
 
-    def onClick(self):
+    def onClick(self) -> None:
         for component in self.components:
             if self.clickHandled:
                 break
@@ -142,7 +149,7 @@ class Interface:
                 component.onClick(self.mouse)
                 self.clickHandled = True
 
-    def onKeyPress(self, keys):
+    def onKeyPress(self, keys) -> None:
         if "escape" in keys:
             self.quit = True
             return
@@ -151,28 +158,28 @@ class Interface:
                 if hasattr(component, "onKeyPress"):
                     component.onKeyPress(key)
 
-    def draw(self):
+    def draw(self) -> None:
         for component in self.components:
             component.draw()
         self.controlWindow.flip()
 
-    def playDriftingGrating(self):
+    def playDriftingGrating(self) -> None:
         texture = drumTexture(self.frameRate)
         grating(
             self.displayWindow,
             self.syncSquares,
             texture,
-            [self.parameters["trigger duration"], self.parameters["stim duration"]],
+            [self.parameters["trigger duration"], self.parameters["stimulus duration"]],
             self.frameRate,
         )
 
-    def playStaticGrating(self):
+    def playStaticGrating(self) -> None:
         time.sleep(5)
 
-    def playMovie(self):
+    def playMovie(self) -> None:
         time.sleep(5)
 
-    def run(self):
+    def run(self) -> None:
         self.quit = self.clickHandled = False
         while not self.quit:
             # render interface

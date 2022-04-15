@@ -1,14 +1,15 @@
-from typing import Any, List
+from typing import Any, Dict, List
 
 from psychopy.visual import Window
 
-from constants import MEDIUMGREY, GREEN, WHITE
 from components import Panel
 from .input import TextInput
 
 
 class ParametersPanel:
-    def __init__(self, window: Window, pos: List[int], callback: Any) -> None:
+    def __init__(
+        self, window: Window, pos: List[int], callback: Any, initialParams: Dict
+    ) -> None:
         self.window = window
         self.callback = callback
         self.panel = Panel(
@@ -19,21 +20,40 @@ class ParametersPanel:
             children=[
                 TextInput(
                     self.window,
-                    "spatial-frequency-input",
-                    "10",
-                    "spatial freq",
+                    f"{'-'.join(k.split(' '))}-input",
+                    str(v),
+                    k,
                     pos,
-                    lambda x: self.callback("spatial frequency", float(x)),
-                ),
-                TextInput(
-                    self.window,
-                    "temporal-frequency-input",
-                    "10",
-                    "temporal freq",
-                    pos,
-                    lambda x: self.callback("temporal frequency", float(x)),
-                ),
-            ],
+                    lambda x: self.callback(k, float(x)),
+                )
+                for k, v in initialParams.items()
+            ]
+            # children=[
+            #     TextInput(
+            #         self.window,
+            #         "stimulus-duration-input",
+            #         "10",
+            #         "stimulus duration",
+            #         pos,
+            #         lambda x: self.callback("stimulus duration", float(x)),
+            #     ),
+            #     TextInput(
+            #         self.window,
+            #         "spatial-frequency-input",
+            #         "10",
+            #         "spatial freq",
+            #         pos,
+            #         lambda x: self.callback("spatial frequency", float(x)),
+            #     ),
+            #     TextInput(
+            #         self.window,
+            #         "temporal-frequency-input",
+            #         "10",
+            #         "temporal freq",
+            #         pos,
+            #         lambda x: self.callback("temporal frequency", float(x)),
+            #     ),
+            # ],
         )
 
     def register(self):
