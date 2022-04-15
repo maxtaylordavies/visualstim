@@ -27,33 +27,8 @@ class ParametersPanel:
                     lambda x: self.callback(k, float(x)),
                 )
                 for k, v in initialParams.items()
-            ]
-            # children=[
-            #     TextInput(
-            #         self.window,
-            #         "stimulus-duration-input",
-            #         "10",
-            #         "stimulus duration",
-            #         pos,
-            #         lambda x: self.callback("stimulus duration", float(x)),
-            #     ),
-            #     TextInput(
-            #         self.window,
-            #         "spatial-frequency-input",
-            #         "10",
-            #         "spatial freq",
-            #         pos,
-            #         lambda x: self.callback("spatial frequency", float(x)),
-            #     ),
-            #     TextInput(
-            #         self.window,
-            #         "temporal-frequency-input",
-            #         "10",
-            #         "temporal freq",
-            #         pos,
-            #         lambda x: self.callback("temporal frequency", float(x)),
-            #     ),
-            # ],
+            ],
+            rows=2,
         )
 
     def register(self):

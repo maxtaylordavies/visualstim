@@ -22,6 +22,7 @@ class TextInput:
         self.pos = pos
         self.onChange = onChange
         self.active = False
+        self.padRight = 0
 
     def register(self, text="."):
         self.input = TextBox2(
@@ -60,6 +61,12 @@ class TextInput:
 
         self.label.pos[0] -= (self.label.size[0] + self.input.size[0]) / 2
         self.input.pos[0] -= self.label.padding + self.input.padding
+
+        if self.padRight > 0:
+            newSize = [self.input.size[0] + self.padRight, self.input.size[1]]
+            newPos = [self.input.pos[0] + (self.padRight / 2), self.input.pos[1]]
+            self.input.size = newSize
+            self.input.pos = newPos
 
         left, right = self.edges()
         center = (left + right) / 2
@@ -107,6 +114,12 @@ class TextInput:
     def size(self):
         leftEdge, rightEdge = self.edges()
         return [rightEdge - leftEdge, self.input.size[1]]
+
+    def setWidth(self, w):
+        diff = w - self.size()[0]
+        if diff > 0:
+            self.padRight = diff
+            self.update()
 
     def onClick(self, args):
         self.toggle()

@@ -47,6 +47,7 @@ class Interface:
         self.parameters = {
             "spatial frequency": 10,
             "temporal frequency": 10,
+            "orientation": 0,
             "trigger duration": 5,
             "stimulus duration": 10,
         }
