@@ -21,7 +21,11 @@ class Interface:
         self.screenNum = 0
         self.fullscreen = fullscreen
         self.controlWindow = visual.Window(
-            screen=self.screenNum, fullscr=self.fullscreen, units="pix", color=WHITE,
+            screen=self.screenNum,
+            fullscr=self.fullscreen,
+            units="pix",
+            color=WHITE,
+            colorSpace="rgb255",
         )
         self.displayWindow = self.controlWindow
         self.frameRate = self.displayWindow.getActualFrameRate()
@@ -32,12 +36,14 @@ class Interface:
             "stimulus type": "drifting grating",
             "spatial frequency": 10,
             "temporal frequency": 10,
+            "trigger duration": 5,
+            "stim duration": 10,
         }
 
         def onStimulusTypeSelected(stimulusType):
             self.stimulusType = stimulusType
 
-        print(self.displayWindow.size)
+        self.syncSquares = SyncSquares(self.displayWindow, "sync-squares")
 
         self.components = [
             Button(
@@ -75,7 +81,7 @@ class Interface:
                 lambda x: self.setParameter("stimulus type", x),
             ),
             ParametersPanel(self.controlWindow, [0, -50], self.setParameter),
-            SyncSquares(self.displayWindow, "sync-squares"),
+            self.syncSquares,
         ]
 
         for i in range(len(self.components)):
@@ -98,6 +104,7 @@ class Interface:
                 fullscr=self.fullscreen,
                 units="pix",
                 color=[255, 255, 255],
+                colorSpace="rgb255"
             )
             self.frameRate = 30
         else:
@@ -119,13 +126,13 @@ class Interface:
         # run selected stimulus
         if self.parameters["stimulus type"] == "drifting grating":
             self.playDriftingGrating()
-        # elif self.stimulusType == "static grating":
-        #     self.playStaticGrating()
-        # elif self.stimulusType == "movie":
-        #     self.playMovie()
+        elif self.stimulusType == "static grating":
+            self.playStaticGrating()
+        elif self.stimulusType == "movie":
+            self.playMovie()
 
         # toggle play button
-        # self.components[playButtonIdx].toggle()
+        self.components[playButtonIdx].toggle()
 
     def onClick(self):
         for component in self.components:
@@ -151,7 +158,13 @@ class Interface:
 
     def playDriftingGrating(self):
         texture = drumTexture(self.frameRate)
-        grating(self.displayWindow, texture, 10, self.frameRate)
+        grating(
+            self.displayWindow,
+            self.syncSquares,
+            texture,
+            [self.parameters["trigger duration"], self.parameters["stim duration"]],
+            self.frameRate,
+        )
 
     def playStaticGrating(self):
         time.sleep(5)
