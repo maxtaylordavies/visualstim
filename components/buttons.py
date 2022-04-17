@@ -14,6 +14,8 @@ class Button:
         color: List[int],
         fill: List[int],
         pos: List[int],
+        size=[None, None],
+        bold=True,
         padding=2,
         onClick=noOp,
     ) -> None:
@@ -23,6 +25,8 @@ class Button:
         self.color = color
         self.fill = fill
         self.pos = pos
+        self._size = size
+        self.bold = bold
         self.padding = padding
         self.onClick = onClick
 
@@ -36,14 +40,13 @@ class Button:
             colorSpace="rgb255",
             color=self.color,
             fillColor=self.fill,
-            bold=True,
+            bold=self.bold,
             padding=self.padding,
-            size=[None, None],
+            size=self._size,
             pos=self.pos,
         )
 
     def changeFill(self, fill):
-        print(f"changing fill to {fill}")
         self.fill = fill
         self.shape.fillColor = self.fill
         self.draw()
@@ -56,6 +59,11 @@ class Button:
 
     def size(self):
         return self.shape.size
+
+    def setSize(self, size):
+        self._size = size
+        self.register()
+        self.draw()
 
 
 class PlayButton:

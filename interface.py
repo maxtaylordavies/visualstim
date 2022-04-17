@@ -1,16 +1,16 @@
 import time
 from typing import Any
 
-from psychopy import visual, event, core
+from psychopy import visual, event
 
 from constants import WHITE, PURPLE, YELLOW, RED
 from utils import checkForEsc, noOp
 from components import (
     Button,
     PlayButton,
-    Box,
     StimulusPanel,
     ParametersPanel,
+    SyncPanel,
     SyncSquares,
 )
 from grating import grating
@@ -23,6 +23,7 @@ class Interface:
         self.screenNum = 0
         self.fullscreen = fullscreen
         self.controlWindow = visual.Window(
+            size=[900, 600],
             screen=self.screenNum,
             fullscr=self.fullscreen,
             units="pix",
@@ -38,18 +39,16 @@ class Interface:
         # controls whether to close the interface
         self.quit = False
 
-        # stimulation parameters
+        # parameters
         self.stimulusType = "drifting grating"
-
-        def selectStimulusType(x):
-            self.stimulusType = x
-
         self.parameters = {
-            "spatial frequency": 10,
-            "temporal frequency": 10,
-            "orientation": 0,
-            "trigger duration": 5,
-            "stimulus duration": 10,
+            "stimulus": {
+                "spatial frequency": 0.1,
+                "temporal frequency": 0.4,
+                "orientation": 0,
+                "stimulus duration": 10,
+            },
+            "sync": {"sync status": 0, "trigger duration": 5},
         }
 
         # create components to render
@@ -61,10 +60,10 @@ class Interface:
                 "visualstim v0.1",
                 PURPLE,
                 WHITE,
-                [-320, 273],
+                [-370, 273],
             ),
             PlayButton(
-                self.controlWindow, "play-button", 16, [125, 270], self.onStartClicked
+                self.controlWindow, "play-button", 16, [175, 270], self.onStartClicked
             ),
             Button(
                 self.controlWindow,
@@ -72,7 +71,7 @@ class Interface:
                 "switch screen",
                 WHITE,
                 YELLOW,
-                [215, 270],
+                [265, 270],
                 onClick=self.onSwitchScreenClicked,
             ),
             Button(
@@ -81,12 +80,21 @@ class Interface:
                 "quit (esc)",
                 WHITE,
                 RED,
-                [340, 270],
+                [390, 270],
                 onClick=self.onQuitClicked,
             ),
-            StimulusPanel(self.controlWindow, [0, 100], selectStimulusType,),
+            StimulusPanel(self.controlWindow, [0, 70], self.selectStimulusType),
             ParametersPanel(
-                self.controlWindow, [0, -50], self.setParameter, self.parameters
+                self.controlWindow,
+                [-122, -67],
+                self.setStimulusParameter,
+                self.parameters["stimulus"],
+            ),
+            SyncPanel(
+                self.controlWindow,
+                [252, -67],
+                self.setSyncParameter,
+                self.parameters["sync"],
             ),
             self.syncSquares,
         ]
@@ -95,8 +103,14 @@ class Interface:
         for i in range(len(self.components)):
             self.components[i].register()
 
-    def setParameter(self, key: str, value: Any) -> None:
-        self.parameters[key] = value
+    def selectStimulusType(self, x):
+        self.stimulusType = x
+
+    def setStimulusParameter(self, key: str, value: Any) -> None:
+        self.parameters["stimulus"][key] = value
+
+    def setSyncParameter(self, key: str, value: Any) -> None:
+        self.parameters["sync"][key] = value
 
     def getComponentIndexById(self, id: str) -> int:
         for i, c in enumerate(self.components):
@@ -165,12 +179,19 @@ class Interface:
         self.controlWindow.flip()
 
     def playDriftingGrating(self) -> None:
-        texture = drumTexture(self.frameRate)
+        texture = drumTexture(
+            self.frameRate,
+            self.parameters["stimulus"]["spatial frequency"],
+            self.parameters["stimulus"]["temporal frequency"],
+        )
         grating(
             self.displayWindow,
             self.syncSquares,
             texture,
-            [self.parameters["trigger duration"], self.parameters["stimulus duration"]],
+            [
+                self.parameters["sync"]["trigger duration"],
+                self.parameters["stimulus"]["stimulus duration"],
+            ],
             self.frameRate,
         )
 

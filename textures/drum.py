@@ -7,11 +7,8 @@ drumgrating_MeanLum = 35
 GammaFactor = 2.455466
 AmpFactor = 0.000197
 drumgrating_Amp_sinu = 5
-drumgrating_SpatFreqVal = 0.1
-drumgrating_tempFreqVal = 0.4
 
-
-def drumTexture(frameRate):
+def drumTexture(frameRate, spatFreq, tempFreq):
     pixelangle = np.empty(
         shape=[1, WINDOW_WIDTH]
     )  # pixel has to be 2D since the image is 2D
@@ -36,13 +33,13 @@ def drumTexture(frameRate):
     inc = drumgrating_gray * drumgrating_contrast
 
     # frames to be calculated per period
-    frames = round(frameRate / drumgrating_tempFreqVal)
+    frames = round(frameRate / tempFreq)
 
     phase = np.array(range(int(frames)))
     phase = (
         drumgrating_Amp_sinu
         * np.sin((phase / frames) * 2 * np.pi)
-        * drumgrating_SpatFreqVal
+        * spatFreq
         * 2
         * np.pi
     )
@@ -54,10 +51,7 @@ def drumTexture(frameRate):
             np.log(
                 (
                     drumgrating_gray
-                    + inc
-                    * np.sin(
-                        pixelangle * drumgrating_SpatFreqVal * 2 * np.pi + phase[i]
-                    )
+                    + inc * np.sin(pixelangle * spatFreq * 2 * np.pi + phase[i])
                 )
                 / AmpFactor
             )

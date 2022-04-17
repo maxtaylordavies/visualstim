@@ -35,8 +35,9 @@ class Panel:
 
         if self.rows > 1:
             maxChildWidth = max(map(lambda c: c.size()[0], self.children))
+            maxChildHeight = max(map(lambda c: c.size()[1], self.children))
             for i in range(len(self.children)):
-                self.children[i].setWidth(maxChildWidth)
+                self.children[i].setSize([maxChildWidth, maxChildHeight])
 
             width = (childrenPerRow * (maxChildWidth + self.padding)) + self.padding
             height = (

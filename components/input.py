@@ -13,16 +13,17 @@ class TextInput:
         text: str,
         labelText: str,
         pos: List[int],
-        onChange=noOp,
+        size=[None,None],
+        onChange=noOp
     ) -> None:
         self.window = window
         self.id = id
         self.text = text
         self.labelText = labelText
+        self._size = size
         self.pos = pos
         self.onChange = onChange
         self.active = False
-        self.padRight = 0
 
     def register(self, text="."):
         self.input = TextBox2(
@@ -62,11 +63,13 @@ class TextInput:
         self.label.pos[0] -= (self.label.size[0] + self.input.size[0]) / 2
         self.input.pos[0] -= self.label.padding + self.input.padding
 
-        if self.padRight > 0:
-            newSize = [self.input.size[0] + self.padRight, self.input.size[1]]
-            newPos = [self.input.pos[0] + (self.padRight / 2), self.input.pos[1]]
-            self.input.size = newSize
-            self.input.pos = newPos
+        if self._size != [None, None]:
+            diffx = self._size[0] - self.size()[0] if self._size[0] else 0
+            diffy = self._size[1] - self.size()[1] if self._size[1] else 0
+
+            self.input.size = [self.input.size[0] + diffx, self.input.size[1] + diffy]
+            self.input.pos = [self.input.pos[0] + (diffx / 2), self.input.pos[1]]
+            self.label.size = [self.label.size[0], self.label.size[1] + diffy]
 
         left, right = self.edges()
         center = (left + right) / 2
@@ -115,11 +118,9 @@ class TextInput:
         leftEdge, rightEdge = self.edges()
         return [rightEdge - leftEdge, self.input.size[1]]
 
-    def setWidth(self, w):
-        diff = w - self.size()[0]
-        if diff > 0:
-            self.padRight = diff
-            self.update()
+    def setSize(self, size):
+        self._size = size
+        self.update()
 
     def onClick(self, args):
         self.toggle()
