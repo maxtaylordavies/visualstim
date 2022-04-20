@@ -1,11 +1,12 @@
 from typing import Any, List
 from psychopy.visual import Window, TextBox2, circle
 
-from constants import GREEN, RED, WHITE
+from components import Component
+from constants import GREEN, RED, WHITE, BLACK
 from utils import noOp
 
 
-class Button:
+class Button(Component):
     def __init__(
         self,
         window: Window,
@@ -29,44 +30,44 @@ class Button:
         self.bold = bold
         self.padding = padding
         self.onClick = onClick
+        self.borderWidth = 0
 
     def register(self):
-        self.shape = TextBox2(
+        self.children = [TextBox2(
             self.window,
             f" {self.text} ",
             "Open Sans",
+            alignment="center",
             units="pix",
             letterHeight=18,
             colorSpace="rgb255",
             color=self.color,
             fillColor=self.fill,
+            # borderColor=self.fill,
             bold=self.bold,
             padding=self.padding,
             size=self._size,
             pos=self.pos,
-        )
+            # borderWidth=self.borderWidth,
+        )]
 
     def changeFill(self, fill):
         self.fill = fill
-        self.shape.fillColor = self.fill
+        self.children[0].fillColor = self.fill
         self.draw()
 
-    def draw(self):
-        self.shape.draw()
-
-    def contains(self, x):
-        return self.shape.contains(x)
-
     def size(self):
-        return self.shape.size
+        return self.children[0].size
 
     def setSize(self, size):
-        self._size = size
+        ydiff = size[1] - self.size()[1]
+        self._size = [size[0] - ydiff / 2 + self.padding, self._size[1]]
+        self.padding += (ydiff / 2)
         self.register()
         self.draw()
 
 
-class PlayButton:
+class PlayButton(Component):
     def __init__(
         self, window: Window, id: str, radius: int, pos: List[int], onClick=noOp,
     ) -> None:
@@ -78,7 +79,7 @@ class PlayButton:
         self.state = "play"
 
     def register(self):
-        self.shapes = [
+        self.children = [
             circle.Circle(
                 self.window,
                 radius=self.radius,
@@ -99,16 +100,6 @@ class PlayButton:
 
     def toggle(self):
         self.state = "stop" if self.state == "play" else "play"
-        self.shapes[1].edges = 3 if self.state == "play" else 4
-        self.shapes[1].ori = 90 if self.state == "play" else 45
-        self.shapes[0].fillColor = GREEN if self.state == "play" else RED
-
-    def draw(self):
-        for shape in self.shapes:
-            shape.draw()
-
-    def contains(self, x):
-        for shape in self.shapes:
-            if shape.contains(x):
-                return True
-        return False
+        self.children[1].edges = 3 if self.state == "play" else 4
+        self.children[1].ori = 90 if self.state == "play" else 45
+        self.children[0].fillColor = GREEN if self.state == "play" else RED

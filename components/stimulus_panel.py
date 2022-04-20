@@ -1,21 +1,22 @@
 from typing import Any, List
 
 from psychopy.visual import Window
+from psychopy.event import Mouse
 
 from constants import MEDIUMGREY, GREEN, WHITE
-from components import Panel, Button
+from components import Component, Panel, Button
 
 
-class StimulusPanel:
+class StimulusPanel(Component):
     def __init__(self, window: Window, pos: List[int], callback: Any) -> None:
         self.window = window
 
-        def onClick(button: Button):
+        def onClick(mouse: Mouse, button: Button):
             for i, c in enumerate(self.panel.children):
-                if isinstance(c, Button) and list(c.shape.fillColor) == GREEN:
-                    self.panel.children[i].shape.fillColor = MEDIUMGREY
+                if isinstance(c, Button) and list(c.fill) == GREEN:
+                    self.panel.children[i].changeFill(MEDIUMGREY)
                 self.panel.children[i].draw()
-            button.shape.fillColor = GREEN
+            button.changeFill(GREEN)
             button.draw()
             callback(button.text.strip())
 
@@ -57,15 +58,4 @@ class StimulusPanel:
                 ),
             ],
         )
-
-    def register(self):
-        self.panel.register()
-
-    def draw(self):
-        self.panel.draw()
-
-    def contains(self, x):
-        return self.panel.contains(x)
-
-    def onClick(self, mouse):
-        self.panel.onClick(mouse)
+        self.children = [self.panel]

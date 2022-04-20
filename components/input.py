@@ -1,11 +1,12 @@
 from typing import Any, List
-from psychopy.visual import Window, TextBox2, circle, rect
+from psychopy.visual import Window, TextBox2, rect
 
+from components import Component
 from constants import DARKGREY, GREEN, RED, WHITE
 from utils import noOp
 
 
-class TextInput:
+class Input(Component):
     def __init__(
         self,
         window: Window,
@@ -13,8 +14,8 @@ class TextInput:
         text: str,
         labelText: str,
         pos: List[int],
-        size=[None,None],
-        onChange=noOp
+        size=[None, None],
+        onChange=noOp,
     ) -> None:
         self.window = window
         self.id = id
@@ -88,6 +89,7 @@ class TextInput:
             ],
             pos=[self.input.pos[0] - (self.input.size[0] / 2), self.input.pos[1]],
         )
+        self.children = [self.label, self.input, self.mask]
 
     def toggle(self):
         if self.active:
@@ -96,18 +98,10 @@ class TextInput:
         self.active = not self.active
         self.update()
 
-    def draw(self):
-        self.label.draw()
-        self.input.draw()
-        self.mask.draw()
-
     def update(self):
         self.register(text=self.input.text)
         self.draw()
         self.input.hasFocus = self.active
-
-    def contains(self, x):
-        return self.input.contains(x) or self.label.contains(x) or self.mask.contains(x)
 
     def edges(self):
         rightEdge = self.input.pos[0] + (self.input.size[0] / 2)
@@ -122,7 +116,7 @@ class TextInput:
         self._size = size
         self.update()
 
-    def onClick(self, args):
+    def onClick(self, mouse, input):
         self.toggle()
 
     def onKeyPress(self, key):

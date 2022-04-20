@@ -2,8 +2,10 @@ from typing import List
 
 from psychopy.visual import rect, Window
 
+from components import Component
 
-class Box:
+
+class Box(Component):
     def __init__(
         self,
         window: Window,
@@ -19,23 +21,19 @@ class Box:
         self.size = size
 
     def register(self):
-        self.shape = rect.Rect(
-            self.window,
-            units="pix",
-            colorSpace="rgb255",
-            fillColor=self.color,
-            size=self.size,
-            pos=self.pos,
-        )
+        self.children = [
+            rect.Rect(
+                self.window,
+                units="pix",
+                colorSpace="rgb255",
+                fillColor=self.color,
+                size=self.size,
+                pos=self.pos,
+            )
+        ]
 
     def changeColor(self, color: List[int], draw=True):
         self.color = color
         self.register()
         if draw:
             self.draw()
-
-    def draw(self):
-        self.shape.draw()
-
-    def contains(self, x):
-        return self.shape.contains(x)

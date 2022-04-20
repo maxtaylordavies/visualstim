@@ -3,13 +3,11 @@ from typing import Any, List
 
 from psychopy.visual import Window
 
+from components import Component, Box, Label
 from constants import LIGHTGREY
-from .buttons import Button
-from .box import Box
-from .label import Label
 
 
-class Panel:
+class Panel(Component):
     def __init__(
         self,
         window: Window,
@@ -70,30 +68,4 @@ class Panel:
 
         self.box = Box(self.window, f"{id}-box", LIGHTGREY, self.pos, self.size)
         self.label = Label(self.window, f"{id}-label", self.label, self.pos, self.size)
-
-    def register(self):
-        self.box.register()
-        self.label.register()
-        for c in self.children:
-            c.register()
-
-    def draw(self):
-        self.box.draw()
-        self.label.draw()
-        for c in self.children:
-            c.draw()
-
-    def contains(self, x):
-        return self.box.contains(x)
-
-    def onClick(self, mouse):
-        for c in self.children:
-            if c.contains(mouse) and hasattr(c, "onClick"):
-                c.onClick(c)
-            elif hasattr(c, "active") and c.active:
-                c.toggle()
-
-    def onKeyPress(self, key):
-        for c in self.children:
-            if hasattr(c, "onKeyPress"):
-                c.onKeyPress(key)
+        self.children = [self.box, self.label] + self.children

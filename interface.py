@@ -45,10 +45,10 @@ class Interface:
             "stimulus": {
                 "spatial frequency": 0.1,
                 "temporal frequency": 0.4,
-                "orientation": 0,
-                "stimulus duration": 10,
+                "orientation": 0.0,
+                "stimulus duration": 10.0,
             },
-            "sync": {"sync status": 0, "trigger duration": 5},
+            "sync": {"sync status": 0, "trigger duration": 5.0},
         }
 
         # create components to render
@@ -83,16 +83,16 @@ class Interface:
                 [390, 270],
                 onClick=self.onQuitClicked,
             ),
-            StimulusPanel(self.controlWindow, [0, 70], self.selectStimulusType),
+            StimulusPanel(self.controlWindow, [-123, 60], self.selectStimulusType),
             ParametersPanel(
                 self.controlWindow,
-                [-122, -67],
+                [-117, -67],
                 self.setStimulusParameter,
                 self.parameters["stimulus"],
             ),
             SyncPanel(
                 self.controlWindow,
-                [252, -67],
+                [254, -67],
                 self.setSyncParameter,
                 self.parameters["sync"],
             ),
@@ -118,7 +118,7 @@ class Interface:
                 return i
         return -1
 
-    def onSwitchScreenClicked(self, mouse: event.Mouse) -> None:
+    def onSwitchScreenClicked(self, mouse: event.Mouse, button: Button) -> None:
         self.screenNum = 1 - self.screenNum
         if self.screenNum:
             self.displayWindow = visual.Window(
@@ -134,10 +134,10 @@ class Interface:
             self.displayWindow = self.controlWindow
             self.frameRate = self.displayWindow.getActualFrameRate()
 
-    def onQuitClicked(self, mouse: event.Mouse) -> None:
+    def onQuitClicked(self, mouse: event.Mouse, button: Button) -> None:
         self.quit = True
 
-    def onStartClicked(self, mouse: event.Mouse) -> None:
+    def onStartClicked(self, mouse: event.Mouse, button: Button) -> None:
         print(self.parameters)
 
         # toggle play button
@@ -161,7 +161,7 @@ class Interface:
             if self.clickHandled:
                 break
             elif component.contains(self.mouse) and hasattr(component, "onClick"):
-                component.onClick(self.mouse)
+                component.onClick(self.mouse, component)
                 self.clickHandled = True
 
     def onKeyPress(self, keys) -> None:

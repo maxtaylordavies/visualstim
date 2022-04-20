@@ -1,10 +1,11 @@
 from typing import List
 from psychopy.visual import Window, TextBox2
 
+from components import Component
 from constants import LIGHTGREY, DARKGREY
 
 
-class Label:
+class Label(Component):
     def __init__(
         self, window: Window, id: str, text: str, boxPos: List[int], boxSize: List[int],
     ) -> None:
@@ -15,22 +16,21 @@ class Label:
         self.boxSize = boxSize
 
     def register(self):
-        self.shape = TextBox2(
-            self.window,
-            f"  {self.text} ",
-            "Open Sans",
-            units="pix",
-            letterHeight=14,
-            colorSpace="rgb255",
-            color=DARKGREY,
-            fillColor=LIGHTGREY,
-            bold=True,
-            padding=2,
-            size=[None, None],
-        )
-        x = self.boxPos[0] - (self.boxSize[0] / 2) + (self.shape.size[0] / 2)
-        y = self.boxPos[1] + (self.boxSize[1] / 2) + (self.shape.size[1] / 2)
-        self.shape.pos = [x, y]
-
-    def draw(self):
-        self.shape.draw()
+        self.children = [
+            TextBox2(
+                self.window,
+                f"  {self.text} ",
+                "Open Sans",
+                units="pix",
+                letterHeight=14,
+                colorSpace="rgb255",
+                color=DARKGREY,
+                fillColor=LIGHTGREY,
+                bold=True,
+                padding=2,
+                size=[None, None],
+            )
+        ]
+        x = self.boxPos[0] - (self.boxSize[0] / 2) + (self.children[0].size[0] / 2)
+        y = self.boxPos[1] + (self.boxSize[1] / 2) + (self.children[0].size[1] / 2)
+        self.children[0].pos = [x, y]

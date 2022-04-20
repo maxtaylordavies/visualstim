@@ -3,14 +3,14 @@ from typing import List
 from psychopy.visual import Window
 
 from constants import BLACK, WHITE
-from components import Box
+from components import Component, Box
 
 
-class SyncSquares:
+class SyncSquares(Component):
     def __init__(self, window: Window, id: str, size=30) -> None:
         self.window = window
         self.id = id
-        self.squares = [
+        self.children = [
             Box(
                 self.window,
                 f"{self.id}-0",
@@ -33,24 +33,9 @@ class SyncSquares:
             ),
         ]
 
-    def register(self):
-        for sq in self.squares:
-            sq.register()
-
-    def draw(self):
-        for sq in self.squares:
-            sq.draw()
-
-    def contains(self, x):
-        for sq in self.squares:
-            if sq.contains(x):
-                return True
-        return False
-
     def toggle(self, i):
-        if i >= len(self.squares):
+        if i >= len(self.children):
             return
-        self.squares[i].changeColor(WHITE if self.squares[i].color == BLACK else BLACK)
-
-    def onClick(self, args):
-        self.toggle(0)
+        self.children[i].changeColor(
+            WHITE if self.children[i].color == BLACK else BLACK
+        )
