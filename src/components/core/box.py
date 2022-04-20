@@ -2,7 +2,7 @@ from typing import List
 
 from psychopy.visual import rect, Window
 
-from src.components import Component
+from src.components.core import Component
 
 
 class Box(Component):

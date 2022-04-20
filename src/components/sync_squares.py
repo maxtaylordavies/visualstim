@@ -3,7 +3,7 @@ from typing import List
 from psychopy.visual import Window
 
 from src.constants import BLACK, WHITE
-from src.components import Component, Box
+from src.components.core import Component, Box
 
 
 class SyncSquares(Component):

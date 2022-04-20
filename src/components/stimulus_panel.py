@@ -4,7 +4,7 @@ from psychopy.visual import Window
 from psychopy.event import Mouse
 
 from src.constants import MEDIUMGREY, GREEN, WHITE
-from src.components import Component, Panel, Button
+from src.components.core import Component, Panel, Button
 
 
 class StimulusPanel(Component):

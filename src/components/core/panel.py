@@ -3,7 +3,7 @@ from typing import Any, List
 
 from psychopy.visual import Window
 
-from src.components import Component, Box, Label
+from src.components.core import Component, Box, Label
 from src.constants import LIGHTGREY
 
 

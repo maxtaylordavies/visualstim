@@ -1,7 +1,7 @@
 from typing import Any, List
 from psychopy.visual import Window, TextBox2, rect
 
-from src.components import Component
+from src.components.core import Component
 from src.constants import DARKGREY, GREEN, RED, WHITE
 from src.utils import noOp
 

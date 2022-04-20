@@ -2,8 +2,8 @@ from typing import Any, Dict, List
 
 from psychopy.visual import Window
 
-from src.components import Component, Panel
-from .input import Input
+from src.components.core import Component, Panel
+from .core.input import Input
 
 # from .text_input import TextInput
 

@@ -4,9 +4,8 @@ from typing import Any
 from psychopy import visual, event
 
 from src.constants import WHITE, PURPLE, YELLOW, RED
+from src.components.core import Button, PlayButton
 from src.components import (
-    Button,
-    PlayButton,
     StimulusPanel,
     ParametersPanel,
     SyncPanel,

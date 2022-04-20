@@ -3,8 +3,8 @@ from typing import Any, Dict, List
 from psychopy.visual import Window
 from psychopy.event import Mouse
 
-from src.components import Component, Panel, Button
-from .input import Input
+from src.components.core import Component, Panel, Button
+from .core.input import Input
 from src.constants import PALEGREEN, PALERED, RED, GREEN
 
 
