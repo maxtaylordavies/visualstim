@@ -1,8 +1,8 @@
 from typing import List
 from psychopy.visual import Window, TextBox2
 
-from components import Component
-from constants import LIGHTGREY, DARKGREY
+from src.components import Component
+from src.constants import LIGHTGREY, DARKGREY
 
 
 class Label(Component):

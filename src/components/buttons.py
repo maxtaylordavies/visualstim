@@ -1,9 +1,9 @@
 from typing import Any, List
 from psychopy.visual import Window, TextBox2, circle
 
-from components import Component
-from constants import GREEN, RED, WHITE, BLACK
-from utils import noOp
+from src.components import Component
+from src.constants import GREEN, RED, WHITE, BLACK
+from src.utils import noOp
 
 
 class Button(Component):
@@ -33,23 +33,25 @@ class Button(Component):
         self.borderWidth = 0
 
     def register(self):
-        self.children = [TextBox2(
-            self.window,
-            f" {self.text} ",
-            "Open Sans",
-            alignment="center",
-            units="pix",
-            letterHeight=18,
-            colorSpace="rgb255",
-            color=self.color,
-            fillColor=self.fill,
-            # borderColor=self.fill,
-            bold=self.bold,
-            padding=self.padding,
-            size=self._size,
-            pos=self.pos,
-            # borderWidth=self.borderWidth,
-        )]
+        self.children = [
+            TextBox2(
+                self.window,
+                f" {self.text} ",
+                "Open Sans",
+                alignment="center",
+                units="pix",
+                letterHeight=18,
+                colorSpace="rgb255",
+                color=self.color,
+                fillColor=self.fill,
+                # borderColor=self.fill,
+                bold=self.bold,
+                padding=self.padding,
+                size=self._size,
+                pos=self.pos,
+                # borderWidth=self.borderWidth,
+            )
+        ]
 
     def changeFill(self, fill):
         self.fill = fill
@@ -62,7 +64,7 @@ class Button(Component):
     def setSize(self, size):
         ydiff = size[1] - self.size()[1]
         self._size = [size[0] - ydiff / 2 + self.padding, self._size[1]]
-        self.padding += (ydiff / 2)
+        self.padding += ydiff / 2
         self.register()
         self.draw()
 

@@ -3,9 +3,8 @@ from typing import Any
 
 from psychopy import visual, event
 
-from constants import WHITE, PURPLE, YELLOW, RED
-from utils import checkForEsc, noOp
-from components import (
+from src.constants import WHITE, PURPLE, YELLOW, RED
+from src.components import (
     Button,
     PlayButton,
     StimulusPanel,
@@ -13,8 +12,8 @@ from components import (
     SyncPanel,
     SyncSquares,
 )
-from grating import grating
-from textures import drumTexture
+from src.grating import grating
+from src.textures import drumTexture
 
 
 class Interface:

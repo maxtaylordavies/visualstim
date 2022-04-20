@@ -1,12 +1,13 @@
 import numpy as np
 
-from constants import WINDOW_WIDTH, PIXEL_SIZE, DISP_WIDTH
+from src.constants import WINDOW_WIDTH, PIXEL_SIZE, DISP_WIDTH
 
 drumgrating_contrast = 1
 drumgrating_MeanLum = 35
 GammaFactor = 2.455466
 AmpFactor = 0.000197
 drumgrating_Amp_sinu = 5
+
 
 def drumTexture(frameRate, spatFreq, tempFreq):
     pixelangle = np.empty(

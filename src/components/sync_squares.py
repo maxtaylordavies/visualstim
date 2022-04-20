@@ -2,8 +2,8 @@ from typing import List
 
 from psychopy.visual import Window
 
-from constants import BLACK, WHITE
-from components import Component, Box
+from src.constants import BLACK, WHITE
+from src.components import Component, Box
 
 
 class SyncSquares(Component):

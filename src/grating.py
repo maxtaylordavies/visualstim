@@ -2,9 +2,9 @@ from typing import List
 
 from psychopy.visual import Window, GratingStim
 
-from utils import checkForEsc
-from constants import WINDOW_WIDTH, WINDOW_HEIGHT, GREY, BLACK, WHITE
-from components import SyncSquares
+from src.utils import checkForEsc
+from src.constants import WINDOW_WIDTH, WINDOW_HEIGHT, GREY, BLACK, WHITE
+from src.components import SyncSquares
 
 
 def grating(

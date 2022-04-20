@@ -3,8 +3,8 @@ from typing import Any, List
 
 from psychopy.visual import Window
 
-from components import Component, Box, Label
-from constants import LIGHTGREY
+from src.components import Component, Box, Label
+from src.constants import LIGHTGREY
 
 
 class Panel(Component):

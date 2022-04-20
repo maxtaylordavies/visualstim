@@ -2,7 +2,7 @@ from typing import Any, Dict, List
 
 from psychopy.visual import Window
 
-from components import Component, Panel
+from src.components import Component, Panel
 from .input import Input
 
 # from .text_input import TextInput

@@ -3,8 +3,8 @@ from typing import Any, List
 from psychopy.visual import Window
 from psychopy.event import Mouse
 
-from constants import MEDIUMGREY, GREEN, WHITE
-from components import Component, Panel, Button
+from src.constants import MEDIUMGREY, GREEN, WHITE
+from src.components import Component, Panel, Button
 
 
 class StimulusPanel(Component):
