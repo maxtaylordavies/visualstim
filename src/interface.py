@@ -1,9 +1,10 @@
+import copy
 import time
 from typing import Any
 
 from psychopy import visual, event
 
-from src.constants import WHITE, PURPLE, YELLOW, RED
+from src.constants import DEFAULT_PARAMS, WHITE, PURPLE, YELLOW, RED
 from src.components.core import Button, PlayButton
 from src.components import (
     StimulusPanel,
@@ -39,15 +40,7 @@ class Interface:
 
         # parameters
         self.stimulusType = "drifting grating"
-        self.parameters = {
-            "stimulus": {
-                "spatial frequency": 0.1,
-                "temporal frequency": 0.4,
-                "orientation": 0.0,
-                "stimulus duration": 10.0,
-            },
-            "sync": {"sync status": 0, "trigger duration": 5.0},
-        }
+        self.parameters = copy.deepcopy(DEFAULT_PARAMS)
 
         # create components to render
         self.syncSquares = SyncSquares(self.displayWindow, "sync-squares")
@@ -86,13 +79,13 @@ class Interface:
                 self.controlWindow,
                 [-117, -67],
                 self.setStimulusParameter,
-                self.parameters["stimulus"],
+                copy.deepcopy(self.parameters["stimulus"]),
             ),
             SyncPanel(
                 self.controlWindow,
                 [254, -67],
                 self.setSyncParameter,
-                self.parameters["sync"],
+                copy.deepcopy(self.parameters["sync"]),
             ),
             self.syncSquares,
         ]
@@ -177,20 +170,13 @@ class Interface:
         self.controlWindow.flip()
 
     def playDriftingGrating(self) -> None:
-        texture = drumTexture(
-            self.frameRate,
-            self.parameters["stimulus"]["spatial frequency"],
-            self.parameters["stimulus"]["temporal frequency"],
-        )
+        texture = drumTexture(self.frameRate, self.parameters)
         grating(
             self.displayWindow,
             self.syncSquares,
             texture,
-            [
-                self.parameters["sync"]["trigger duration"],
-                self.parameters["stimulus"]["stimulus duration"],
-            ],
             self.frameRate,
+            self.parameters,
         )
 
     def playStaticGrating(self) -> None:

@@ -16,7 +16,7 @@ class ParametersPanel(Component):
         self.callback = callback
 
         def makeFunc(k):
-            return lambda x: self.callback(k, float(x))
+            return lambda x: self.callback(k, float(x) if x else initialParams[k])
 
         self.children = [
             Panel(

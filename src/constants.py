@@ -1,3 +1,13 @@
+DEFAULT_PARAMS = {
+    "stimulus": {
+        "spatial frequency": 0.1,
+        "temporal frequency": 0.4,
+        "orientation": 0.0,
+        "stimulus duration": 10.0,
+    },
+    "sync": {"sync status": 0, "trigger duration": 5.0},
+}
+
 BLACK = [0, 0, 0]
 WHITE = [255, 255, 255]
 GREY = [127, 127, 127]

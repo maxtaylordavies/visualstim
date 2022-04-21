@@ -25,7 +25,8 @@ class SyncPanel(Component):
 
     def register(self):
         def makeFunc(k):
-            return lambda x: self.callback(k, float(x))
+            print(self.initialParams[k])
+            return lambda x: self.callback(k, float(x) if x else self.initialParams[k])
 
         self.children = [
             Panel(

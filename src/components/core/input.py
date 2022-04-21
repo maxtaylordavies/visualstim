@@ -19,6 +19,7 @@ class Input(Component):
     ) -> None:
         self.window = window
         self.id = id
+        self.initialText = text
         self.text = text
         self.labelText = labelText
         self._size = size
@@ -26,10 +27,10 @@ class Input(Component):
         self.onChange = onChange
         self.active = False
 
-    def register(self, text="."):
+    def register(self, text="$"):
         self.input = TextBox2(
             self.window,
-            text if text != "." else self.text,
+            text if text != "$" else self.text,
             "Open Sans",
             units="pix",
             letterHeight=18,
@@ -93,6 +94,7 @@ class Input(Component):
 
     def toggle(self):
         if self.active:
+            self.input.text = self.input.text if self.input.text else self.initialText
             self.text = self.input.text
             self.onChange(self.text)
         self.active = not self.active
