@@ -129,12 +129,11 @@ class Interface:
         self.quit = True
 
     def onStartClicked(self, mouse: event.Mouse, button: Button) -> None:
-        print(self.parameters)
-
         # toggle play button
         playButtonIdx = self.getComponentIndexById("play-button")
         if playButtonIdx != -1:
             self.components[playButtonIdx].toggle()
+            self.draw()
 
         # run selected stimulus
         if self.stimulusType == "drifting grating":
@@ -146,6 +145,7 @@ class Interface:
 
         # toggle play button
         self.components[playButtonIdx].toggle()
+        self.draw()
 
     def onClick(self) -> None:
         for component in self.components:
