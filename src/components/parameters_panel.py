@@ -10,9 +10,10 @@ from .core.input import Input
 
 class ParametersPanel(Component):
     def __init__(
-        self, window: Window, pos: List[int], callback: Any, initialParams: Dict
+        self, window: Window, id: str, pos: List[int], callback: Any, initialParams: Dict
     ) -> None:
         self.window = window
+        self.id = id
         self.callback = callback
 
         def makeFunc(k):
@@ -21,7 +22,7 @@ class ParametersPanel(Component):
         self.children = [
             Panel(
                 self.window,
-                "stim-parameters",
+                self.id,
                 "stimulus parameters",
                 pos,
                 children=[

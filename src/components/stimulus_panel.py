@@ -8,8 +8,9 @@ from src.components.core import Component, Panel, Button
 
 
 class StimulusPanel(Component):
-    def __init__(self, window: Window, pos: List[int], callback: Any) -> None:
+    def __init__(self, window: Window, id: str, pos: List[int], callback: Any) -> None:
         self.window = window
+        self.id = id
 
         def onClick(mouse: Mouse, button: Button):
             for i, c in enumerate(self.panel.children):
@@ -22,7 +23,7 @@ class StimulusPanel(Component):
 
         self.panel = Panel(
             self.window,
-            "select-stimulus",
+            self.id,
             "stimulus type",
             pos,
             children=[

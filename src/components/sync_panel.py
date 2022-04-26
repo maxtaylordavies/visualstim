@@ -10,9 +10,15 @@ from src.constants import PALEGREEN, PALERED, RED, GREEN
 
 class SyncPanel(Component):
     def __init__(
-        self, window: Window, pos: List[int], callback: Any, initialParams: Dict
+        self,
+        window: Window,
+        id: str,
+        pos: List[int],
+        callback: Any,
+        initialParams: Dict,
     ) -> None:
         self.window = window
+        self.id = id
         self.pos = pos
         self.callback = callback
         self.initialParams = initialParams
@@ -25,13 +31,12 @@ class SyncPanel(Component):
 
     def register(self):
         def makeFunc(k):
-            print(self.initialParams[k])
             return lambda x: self.callback(k, float(x) if x else self.initialParams[k])
 
         self.children = [
             Panel(
                 self.window,
-                "sync-parameters",
+                self.id,
                 "sync parameters",
                 self.pos,
                 children=[
@@ -57,7 +62,7 @@ class SyncPanel(Component):
                     )
                     for k, v in list(self.initialParams.items())[1:]
                 ],
-                rows=2,
+                rows=3,
             )
         ]
 

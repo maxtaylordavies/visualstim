@@ -5,7 +5,7 @@ DEFAULT_PARAMS = {
         "orientation": 0.0,
         "stimulus duration": 10.0,
     },
-    "sync": {"sync status": 0, "trigger duration": 5.0},
+    "sync": {"sync status": 0, "trigger duration": 5.0, "sync interval": 60},
 }
 
 BLACK = [0, 0, 0]

@@ -43,7 +43,6 @@ class Interface:
         self.parameters = copy.deepcopy(DEFAULT_PARAMS)
 
         # create components to render
-        self.syncSquares = SyncSquares(self.displayWindow, "sync-squares")
         self.components = [
             Button(
                 self.controlWindow,
@@ -74,25 +73,45 @@ class Interface:
                 [390, 270],
                 onClick=self.onQuitClicked,
             ),
-            StimulusPanel(self.controlWindow, [-123, 60], self.selectStimulusType),
+            StimulusPanel(
+                self.controlWindow,
+                "stimulus-panel",
+                [-123, 60],
+                self.selectStimulusType,
+            ),
             ParametersPanel(
                 self.controlWindow,
+                "stim-params-panel",
                 [-117, -67],
                 self.setStimulusParameter,
                 copy.deepcopy(self.parameters["stimulus"]),
             ),
             SyncPanel(
                 self.controlWindow,
+                "sync-params-panel",
                 [254, -67],
                 self.setSyncParameter,
                 copy.deepcopy(self.parameters["sync"]),
             ),
-            self.syncSquares,
         ]
 
         # register components (assign them to the window)
         for i in range(len(self.components)):
             self.components[i].register()
+
+        # create sync squares
+        if self.parameters["sync"]["sync status"]:
+            self.createSyncSquares()
+
+    def createSyncSquares(self):
+        self.syncSquares = SyncSquares(self.displayWindow, "sync-squares")
+        self.components = [c for c in self.components if c.id != "sync-squares"]
+        self.components.append(self.syncSquares)
+        self.components[-1].register()
+
+    def removeSyncSquares(self):
+        self.syncSquares = None
+        self.components = [c for c in self.components if c.id != "sync-squares"]
 
     def selectStimulusType(self, x):
         self.stimulusType = x
@@ -101,6 +120,8 @@ class Interface:
         self.parameters["stimulus"][key] = value
 
     def setSyncParameter(self, key: str, value: Any) -> None:
+        if key == "sync status":
+            self.createSyncSquares() if value else self.removeSyncSquares()
         self.parameters["sync"][key] = value
 
     def getComponentIndexById(self, id: str) -> int:
@@ -120,6 +141,9 @@ class Interface:
                 colorSpace="rgb255",
             )
             self.frameRate = 30
+            if self.parameters["sync"]["sync status"]:
+                self.createSyncSquares()
+            self.draw()
         else:
             self.displayWindow.close()
             self.displayWindow = self.controlWindow
@@ -168,6 +192,8 @@ class Interface:
         for component in self.components:
             component.draw()
         self.controlWindow.flip()
+        if self.screenNum:
+            self.displayWindow.flip()
 
     def playDriftingGrating(self) -> None:
         texture = drumTexture(self.frameRate, self.parameters)
