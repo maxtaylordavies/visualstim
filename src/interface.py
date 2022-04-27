@@ -1,6 +1,8 @@
+import asyncio
 import copy
 import time
 from typing import Any
+from threading import Thread
 
 from psychopy import visual, event
 
@@ -34,9 +36,13 @@ class Interface:
 
         # create mouse object to listen for click events
         self.mouse = event.Mouse(visible=True, win=self.controlWindow)
+        self.clickHandled = False
 
         # controls whether to close the interface
         self.quit = False
+
+        # flag for whether we're currently showing stimulus
+        self.playing = False
 
         # parameters
         self.stimulusType = "drifting grating"
@@ -100,6 +106,7 @@ class Interface:
             self.components[i].register()
 
         # create sync squares
+        self.syncSquares = None
         if self.parameters["sync"]["sync status"]:
             self.createSyncSquares()
 
@@ -154,30 +161,31 @@ class Interface:
 
     def onStartClicked(self, mouse: event.Mouse, button: Button) -> None:
         # toggle play button
+        self.playing = not self.playing
         playButtonIdx = self.getComponentIndexById("play-button")
         if playButtonIdx != -1:
             self.components[playButtonIdx].toggle()
             self.draw()
 
-        # run selected stimulus
-        if self.stimulusType == "drifting grating":
-            self.playDriftingGrating()
-        elif self.stimulusType == "static grating":
-            self.playStaticGrating()
-        elif self.stimulusType == "movie":
-            self.playMovie()
+        if self.playing:
+            # run selected stimulus
+            if self.stimulusType == "drifting grating":
+                self.playDriftingGrating()
+            elif self.stimulusType == "static grating":
+                self.playStaticGrating()
+            elif self.stimulusType == "movie":
+                self.playMovie()
 
-        # toggle play button
-        self.components[playButtonIdx].toggle()
-        self.draw()
+            # toggle play button
+            self.components[playButtonIdx].toggle()
+            self.draw()
+            self.playing = not self.playing
 
     def onClick(self) -> None:
         for component in self.components:
-            if self.clickHandled:
-                break
-            elif component.contains(self.mouse) and hasattr(component, "onClick"):
+            if component.contains(self.mouse) and hasattr(component, "onClick"):
                 component.onClick(self.mouse, component)
-                self.clickHandled = True
+                break
 
     def onKeyPress(self, keys) -> None:
         if "escape" in keys:
@@ -187,6 +195,19 @@ class Interface:
             for component in self.components:
                 if hasattr(component, "onKeyPress"):
                     component.onKeyPress(key)
+
+    def handle_input(self) -> None:
+        # listen for click events
+        if self.mouse.getPressed()[0]:
+            if not self.clickHandled:
+                self.clickHandled = True
+                self.onClick()
+        else:
+            self.clickHandled = False
+
+        # listen for keypresses
+        keys = event.getKeys()
+        self.onKeyPress(keys)
 
     def draw(self) -> None:
         for component in self.components:
@@ -203,6 +224,8 @@ class Interface:
             texture,
             self.frameRate,
             self.parameters,
+            mouse=self.mouse,
+            clickCallback=self.onClick,
         )
 
     def playStaticGrating(self) -> None:
@@ -217,13 +240,9 @@ class Interface:
             # render interface
             self.draw()
 
-            # listen for click events
-            if self.mouse.getPressed()[0]:
-                self.onClick()
-            else:
-                self.clickHandled = False
+            # listen for + handle user input
+            self.handle_input()
 
-            # listen for keypresses
-            keys = event.getKeys()
-            self.onKeyPress(keys)
+    def start(self) -> None:
+        self.run()
 

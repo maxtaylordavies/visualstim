@@ -1,5 +1,7 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
+
 from psychopy.visual import Window, GratingStim
+from psychopy.event import Mouse
 
 from src.utils import checkForEsc
 from src.constants import WINDOW_WIDTH, GREY, WHITE, DEFAULT_PARAMS, SYNC_PULSE_LENGTH
@@ -8,11 +10,15 @@ from src.components import SyncSquares
 
 def grating(
     window: Window,
-    syncSquares: SyncSquares,
+    syncSquares: Optional[SyncSquares],
     texture: List,
     frameRate: float,
     params: Dict[str, Any] = DEFAULT_PARAMS,
+    mouse: Optional[Mouse] = None,
+    clickCallback: Optional[Any] = None,
 ) -> None:
+    print("GRATING CALLED")
+
     # initialise grating object
     grating = GratingStim(
         win=window,
@@ -22,20 +28,25 @@ def grating(
     )
 
     # 2P trigger loop
-    syncSquares.toggle(1)  # turn on trigger square
-    for i in range(int(frameRate * params["sync"]["trigger duration"])):
-        # exit if user presses esc
-        if checkForEsc():
-            break
+    if syncSquares:
+        syncSquares.toggle(1)  # turn on trigger square
+        for i in range(int(frameRate * params["sync"]["trigger duration"])):
+            # exit if user presses esc
+            if checkForEsc():
+                break
 
-        if i == 3:
-            syncSquares.toggle(1)  # turn off trigger square
+            # check for click to pass back to interface
+            if mouse and clickCallback and mouse.getPressed()[0]:
+                clickCallback()
 
-        window.color = GREY
-        syncSquares.draw()
-        window.flip()
+            if i == 3:
+                syncSquares.toggle(1)  # turn off trigger square
 
-    window.color = WHITE
+            window.color = GREY
+            syncSquares.draw()
+            window.flip()
+
+        window.color = WHITE
 
     # main display loop
     frameIdx = 0
@@ -44,8 +55,15 @@ def grating(
         if checkForEsc():
             break
 
+        # check for click to pass back to interface
+        if mouse and clickCallback and mouse.getPressed()[0]:
+            clickCallback()
+
         # send a sync pulse if needed
-        if frameIdx % params["sync"]["sync interval"] in {0, SYNC_PULSE_LENGTH}:
+        if syncSquares and frameIdx % params["sync"]["sync interval"] in {
+            0,
+            SYNC_PULSE_LENGTH,
+        }:
             syncSquares.toggle(0)
 
         # update grating texture
@@ -53,11 +71,13 @@ def grating(
 
         # draw the new frame
         grating.draw()
-        syncSquares.draw()
+        if syncSquares:
+            syncSquares.draw()
         window.flip()
 
         # increment the frame counter
         frameIdx += 1
 
     # turn off sync square
-    syncSquares.turn_off(0)
+    if syncSquares:
+        syncSquares.turn_off(0)

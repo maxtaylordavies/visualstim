@@ -3,7 +3,7 @@ from src.interface import Interface
 
 def main():
     interface = Interface()
-    interface.run()
+    interface.start()
 
 
 if __name__ == "__main__":
