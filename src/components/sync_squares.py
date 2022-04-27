@@ -39,3 +39,8 @@ class SyncSquares(Component):
         self.children[i].changeColor(
             WHITE if self.children[i].color == BLACK else BLACK
         )
+
+    def turn_off(self, i):
+        if i >= len(self.children):
+            return
+        self.children[i].changeColor(BLACK)

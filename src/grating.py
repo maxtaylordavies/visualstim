@@ -2,7 +2,7 @@ from typing import Any, Dict, List
 from psychopy.visual import Window, GratingStim
 
 from src.utils import checkForEsc
-from src.constants import WINDOW_WIDTH, GREY, WHITE, DEFAULT_PARAMS
+from src.constants import WINDOW_WIDTH, GREY, WHITE, DEFAULT_PARAMS, SYNC_PULSE_LENGTH
 from src.components import SyncSquares
 
 
@@ -21,15 +21,15 @@ def grating(
         ori=params["stimulus"]["orientation"],
     )
 
-    # camera trigger loop
-    syncSquares.toggle(1)  # turn on bottom sync square
+    # 2P trigger loop
+    syncSquares.toggle(1)  # turn on trigger square
     for i in range(int(frameRate * params["sync"]["trigger duration"])):
         # exit if user presses esc
         if checkForEsc():
             break
 
         if i == 3:
-            syncSquares.toggle(1)  # turn off bottom sync square
+            syncSquares.toggle(1)  # turn off trigger square
 
         window.color = GREY
         syncSquares.draw()
@@ -38,15 +38,18 @@ def grating(
     window.color = WHITE
 
     # main display loop
-    syncSquares.toggle(0)  # turn on top sync square
     frameIdx = 0
     for _ in range(int(frameRate * params["stimulus"]["stimulus duration"])):
         # exit if user presses esc
         if checkForEsc():
             break
 
+        # send a sync pulse if needed
+        if frameIdx % params["sync"]["sync interval"] in {0, SYNC_PULSE_LENGTH}:
+            syncSquares.toggle(0)
+
         # update grating texture
-        grating.tex = texture[frameIdx]
+        grating.tex = texture[frameIdx % len(texture)]
 
         # draw the new frame
         grating.draw()
@@ -54,7 +57,7 @@ def grating(
         window.flip()
 
         # increment the frame counter
-        frameIdx = (frameIdx + 1) % len(texture)
+        frameIdx += 1
 
-    # turn off top sync square
-    syncSquares.toggle(0)
+    # turn off sync square
+    syncSquares.turn_off(0)

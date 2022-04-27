@@ -89,7 +89,7 @@ class Interface:
             SyncPanel(
                 self.controlWindow,
                 "sync-params-panel",
-                [254, -67],
+                [254, 10],
                 self.setSyncParameter,
                 copy.deepcopy(self.parameters["sync"]),
             ),
