@@ -1,29 +1,29 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
-from psychopy.visual import Window, GratingStim
+from psychopy.visual import Window
 
-from src.utils import checkForEsc
-from src.constants import WINDOW_WIDTH, GREY, WHITE, DEFAULT_PARAMS, SYNC_PULSE_LENGTH
 from src.components import SyncSquares
+from src.constants import DEFAULT_PARAMS, GREY, WHITE, SYNC_PULSE_LENGTH
+from src.utils import checkForEsc
 
 
-def grating(
+class Stimulus:
+    def __init__(self) -> None:
+        pass
+
+    def drawFrame(self) -> None:
+        pass
+
+
+def playStimulus(
     window: Window,
-    syncSquares: Optional[SyncSquares],
-    texture: List,
+    stimulus: Stimulus,
     frameRate: float,
+    syncSquares: Optional[SyncSquares],
     params: Dict[str, Any] = DEFAULT_PARAMS,
     callback: Any = None,
     shouldTerminate: Any = checkForEsc,
-) -> None:
-    # initialise grating object
-    _grating = GratingStim(
-        win=window,
-        size=[WINDOW_WIDTH, WINDOW_WIDTH],
-        units="pix",
-        ori=params["stimulus"]["orientation"],
-    )
-
+):
     # 2P (+ maybe camera) trigger loop
     if syncSquares:
         syncSquares.toggle(1)  # turn on trigger square
@@ -31,10 +31,6 @@ def grating(
             # check if we should terminate
             if shouldTerminate():
                 break
-
-            # # exit if user presses esc
-            # if checkForEsc():
-            #     break
 
             # execute per-frame callback
             if callback:
@@ -66,11 +62,8 @@ def grating(
         }:
             syncSquares.toggle(0)
 
-        # update grating texture
-        _grating.tex = texture[frameIdx % len(texture)]
-
-        # draw the new frame
-        _grating.draw()
+        # draw stimulus (+ sync squares)
+        stimulus.drawFrame()
         if syncSquares:
             syncSquares.draw()
         window.flip()

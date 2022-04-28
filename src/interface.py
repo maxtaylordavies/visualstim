@@ -12,8 +12,7 @@ from src.components import (
     SyncPanel,
     SyncSquares,
 )
-from src.grating import grating
-from src.movie import movie
+from src.stimuli import Grating, Movie, playStimulus
 from src.textures import drumTexture
 from src.utils import checkForEsc
 
@@ -177,10 +176,26 @@ class Interface:
 
         # if now in "playing" state, run the selected stimulus
         if self.playing:
+            stimulus = None
             if "grating" in self.stimulusType:
-                self.playGrating()
+                stimulus = Grating(
+                    self.displayWindow,
+                    drumTexture(self.frameRate, self.parameters),
+                    params=self.parameters,
+                )
             elif self.stimulusType == "movie":
-                self.playMovie()
+                stimulus = Movie(self.displayWindow, "/Users/max/Documents/test.mp4")
+
+            if stimulus:
+                playStimulus(
+                    self.displayWindow,
+                    stimulus,
+                    self.frameRate,
+                    self.syncSquares,
+                    params=self.parameters,
+                    callback=self.handleInput,
+                    shouldTerminate=self.shouldTerminateStimulation,
+                )
 
             # if the stimulation hasn't been stopped prematurely by the user,
             # then we need to toggle the playing state + button
@@ -204,7 +219,7 @@ class Interface:
                 if hasattr(component, "onKeyPress"):
                     component.onKeyPress(key)
 
-    def handle_input(self) -> None:
+    def handleInput(self) -> None:
         # listen for click events
         if self.mouse.getPressed()[0]:
             if not self.clickHandled:
@@ -227,29 +242,6 @@ class Interface:
     def shouldTerminateStimulation(self) -> bool:
         return checkForEsc() or (not self.playing) or (self.quit)
 
-    def playGrating(self) -> None:
-        texture = drumTexture(self.frameRate, self.parameters)
-        grating(
-            self.displayWindow,
-            self.syncSquares,
-            texture,
-            self.frameRate,
-            params=self.parameters,
-            callback=self.handle_input,
-            shouldTerminate=self.shouldTerminateStimulation,
-        )
-
-    def playMovie(self) -> None:
-        movie(
-            self.displayWindow,
-            "/Users/max/Documents/test.mp4",
-            self.syncSquares,
-            self.frameRate,
-            params=self.parameters,
-            callback=self.handle_input,
-            shouldTerminate=self.shouldTerminateStimulation,
-        )
-
     def run(self) -> None:
         self.quit = self.clickHandled = False
         while not self.quit:
@@ -257,7 +249,7 @@ class Interface:
             self.draw()
 
             # listen for + handle user input
-            self.handle_input()
+            self.handleInput()
 
     def start(self) -> None:
         self.run()

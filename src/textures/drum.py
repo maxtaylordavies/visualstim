@@ -36,8 +36,6 @@ def drumTexture(frameRate: float, params: Dict[str, Any] = DEFAULT_PARAMS) -> Li
 
     # frames to be calculated per period
     frames = round(frameRate / params["stimulus"]["temporal frequency"])
-    print(frameRate)
-    print(frames)
 
     phase = np.array(range(int(frames)))
     phase = (
