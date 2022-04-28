@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Optional
 from psychopy.visual import Window, GratingStim
 from psychopy.event import Mouse
 
-from src.utils import checkForEsc
+from src.utils import checkForEsc, noOp
 from src.constants import WINDOW_WIDTH, GREY, WHITE, DEFAULT_PARAMS, SYNC_PULSE_LENGTH
 from src.components import SyncSquares
 
@@ -14,11 +14,9 @@ def grating(
     texture: List,
     frameRate: float,
     params: Dict[str, Any] = DEFAULT_PARAMS,
-    mouse: Optional[Mouse] = None,
-    clickCallback: Optional[Any] = None,
+    callback: Any = None,
+    shouldTerminate: Any = checkForEsc,
 ) -> None:
-    print("GRATING CALLED")
-
     # initialise grating object
     grating = GratingStim(
         win=window,
@@ -27,17 +25,21 @@ def grating(
         ori=params["stimulus"]["orientation"],
     )
 
-    # 2P trigger loop
+    # 2P (+ maybe camera) trigger loop
     if syncSquares:
         syncSquares.toggle(1)  # turn on trigger square
         for i in range(int(frameRate * params["sync"]["trigger duration"])):
-            # exit if user presses esc
-            if checkForEsc():
+            # check if we should terminate
+            if shouldTerminate():
                 break
 
-            # check for click to pass back to interface
-            if mouse and clickCallback and mouse.getPressed()[0]:
-                clickCallback()
+            # # exit if user presses esc
+            # if checkForEsc():
+            #     break
+
+            # execute per-frame callback
+            if callback:
+                callback()
 
             if i == 3:
                 syncSquares.toggle(1)  # turn off trigger square
@@ -51,13 +53,17 @@ def grating(
     # main display loop
     frameIdx = 0
     for _ in range(int(frameRate * params["stimulus"]["stimulus duration"])):
-        # exit if user presses esc
-        if checkForEsc():
+        # check if we should terminate
+        if shouldTerminate():
             break
 
-        # check for click to pass back to interface
-        if mouse and clickCallback and mouse.getPressed()[0]:
-            clickCallback()
+        # exit if user presses esc
+        # if checkForEsc():
+        #     break
+
+        # execute per-frame callback
+        if callback:
+            callback()
 
         # send a sync pulse if needed
         if syncSquares and frameIdx % params["sync"]["sync interval"] in {

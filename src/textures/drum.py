@@ -36,6 +36,8 @@ def drumTexture(frameRate: float, params: Dict[str, Any] = DEFAULT_PARAMS) -> Li
 
     # frames to be calculated per period
     frames = round(frameRate / params["stimulus"]["temporal frequency"])
+    print(frameRate)
+    print(frames)
 
     phase = np.array(range(int(frames)))
     phase = (
@@ -53,7 +55,11 @@ def drumTexture(frameRate: float, params: Dict[str, Any] = DEFAULT_PARAMS) -> Li
             np.log(
                 (
                     drumgrating_gray
-                    + inc * np.sin(pixelangle * params["stimulus"]["spatial frequency"] * 2 * np.pi + phase[i])
+                    + inc
+                    * np.sin(
+                        pixelangle * params["stimulus"]["spatial frequency"] * 2 * np.pi
+                        + phase[i]
+                    )
                 )
                 / AmpFactor
             )

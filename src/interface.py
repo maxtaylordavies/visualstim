@@ -16,6 +16,7 @@ from src.components import (
 )
 from src.grating import grating
 from src.textures import drumTexture
+from src.utils import checkForEsc
 
 
 class Interface:
@@ -122,6 +123,12 @@ class Interface:
 
     def selectStimulusType(self, x):
         self.stimulusType = x
+        if x == "static grating":
+            self.setStimulusParameter("temporal frequency", self.frameRate)
+        else:
+            self.setStimulusParameter(
+                "temporal frequency", DEFAULT_PARAMS["stimulus"]["temporal frequency"]
+            )
 
     def setStimulusParameter(self, key: str, value: Any) -> None:
         self.parameters["stimulus"][key] = value
@@ -160,26 +167,28 @@ class Interface:
         self.quit = True
 
     def onStartClicked(self, mouse: event.Mouse, button: Button) -> None:
+        playButtonIdx = self.getComponentIndexById("play-button")
+        if playButtonIdx == -1:
+            return
+
         # toggle play button
         self.playing = not self.playing
-        playButtonIdx = self.getComponentIndexById("play-button")
-        if playButtonIdx != -1:
-            self.components[playButtonIdx].toggle()
-            self.draw()
+        self.components[playButtonIdx].toggle()
+        self.draw()
 
+        # if now in "playing" state, run the selected stimulus
         if self.playing:
-            # run selected stimulus
-            if self.stimulusType == "drifting grating":
-                self.playDriftingGrating()
-            elif self.stimulusType == "static grating":
-                self.playStaticGrating()
+            if "grating" in self.stimulusType:
+                self.playGrating()
             elif self.stimulusType == "movie":
                 self.playMovie()
 
-            # toggle play button
-            self.components[playButtonIdx].toggle()
-            self.draw()
-            self.playing = not self.playing
+            # if the stimulation hasn't been stopped prematurely by the user,
+            # then we need to toggle the playing state + button
+            if self.playing:
+                self.components[playButtonIdx].toggle()
+                self.draw()
+                self.playing = not self.playing
 
     def onClick(self) -> None:
         for component in self.components:
@@ -216,20 +225,20 @@ class Interface:
         if self.screenNum:
             self.displayWindow.flip()
 
-    def playDriftingGrating(self) -> None:
+    def shouldTerminateStimulation(self) -> bool:
+        return checkForEsc() or (not self.playing) or (self.quit)
+
+    def playGrating(self) -> None:
         texture = drumTexture(self.frameRate, self.parameters)
         grating(
             self.displayWindow,
             self.syncSquares,
             texture,
             self.frameRate,
-            self.parameters,
-            mouse=self.mouse,
-            clickCallback=self.onClick,
+            params=self.parameters,
+            callback=self.handle_input,
+            shouldTerminate=self.shouldTerminateStimulation,
         )
-
-    def playStaticGrating(self) -> None:
-        time.sleep(5)
 
     def playMovie(self) -> None:
         time.sleep(5)
