@@ -1,28 +1,24 @@
 from typing import Any, Dict, List, Optional
 
-from psychopy.visual import Window, GratingStim
+from psychopy.visual import Window
+from psychopy.visual.movie3 import MovieStim3
 
+from src.components import SyncSquares
 from src.utils import checkForEsc
 from src.constants import WINDOW_WIDTH, GREY, WHITE, DEFAULT_PARAMS, SYNC_PULSE_LENGTH
-from src.components import SyncSquares
 
 
-def grating(
+def movie(
     window: Window,
+    path: str,
     syncSquares: Optional[SyncSquares],
-    texture: List,
     frameRate: float,
     params: Dict[str, Any] = DEFAULT_PARAMS,
     callback: Any = None,
     shouldTerminate: Any = checkForEsc,
 ) -> None:
-    # initialise grating object
-    _grating = GratingStim(
-        win=window,
-        size=[WINDOW_WIDTH, WINDOW_WIDTH],
-        units="pix",
-        ori=params["stimulus"]["orientation"],
-    )
+    # read file from given path + initialise movie object
+    _movie = MovieStim3(window, path, volume=0.0)
 
     # 2P (+ maybe camera) trigger loop
     if syncSquares:
@@ -50,7 +46,7 @@ def grating(
         window.color = WHITE
 
     # main display loop
-    for frameIdx in range(int(frameRate * params["stimulus"]["stimulus duration"])):
+    for frameIdx in range(int(frameRate * _movie.duration)):
         # check if we should terminate
         if shouldTerminate():
             break
@@ -66,13 +62,8 @@ def grating(
         }:
             syncSquares.toggle(0)
 
-        # update grating texture
-        _grating.tex = texture[frameIdx % len(texture)]
-
-        # draw the new frame
-        _grating.draw()
-        if syncSquares:
-            syncSquares.draw()
+        # draw the next frame of the movie
+        _movie.draw()
         window.flip()
 
     # turn off sync square

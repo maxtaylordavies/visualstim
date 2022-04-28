@@ -1,8 +1,6 @@
-import asyncio
 import copy
 import time
 from typing import Any
-from threading import Thread
 
 from psychopy import visual, event
 
@@ -15,6 +13,7 @@ from src.components import (
     SyncSquares,
 )
 from src.grating import grating
+from src.movie import movie
 from src.textures import drumTexture
 from src.utils import checkForEsc
 
@@ -241,7 +240,15 @@ class Interface:
         )
 
     def playMovie(self) -> None:
-        time.sleep(5)
+        movie(
+            self.displayWindow,
+            "/Users/max/Documents/test.mp4",
+            self.syncSquares,
+            self.frameRate,
+            params=self.parameters,
+            callback=self.handle_input,
+            shouldTerminate=self.shouldTerminateStimulation,
+        )
 
     def run(self) -> None:
         self.quit = self.clickHandled = False
