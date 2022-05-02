@@ -4,7 +4,14 @@ from typing import Any
 
 from psychopy import visual, event
 
-from src.constants import DEFAULT_PARAMS, WHITE, PURPLE, YELLOW, RED
+from src.constants import (
+    DEFAULT_PARAMS,
+    STIMULUS_PARAMETER_MAP,
+    WHITE,
+    PURPLE,
+    YELLOW,
+    RED,
+)
 from src.components.core import Button, PlayButton
 from src.components import (
     StimulusPanel,
@@ -89,7 +96,7 @@ class Interface:
                 "stim-params-panel",
                 [-117, -67],
                 self.setStimulusParameter,
-                copy.deepcopy(self.parameters["stimulus"]),
+                self.filterStimulusParams(),
             ),
             SyncPanel(
                 self.controlWindow,
@@ -106,8 +113,15 @@ class Interface:
 
         # create sync squares
         self.syncSquares = None
-        if self.parameters["sync"]["sync status"]:
+        if self.parameters["sync"]["sync"]:
             self.createSyncSquares()
+
+    def filterStimulusParams(self):
+        return {
+            k: v
+            for k, v in self.parameters["stimulus"].items()
+            if k in STIMULUS_PARAMETER_MAP[self.stimulusType]
+        }
 
     def createSyncSquares(self):
         self.syncSquares = SyncSquares(self.displayWindow, "sync-squares")
@@ -120,7 +134,10 @@ class Interface:
         self.components = [c for c in self.components if c.id != "sync-squares"]
 
     def selectStimulusType(self, x):
+        # set stimulus type
         self.stimulusType = x
+
+        # adjust params if needed
         if x == "static grating":
             self.setStimulusParameter("temporal frequency", self.frameRate)
         else:
@@ -128,11 +145,16 @@ class Interface:
                 "temporal frequency", DEFAULT_PARAMS["stimulus"]["temporal frequency"]
             )
 
+        # update the parameters shown in the params panel
+        paramsPanelIdx = self.getComponentIndexById("stim-params-panel")
+        if paramsPanelIdx != -1:
+            self.components[paramsPanelIdx].resetParams(self.filterStimulusParams())
+
     def setStimulusParameter(self, key: str, value: Any) -> None:
         self.parameters["stimulus"][key] = value
 
     def setSyncParameter(self, key: str, value: Any) -> None:
-        if key == "sync status":
+        if key == "sync":
             self.createSyncSquares() if value else self.removeSyncSquares()
         self.parameters["sync"][key] = value
 
@@ -153,7 +175,7 @@ class Interface:
                 colorSpace="rgb255",
             )
             self.frameRate = 30
-            if self.parameters["sync"]["sync status"]:
+            if self.parameters["sync"]["sync"]:
                 self.createSyncSquares()
             self.draw()
         else:
@@ -176,26 +198,30 @@ class Interface:
 
         # if now in "playing" state, run the selected stimulus
         if self.playing:
-            stimulus = None
-            if "grating" in self.stimulusType:
-                stimulus = Grating(
+            # create stimulus
+            stimulus = (
+                Grating(
                     self.displayWindow,
                     drumTexture(self.frameRate, self.parameters),
                     params=self.parameters,
                 )
-            elif self.stimulusType == "movie":
-                stimulus = Movie(self.displayWindow, "/Users/max/Documents/test.mp4")
-
-            if stimulus:
-                playStimulus(
+                if "grating" in self.stimulusType
+                else Movie(
                     self.displayWindow,
-                    stimulus,
-                    self.frameRate,
-                    self.syncSquares,
-                    params=self.parameters,
-                    callback=self.handleInput,
-                    shouldTerminate=self.shouldTerminateStimulation,
+                    self.parameters["stimulus"]["filename"],
+                    self.parameters["stimulus"]["fit screen"],
                 )
+            )
+
+            playStimulus(
+                self.displayWindow,
+                stimulus,
+                self.frameRate,
+                self.syncSquares,
+                params=self.parameters,
+                callback=self.handleInput,
+                shouldTerminate=self.shouldTerminateStimulation,
+            )
 
             # if the stimulation hasn't been stopped prematurely by the user,
             # then we need to toggle the playing state + button

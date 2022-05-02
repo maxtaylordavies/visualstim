@@ -6,7 +6,7 @@ from src.constants import DARKGREY, GREEN, RED, WHITE
 from src.utils import noOp
 
 
-class Input(Component):
+class TextInput(Component):
     def __init__(
         self,
         window: Window,

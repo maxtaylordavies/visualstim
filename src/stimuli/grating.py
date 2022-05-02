@@ -11,6 +11,7 @@ class Grating(Stimulus):
     def __init__(
         self, window: Window, texture: List, params: Dict[str, Any] = DEFAULT_PARAMS
     ):
+        super().__init__()
         self.window = window
         self.texture = texture
         self.params = params

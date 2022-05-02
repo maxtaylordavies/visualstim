@@ -4,8 +4,20 @@ DEFAULT_PARAMS = {
         "temporal frequency": 0.4,
         "orientation": 0.0,
         "stimulus duration": 10.0,
+        "filename": "test.mp4",
+        "fit screen": False,
     },
-    "sync": {"sync status": 0, "trigger duration": 5.0, "sync interval": 60},
+    "sync": {"sync": False, "trigger duration": 5.0, "sync interval": 60},
+}
+STIMULUS_PARAMETER_MAP = {
+    "drifting grating": [
+        "spatial frequency",
+        "temporal frequency",
+        "orientation",
+        "stimulus duration",
+    ],
+    "static grating": ["spatial frequency", "orientation", "stimulus duration"],
+    "movie": ["stimulus duration", "filename", "fit screen"],
 }
 
 BLACK = [0, 0, 0]
@@ -28,3 +40,6 @@ DISP_HEIGHT = 323
 PIXEL_SIZE = DISP_WIDTH / WINDOW_WIDTH
 
 SYNC_PULSE_LENGTH = 3
+
+DEFAULT_BACKGROUND_COLOR = WHITE
+STIMULATION_BACKGROUND_COLOR = GREY

@@ -3,8 +3,8 @@ from typing import Any, Dict, List
 from psychopy.visual import Window
 from psychopy.event import Mouse
 
-from src.components.core import Component, Panel, Button
-from .core.input import Input
+from src.components.core import Component, Panel, Button, Switch
+from .core.input import TextInput
 from src.constants import PALEGREEN, PALERED, RED, GREEN
 
 
@@ -21,18 +21,19 @@ class SyncPanel(Component):
         self.id = id
         self.pos = pos
         self.callback = callback
-        self.initialParams = initialParams
-        self.syncStatus = initialParams["sync status"]
+        self.params = initialParams
 
-    def onStatusClicked(self, mouse: Mouse, button: Button):
-        self.syncStatus = 1 - self.syncStatus
-        self.callback("sync status", self.syncStatus)
-        self.register()
+    def cast(self, k, x):
+        if k not in self.params:
+            return None
+        if x == "":
+            return self.params[k]
+        return type(self.params[k])(x)
+
+    def makeFunc(self, k):
+        return lambda x: self.callback(k, self.cast(k, x))
 
     def register(self):
-        def makeFunc(k):
-            return lambda x: self.callback(k, float(x) if x else self.initialParams[k])
-
         self.children = [
             Panel(
                 self.window,
@@ -40,27 +41,24 @@ class SyncPanel(Component):
                 "sync parameters",
                 self.pos,
                 children=[
-                    Button(
+                    Switch(
                         self.window,
-                        "sync-button",
-                        f"  sync status: {('OFF','ON')[self.syncStatus]}",
-                        (RED, GREEN)[self.syncStatus],
-                        (PALERED, PALEGREEN)[self.syncStatus],
+                        f"{'-'.join(k.split(' '))}-switch",
+                        k,
+                        v,
                         self.pos,
-                        bold=True,
-                        onClick=self.onStatusClicked,
+                        self.makeFunc(k),
                     )
-                ]
-                + [
-                    Input(
+                    if type(v) == bool
+                    else TextInput(
                         self.window,
                         f"{'-'.join(k.split(' '))}-input",
                         str(v),
                         k,
                         self.pos,
-                        onChange=makeFunc(k),
+                        onChange=self.makeFunc(k),
                     )
-                    for k, v in list(self.initialParams.items())[1:]
+                    for k, v in list(self.params.items())
                 ],
                 rows=3,
             )

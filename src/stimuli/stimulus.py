@@ -3,13 +3,18 @@ from typing import Any, Dict, Optional
 from psychopy.visual import Window
 
 from src.components import SyncSquares
-from src.constants import DEFAULT_PARAMS, GREY, WHITE, SYNC_PULSE_LENGTH
+from src.constants import (
+    DEFAULT_PARAMS,
+    SYNC_PULSE_LENGTH,
+    DEFAULT_BACKGROUND_COLOR,
+    STIMULATION_BACKGROUND_COLOR,
+)
 from src.utils import checkForEsc
 
 
 class Stimulus:
     def __init__(self) -> None:
-        pass
+        self.duration = 0
 
     def drawFrame(self) -> None:
         pass
@@ -24,6 +29,8 @@ def playStimulus(
     callback: Any = None,
     shouldTerminate: Any = checkForEsc,
 ):
+    window.color = STIMULATION_BACKGROUND_COLOR
+
     # 2P (+ maybe camera) trigger loop
     if syncSquares:
         syncSquares.toggle(1)  # turn on trigger square
@@ -39,14 +46,13 @@ def playStimulus(
             if i == 3:
                 syncSquares.toggle(1)  # turn off trigger square
 
-            window.color = GREY
             syncSquares.draw()
             window.flip()
 
-        window.color = WHITE
-
     # main display loop
-    for frameIdx in range(int(frameRate * params["stimulus"]["stimulus duration"])):
+    duration = params["stimulus"]["stimulus duration"] or stimulus.duration
+    print(duration)
+    for frameIdx in range(int(frameRate * duration)):
         # check if we should terminate
         if shouldTerminate():
             break
@@ -71,3 +77,6 @@ def playStimulus(
     # turn off sync square
     if syncSquares:
         syncSquares.turn_off(0)
+
+    window.color = DEFAULT_BACKGROUND_COLOR
+    window.flip()
