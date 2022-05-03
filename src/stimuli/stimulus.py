@@ -5,7 +5,6 @@ from psychopy.visual import Window
 from src.components import SyncSquares
 from src.constants import (
     DEFAULT_PARAMS,
-    SYNC_PULSE_LENGTH,
     DEFAULT_BACKGROUND_COLOR,
     STIMULATION_BACKGROUND_COLOR,
 )
@@ -30,6 +29,7 @@ def playStimulus(
     shouldTerminate: Any = checkForEsc,
 ):
     window.color = STIMULATION_BACKGROUND_COLOR
+    pulseLength = params["sync"]["pulse length"]
 
     # 2P (+ maybe camera) trigger loop
     if syncSquares:
@@ -43,7 +43,7 @@ def playStimulus(
             if callback:
                 callback()
 
-            if i == 3:
+            if i == pulseLength:
                 syncSquares.toggle(1)  # turn off trigger square
 
             syncSquares.draw()
@@ -51,7 +51,6 @@ def playStimulus(
 
     # main display loop
     duration = params["stimulus"]["stimulus duration"] or stimulus.duration
-    print(duration)
     for frameIdx in range(int(frameRate * duration)):
         # check if we should terminate
         if shouldTerminate():
@@ -62,10 +61,11 @@ def playStimulus(
             callback()
 
         # send a sync pulse if needed
-        if syncSquares and frameIdx % params["sync"]["sync interval"] in {
-            0,
-            SYNC_PULSE_LENGTH,
-        }:
+        if (
+            syncSquares
+            and pulseLength
+            and frameIdx % params["sync"]["sync interval"] in {0, pulseLength,}
+        ):
             syncSquares.toggle(0)
 
         # draw stimulus (+ sync squares)

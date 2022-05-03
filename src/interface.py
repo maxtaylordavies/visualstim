@@ -1,5 +1,4 @@
 import copy
-import time
 from typing import Any
 
 from psychopy import visual, event
@@ -101,7 +100,7 @@ class Interface:
             SyncPanel(
                 self.controlWindow,
                 "sync-params-panel",
-                [254, 10],
+                [256, -15],
                 self.setSyncParameter,
                 copy.deepcopy(self.parameters["sync"]),
             ),

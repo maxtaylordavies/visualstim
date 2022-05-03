@@ -60,7 +60,7 @@ class SyncPanel(Component):
                     )
                     for k, v in list(self.params.items())
                 ],
-                rows=3,
+                rows=4,
             )
         ]
 
