@@ -45,4 +45,4 @@ In **sync mode**, clicking ![play](./screenshots/v0.1/play.png) will not begin p
 - At the start of the trigger period, the trigger square flashes white for 3 frames, producing a voltage pulse in the photodiode covering the trigger square
 - This photodiode should be connected to the appropriate input(s) of whatever external system(s) you want to trigger
 
-After the user-defined trigger duration has elapsed, the selected stimulus will begin playing as normal.
+After the user-defined trigger duration has elapsed, the selected stimulus will begin playing as normal. In **sync mode**, while the stimulus is playing, the **sync square** will flash white every `n` frames (where `n` is the value supplied for `sync interval`). This allows the user to send a regular synchronisation pulse to an external clock system, in order to align the stimulus frame timestamps with data from any other systems (e.g. 2P imaging data).
