@@ -16,8 +16,8 @@ class SyncSquares(Component):
                 f"{self.id}-0",
                 BLACK,
                 [
-                    (-self.window.size[0] / 4) + size / 2,
-                    (-self.window.size[1] / 4) + (size * (3 / 2)),
+                    (-self.window.size[0] / 2) + size / 2,
+                    (-self.window.size[1] / 2) + (size * (3 / 2)),
                 ],
                 [size, size],
             ),
@@ -26,8 +26,8 @@ class SyncSquares(Component):
                 f"{self.id}-1",
                 BLACK,
                 [
-                    (-self.window.size[0] / 4) + size / 2,
-                    (-self.window.size[1] / 4) + size / 2,
+                    (-self.window.size[0] / 2) + size / 2,
+                    (-self.window.size[1] / 2) + size / 2,
                 ],
                 [size, size],
             ),
