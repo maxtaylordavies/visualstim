@@ -1,3 +1,4 @@
+import platform
 from typing import List
 
 from psychopy.visual import Window
@@ -10,14 +11,22 @@ class SyncSquares(Component):
     def __init__(self, window: Window, id: str, size=30) -> None:
         self.window = window
         self.id = id
+
+        # not sure why, but (in my experience) on Mac the left edge
+        # of the PsychoPy window is at -window_width/4; on Windows
+        # it's at -window_width/2. Similar for bottom edge
+        # so in order to correctly position the sync/trigger squares in
+        # the bottom left corner, we need to check what platform we're on
+        factor = 2 if platform.system() == "Windows" else 4
+
         self.children = [
             Box(
                 self.window,
                 f"{self.id}-0",
                 BLACK,
                 [
-                    (-self.window.size[0] / 4) + size / 2,
-                    (-self.window.size[1] / 4) + (size * (3 / 2)),
+                    (-self.window.size[0] / factor) + size / 2,
+                    (-self.window.size[1] / factor) + (size * (3 / 2)),
                 ],
                 [size, size],
             ),
@@ -26,8 +35,8 @@ class SyncSquares(Component):
                 f"{self.id}-1",
                 BLACK,
                 [
-                    (-self.window.size[0] / 4) + size / 2,
-                    (-self.window.size[1] / 4) + size / 2,
+                    (-self.window.size[0] / factor) + size / 2,
+                    (-self.window.size[1] / factor) + size / 2,
                 ],
                 [size, size],
             ),
