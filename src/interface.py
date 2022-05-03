@@ -38,7 +38,7 @@ class Interface:
             colorSpace="rgb255",
         )
         self.displayWindow = self.controlWindow
-        self.frameRate = self.displayWindow.getActualFrameRate()
+        self.frameRate = self.displayWindow.getActualFrameRate() or 30
 
         # create mouse object to listen for click events
         self.mouse = event.Mouse(visible=True, win=self.controlWindow)
