@@ -10,6 +10,8 @@
 
 ## Basic usage
 
+### Control window vs display window
+
 After creating an instance of the `Interface` class and calling its `.start()` method, you should be greeted with a window that looks like this:
 
 ![screenshot of the visualstim GUI](./screenshots/v0.1/main-view.png)
