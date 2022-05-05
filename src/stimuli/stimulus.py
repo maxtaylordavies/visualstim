@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from psychopy.visual import Window
 
@@ -25,19 +25,19 @@ class Stimulus:
         pass
 
 
-def playStimulus(
+def playStimuli(
     window: Window,
-    stimulus: Stimulus,
+    stimuli: List[Stimulus],
     frameRate: float,
     syncSquares: Optional[SyncSquares],
-    params: Dict[str, Any] = DEFAULT_PARAMS,
+    paramsList: List[Dict[str, Any]] = [],
     callback: Any = None,
     shouldTerminate: Any = checkForEsc,
 ):
     window.color = STIMULATION_BACKGROUND_COLOR
-    pulseLength = params["sync"]["pulse length"]
+    params = paramsList[0] if paramsList else DEFAULT_PARAMS
 
-    # 2P (+ maybe camera) trigger loop
+    # trigger loop
     if syncSquares:
         syncSquares.toggle(1)  # turn on trigger square
         for i in range(int(frameRate * params["sync"]["trigger duration"])):
@@ -49,13 +49,33 @@ def playStimulus(
             if callback:
                 callback()
 
-            if i == pulseLength:
+            if i == params["sync"]["pulse length"]:
                 syncSquares.toggle(1)  # turn off trigger square
 
             syncSquares.draw()
             window.flip()
 
-    # main display loop
+    # cycle through + display stimuli
+    for i in range(len(stimuli)):
+        p = paramsList[i] if i < len(paramsList) else DEFAULT_PARAMS
+        playStimulus(
+            window, stimuli[i], frameRate, syncSquares, p, callback, shouldTerminate
+        )
+
+    # reset window colour
+    window.color = DEFAULT_BACKGROUND_COLOR
+    window.flip()
+
+
+def playStimulus(
+    window: Window,
+    stimulus: Stimulus,
+    frameRate: float,
+    syncSquares: Optional[SyncSquares],
+    params: Dict[str, Any] = DEFAULT_PARAMS,
+    callback: Any = None,
+    shouldTerminate: Any = checkForEsc,
+):
     duration = params["stimulus"]["stimulus duration"] or stimulus.duration
     for frameIdx in range(int(frameRate * duration)):
         # check if we should terminate
@@ -69,8 +89,9 @@ def playStimulus(
         # send a sync pulse if needed
         if (
             syncSquares
-            and pulseLength
-            and frameIdx % params["sync"]["sync interval"] in {0, pulseLength,}
+            and params["sync"]["pulse length"]
+            and frameIdx % params["sync"]["sync interval"]
+            in {0, params["sync"]["pulse length"]}
         ):
             syncSquares.toggle(0)
 
@@ -83,6 +104,4 @@ def playStimulus(
     # turn off sync square
     if syncSquares:
         syncSquares.turn_off(0)
-
-    window.color = DEFAULT_BACKGROUND_COLOR
-    window.flip()
+        window.flip()

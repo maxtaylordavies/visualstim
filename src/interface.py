@@ -18,7 +18,7 @@ from src.components import (
     SyncPanel,
     SyncSquares,
 )
-from src.stimuli import Grating, Movie, playStimulus
+from src.stimuli import Grating, Movie, playStimuli
 from src.utils import checkForEsc
 
 
@@ -203,12 +203,12 @@ class Interface:
                 else Movie(self.displayWindow, self.frameRate, params=self.parameters)
             )
 
-            playStimulus(
+            playStimuli(
                 self.displayWindow,
-                stimulus,
+                [stimulus],
                 self.frameRate,
                 self.syncSquares,
-                params=self.parameters,
+                paramsList=[self.parameters],
                 callback=self.handleInput,
                 shouldTerminate=self.shouldTerminateStimulation,
             )
