@@ -10,12 +10,11 @@ from .stimulus import Stimulus
 class Movie(Stimulus):
     def __init__(self, window: Window, filename: str, fitScreen: bool = False) -> None:
         super().__init__()
-        size = [WINDOW_WIDTH, WINDOW_HEIGHT] if fitScreen else None
         self._movie = MovieStim3(
             window,
-            pathlib.Path().resolve().joinpath(f"movies/{filename}"),
+            pathlib.Path().resolve().joinpath("movies", filename),
             noAudio=True,
-            size=size,
+            size=[WINDOW_WIDTH, WINDOW_HEIGHT] if fitScreen else None,
         )
         self.duration = self._movie.duration
 
