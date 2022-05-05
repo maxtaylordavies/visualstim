@@ -4,23 +4,21 @@ from psychopy.visual import Window
 from psychopy.visual.grating import GratingStim
 
 from src.constants import WINDOW_WIDTH, DEFAULT_PARAMS
+from src.textures import drumTexture
 from .stimulus import Stimulus
 
 
 class Grating(Stimulus):
     def __init__(
-        self, window: Window, texture: List, params: Dict[str, Any] = DEFAULT_PARAMS
+        self, window: Window, frameRate: float, params: Dict[str, Any] = DEFAULT_PARAMS
     ):
-        super().__init__()
-        self.window = window
-        self.texture = texture
-        self.params = params
-        self.frameIdx = 0
+        super().__init__(window, frameRate, params)
+        self.texture = drumTexture(self.frameRate, self.params)
         self._grating = GratingStim(
-            win=window,
+            win=self.window,
             size=[WINDOW_WIDTH, WINDOW_WIDTH],
             units="pix",
-            ori=params["stimulus"]["orientation"],
+            ori=self.params["stimulus"]["orientation"],
         )
 
     def drawFrame(self) -> None:

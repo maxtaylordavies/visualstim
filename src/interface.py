@@ -19,7 +19,6 @@ from src.components import (
     SyncSquares,
 )
 from src.stimuli import Grating, Movie, playStimulus
-from src.textures import drumTexture
 from src.utils import checkForEsc
 
 
@@ -199,17 +198,9 @@ class Interface:
         if self.playing:
             # create stimulus
             stimulus = (
-                Grating(
-                    self.displayWindow,
-                    drumTexture(self.frameRate, self.parameters),
-                    params=self.parameters,
-                )
+                Grating(self.displayWindow, self.frameRate, params=self.parameters)
                 if "grating" in self.stimulusType
-                else Movie(
-                    self.displayWindow,
-                    self.parameters["stimulus"]["filename"],
-                    self.parameters["stimulus"]["fit screen"],
-                )
+                else Movie(self.displayWindow, self.frameRate, params=self.parameters)
             )
 
             playStimulus(

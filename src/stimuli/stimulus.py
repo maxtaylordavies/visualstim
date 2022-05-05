@@ -12,8 +12,14 @@ from src.utils import checkForEsc
 
 
 class Stimulus:
-    def __init__(self) -> None:
+    def __init__(
+        self, window: Window, frameRate: float, params: Dict[str, Any] = DEFAULT_PARAMS
+    ) -> None:
+        self.window = window
+        self.frameRate = frameRate
+        self.params = params
         self.duration = 0
+        self.frameIdx = 0
 
     def drawFrame(self) -> None:
         pass
