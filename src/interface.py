@@ -18,8 +18,14 @@ from src.components import (
     SyncPanel,
     SyncSquares,
 )
-from src.stimuli import Grating, Movie, playStimuli
+from src.stimuli import Stimulus, DriftingGrating, StaticGrating, Movie
 from src.utils import checkForEsc
+from src.experiments import (
+    str2Stim,
+    Experiment,
+    playExperiment,
+    loadExperiment as _loadExperiment,
+)
 
 
 class Interface:
@@ -48,9 +54,8 @@ class Interface:
         # flag for whether we're currently showing stimulus
         self.playing = False
 
-        # parameters
-        self.stimulusType = "drifting grating"
-        self.parameters = copy.deepcopy(DEFAULT_PARAMS)
+        # load default experiment
+        self.loadExperiment("default.json")
 
         # create components to render
         self.components = [
@@ -101,7 +106,7 @@ class Interface:
                 "sync-params-panel",
                 [256, -15],
                 self.setSyncParameter,
-                copy.deepcopy(self.parameters["sync"]),
+                copy.deepcopy(self.experiment.syncSettings),
             ),
         ]
 
@@ -111,14 +116,17 @@ class Interface:
 
         # create sync squares
         self.syncSquares = None
-        if self.parameters["sync"]["sync"]:
+        if self.experiment.syncSettings["sync"]:
             self.createSyncSquares()
+
+    def loadExperiment(self, filename):
+        self.experiment = _loadExperiment(self.displayWindow, self.frameRate, filename)
 
     def filterStimulusParams(self):
         return {
             k: v
-            for k, v in self.parameters["stimulus"].items()
-            if k in STIMULUS_PARAMETER_MAP[self.stimulusType]
+            for k, v in self.experiment.stimuli[0]["params"].items()
+            if k in STIMULUS_PARAMETER_MAP[self.experiment.stimuli[0]["name"]]
         }
 
     def createSyncSquares(self):
@@ -133,15 +141,7 @@ class Interface:
 
     def selectStimulusType(self, x):
         # set stimulus type
-        self.stimulusType = x
-
-        # adjust params if needed
-        if x == "static grating":
-            self.setStimulusParameter("temporal frequency", self.frameRate)
-        else:
-            self.setStimulusParameter(
-                "temporal frequency", DEFAULT_PARAMS["stimulus"]["temporal frequency"]
-            )
+        self.experiment.stimuli[0]["name"] = x
 
         # update the parameters shown in the params panel
         paramsPanelIdx = self.getComponentIndexById("stim-params-panel")
@@ -149,12 +149,12 @@ class Interface:
             self.components[paramsPanelIdx].resetParams(self.filterStimulusParams())
 
     def setStimulusParameter(self, key: str, value: Any) -> None:
-        self.parameters["stimulus"][key] = value
+        self.experiment.stimuli[0]["params"][key] = value
 
     def setSyncParameter(self, key: str, value: Any) -> None:
         if key == "sync":
             self.createSyncSquares() if value else self.removeSyncSquares()
-        self.parameters["sync"][key] = value
+        self.experiment.syncSettings[key] = value
 
     def getComponentIndexById(self, id: str) -> int:
         for i, c in enumerate(self.components):
@@ -173,7 +173,7 @@ class Interface:
                 colorSpace="rgb255",
             )
             self.frameRate = 30
-            if self.parameters["sync"]["sync"]:
+            if self.experiment.syncSettings["sync"]:
                 self.createSyncSquares()
             self.draw()
         else:
@@ -196,19 +196,11 @@ class Interface:
 
         # if now in "playing" state, run the selected stimulus
         if self.playing:
-            # create stimulus
-            stimulus = (
-                Grating(self.displayWindow, self.frameRate, params=self.parameters)
-                if "grating" in self.stimulusType
-                else Movie(self.displayWindow, self.frameRate, params=self.parameters)
-            )
-
-            playStimuli(
+            playExperiment(
                 self.displayWindow,
-                [stimulus],
+                self.experiment,
                 self.frameRate,
                 self.syncSquares,
-                paramsList=[self.parameters],
                 callback=self.handleInput,
                 shouldTerminate=self.shouldTerminateStimulation,
             )

@@ -1,3 +1,3 @@
-from .stimulus import playStimuli
-from .grating import Grating
+from .stimulus import Stimulus, playStimulus
+from .grating import DriftingGrating, StaticGrating
 from .movie import Movie

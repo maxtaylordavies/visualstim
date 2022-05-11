@@ -14,17 +14,11 @@ class Movie(Stimulus):
     ) -> None:
         super().__init__(window, frameRate, params)
 
-        size = (
-            [WINDOW_WIDTH, WINDOW_HEIGHT]
-            if self.params["stimulus"]["fit screen"]
-            else None
-        )
+        size = [WINDOW_WIDTH, WINDOW_HEIGHT] if self.params["fit screen"] else None
 
         self._movie = MovieStim3(
             self.window,
-            pathlib.Path()
-            .resolve()
-            .joinpath(f"movies/{self.params['stimulus']['filename']}"),
+            pathlib.Path().resolve().joinpath(f"movies/{self.params['filename']}"),
             noAudio=True,
             size=size,
         )
