@@ -1,7 +1,7 @@
 {
     "name": "test experiment",
     "sync settings": {
-        "sync": false,
+        "sync": true,
         "trigger duration": 5.0,
         "sync interval": 60,
         "pulse length": 3

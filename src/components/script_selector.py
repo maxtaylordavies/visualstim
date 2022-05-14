@@ -35,7 +35,7 @@ class ScriptSelector(Component):
             Panel(
                 self.window,
                 f"{self.id}-panel",
-                "Choose script",
+                "load file",
                 self.pos,
                 [
                     Button(

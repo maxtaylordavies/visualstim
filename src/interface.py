@@ -48,6 +48,7 @@ class Interface:
         )
         self.displayWindow = self.controlWindow
         self.frameRate = self.displayWindow.getActualFrameRate() or 30
+        self.syncSquares = None
 
         # create mouse object to listen for click events
         self.mouse = event.Mouse(visible=True, win=self.controlWindow)
@@ -112,10 +113,6 @@ class Interface:
         # register components (assign them to the window)
         for i in range(len(self.components)):
             self.components[i].register()
-        # create sync squares
-        self.syncSquares = None
-        if self.experiment.syncSettings["sync"]:
-            self.createSyncSquares()
 
     def interactiveModeComponents(self) -> List[Component]:
         return [
@@ -155,7 +152,10 @@ class Interface:
 
     def loadExperiment(self, filename):
         self.experiment = _loadExperiment(self.displayWindow, self.frameRate, filename)
-        print(f"loaded experiment from file {self.experiment.name}")
+        if self.experiment.syncSettings["sync"]:
+            self.createSyncSquares()
+        elif self.syncSquares:
+            self.removeSyncSquares()
 
     def filterStimulusParams(self):
         return {
