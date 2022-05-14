@@ -1,18 +1,10 @@
 DEFAULT_PARAMS = {
-    "stimulus": {
-        "spatial frequency": 0.1,
-        "temporal frequency": 0.4,
-        "orientation": 0.0,
-        "stimulus duration": 10.0,
-        "filename": "test.mp4",
-        "fit screen": False,
-    },
-    "sync": {
-        "sync": False,
-        "trigger duration": 5.0,
-        "sync interval": 60,
-        "pulse length": 3,
-    },
+    "spatial frequency": 0.1,
+    "temporal frequency": 0.4,
+    "orientation": 0.0,
+    "stimulus duration": 10.0,
+    "filename": "test.mp4",
+    "fit screen": False,
 }
 STIMULUS_PARAMETER_MAP = {
     "drifting grating": [

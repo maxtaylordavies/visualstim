@@ -11,7 +11,7 @@ drumgrating_Amp_sinu = 5
 
 
 def drumTexture(
-    frameRate: float, params: Dict[str, Any] = DEFAULT_PARAMS["stimulus"]
+    frameRate: float, params: Dict[str, Any] = DEFAULT_PARAMS
 ) -> List:
     pixelangle = np.empty(
         shape=[1, WINDOW_WIDTH]

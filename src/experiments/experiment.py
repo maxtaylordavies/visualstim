@@ -7,11 +7,10 @@ from psychopy.visual import Window
 from src.stimuli import Stimulus, StaticGrating, DriftingGrating, Movie, playStimulus
 from src.components import SyncSquares
 from src.constants import (
-    DEFAULT_PARAMS,
     DEFAULT_BACKGROUND_COLOR,
     STIMULATION_BACKGROUND_COLOR,
 )
-from src.utils import checkForEsc
+from src.utils import checkForEsc, parseParams
 
 
 def str2Stim(s: str) -> Stimulus:
@@ -41,7 +40,16 @@ def loadExperiment(window: Window, frameRate: float, filename: str) -> None:
     with open(pathlib.Path().resolve().joinpath(f"experiments/{filename}")) as f:
         data = json.load(f)
 
-    return Experiment(data["name"], data["sync settings"], data["stimuli"])
+    return Experiment(
+        data["name"],
+        data["sync settings"],
+        list(
+            map(
+                lambda s: {"name": s["name"], "params": parseParams(s["params"])},
+                data["stimuli"],
+            )
+        ),
+    )
 
 
 def playExperiment(

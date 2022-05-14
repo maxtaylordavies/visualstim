@@ -1,5 +1,5 @@
 import copy
-from typing import Any
+from typing import Any, List
 
 from psychopy import visual, event
 
@@ -11,8 +11,9 @@ from src.constants import (
     YELLOW,
     RED,
 )
-from src.components.core import Button, PlayButton
+from src.components.core import Button, Component, PlayButton
 from src.components import (
+    ModeSelector,
     StimulusPanel,
     ParametersPanel,
     SyncPanel,
@@ -30,6 +31,9 @@ from src.experiments import (
 
 class Interface:
     def __init__(self, fullscreen=False):
+        # start in interactive mode by default
+        self.mode = "interactive"
+
         # create window
         self.screenNum = 0
         self.fullscreen = fullscreen
@@ -58,6 +62,10 @@ class Interface:
         self.loadExperiment("default.json")
 
         # create components to render
+        # (and register them)
+        self.createComponents()
+
+    def createComponents(self) -> None:
         self.components = [
             Button(
                 self.controlWindow,
@@ -66,6 +74,13 @@ class Interface:
                 PURPLE,
                 WHITE,
                 [-370, 273],
+            ),
+            ModeSelector(
+                self.controlWindow,
+                "mode-selector",
+                [-200, 273],
+                self.mode,
+                self.toggleMode,
             ),
             PlayButton(
                 self.controlWindow, "play-button", 16, [175, 270], self.onStartClicked
@@ -88,6 +103,21 @@ class Interface:
                 [390, 270],
                 onClick=self.onQuitClicked,
             ),
+        ] + (
+            self.scriptingModeComponents()
+            if self.mode == "scripting"
+            else self.interactiveModeComponents()
+        )
+        # register components (assign them to the window)
+        for i in range(len(self.components)):
+            self.components[i].register()
+        # create sync squares
+        self.syncSquares = None
+        if self.experiment.syncSettings["sync"]:
+            self.createSyncSquares()
+
+    def interactiveModeComponents(self) -> List[Component]:
+        return [
             StimulusPanel(
                 self.controlWindow,
                 "stimulus-panel",
@@ -110,14 +140,13 @@ class Interface:
             ),
         ]
 
-        # register components (assign them to the window)
-        for i in range(len(self.components)):
-            self.components[i].register()
+    def scriptingModeComponents(self) -> List[Component]:
+        return []
 
-        # create sync squares
-        self.syncSquares = None
-        if self.experiment.syncSettings["sync"]:
-            self.createSyncSquares()
+    def toggleMode(self) -> None:
+        self.mode = ("interactive", "scripting")[self.mode == "interactive"]
+        self.loadExperiment("default.json")
+        self.createComponents()
 
     def loadExperiment(self, filename):
         self.experiment = _loadExperiment(self.displayWindow, self.frameRate, filename)
