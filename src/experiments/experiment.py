@@ -35,13 +35,13 @@ class Experiment:
         self.stimuli = stimuli
 
 
-def loadExperiment(window: Window, frameRate: float, filename: str) -> None:
+def loadExperiment(window: Window, frameRate: float, filename: str) -> Experiment:
     # TODO: check file exists / error handling
     with open(pathlib.Path().resolve().joinpath(f"experiments/{filename}")) as f:
         data = json.load(f)
 
     return Experiment(
-        data["name"],
+        filename,
         data["sync settings"],
         list(
             map(

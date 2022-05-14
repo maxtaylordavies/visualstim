@@ -18,6 +18,7 @@ from src.components import (
     ParametersPanel,
     SyncPanel,
     SyncSquares,
+    ScriptSelector,
 )
 from src.stimuli import Stimulus, DriftingGrating, StaticGrating, Movie
 from src.utils import checkForEsc
@@ -141,7 +142,11 @@ class Interface:
         ]
 
     def scriptingModeComponents(self) -> List[Component]:
-        return []
+        return [
+            ScriptSelector(
+                self.controlWindow, "script-selector", [0, 0], self.loadExperiment
+            )
+        ]
 
     def toggleMode(self) -> None:
         self.mode = ("interactive", "scripting")[self.mode == "interactive"]
@@ -150,6 +155,7 @@ class Interface:
 
     def loadExperiment(self, filename):
         self.experiment = _loadExperiment(self.displayWindow, self.frameRate, filename)
+        print(f"loaded experiment from file {self.experiment.name}")
 
     def filterStimulusParams(self):
         return {
