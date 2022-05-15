@@ -19,6 +19,7 @@ class Box(Component):
         self.color = color
         self.pos = pos
         self.size = size
+        self.children = []
 
     def register(self):
         self.children = [

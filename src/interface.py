@@ -80,7 +80,7 @@ class Interface:
             ModeSelector(
                 self.controlWindow,
                 "mode-selector",
-                [-200, 273],
+                [-207, 275],
                 self.mode,
                 self.toggleMode,
             ),
