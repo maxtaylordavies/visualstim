@@ -17,9 +17,9 @@ class ScriptSelector(Component):
 
         expDirPath = pathlib.Path().resolve().joinpath("experiments")
         self.filenames = [
-            f.replace(".json", "")
+            f
             for f in os.listdir(expDirPath)
-            if os.path.isfile(expDirPath.joinpath(f))
+            if os.path.isfile(expDirPath.joinpath(f)) and f.endswith(".json")
         ]
 
         self.selected = ""
@@ -43,7 +43,7 @@ class ScriptSelector(Component):
                     Button(
                         self.window,
                         f"{self.id}-button-{i}",
-                        filename,
+                        filename.replace(".json", ""),
                         WHITE,
                         GREEN if self.selected == filename else MEDIUMGREY,
                         self.pos,
