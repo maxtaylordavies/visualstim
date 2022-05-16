@@ -55,7 +55,7 @@ After the user-defined trigger duration has elapsed, the selected stimulus will 
 
 When running the visualstim software, you start in interactive mode by default. You can switch modes by clicking ![scripting](./screenshots/v0.1/scripting-button.png), at which point you should see a screen that looks something like this:
 
-[screenshot of scripting mode](./screenshots/v0.1/scripting-mode.png)
+![screenshot of scripting mode](./screenshots/v0.1/scripting-mode.png)
 
 The panel labeled "load experiment" shows a list of all the files contained in the top-level `experiments/` folder. To load an experiment, just click on the name of its file. You can then run the experiment by clicking ![play](./screenshots/v0.1/play.png).
 
