@@ -20,7 +20,7 @@ class Movie(Stimulus):
             self.window,
             pathlib.Path().resolve().joinpath(f"movies/{self.params['filename']}"),
             noAudio=True,
-            size=size,
+            size=[WINDOW_WIDTH, WINDOW_HEIGHT] if fitScreen else None,
         )
 
         self.duration = self._movie.duration
