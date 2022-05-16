@@ -18,6 +18,10 @@ After creating an instance of the `Interface` class and calling its `.start()` m
 
 This is the **visualstim control window**. It contains elements for interactively controlling the visual stimulation. By default, the **visualstim display window** is the same as the control window; i.e. when you click ![play](./screenshots/v0.1/play.png), the GUI elements of the control window disappear and are replaced by the stimulus, and return after the stimulus is complete. If you have more than one display available (e.g. you're running visualstim on a laptop connected to an external monitor), you can click ![switch screen](./screenshots/v0.1/switch-screen.png) to spin out a separate display window. This lets you show the control window on one screen while displaying the stimulus on another screen.
 
+### Modes
+
+The visualstim software has two different usage modes: **interactive** and **scripting**. In interactive mode (enabled by default), you can use the GUI panels to play around with the parameters and display a **single stimulus**. **Scripting mode** lets you load and display a multi-stimulus sequence defined in an external file. For details on how to write such files, jump to SECTION REFERENCE
+
 ### Stimulus type
 
 The **stimulus type** panel lets you choose the stimulus you want to display. Currently, the options are
@@ -46,3 +50,74 @@ In **sync mode**, clicking ![play](./screenshots/v0.1/play.png) will not begin p
 - This photodiode should be connected to the appropriate input(s) of whatever external system(s) you want to trigger
 
 After the user-defined trigger duration has elapsed, the selected stimulus will begin playing as normal. In **sync mode**, while the stimulus is playing, the **sync square** will flash white every `n` frames (where `n` is the value supplied for `sync interval`). This allows the user to send a regular synchronisation pulse to an external clock system, in order to align the stimulus frame timestamps with data from any other systems (e.g. 2P imaging data).
+
+### Scripting mode and experiment files
+
+When running the visualstim software, you start in interactive mode by default. You can switch modes by clicking ![scripting](./screenshots/v0.1/scripting-button.png), at which point you should see a screen that looks something like this:
+
+![screenshot of scripting mode](./screenshots/v0.1/scripting-mode.png)
+
+The panel labeled "load experiment" shows a list of all the files contained in the top-level `experiments/` folder. To load an experiment, just click on the name of its file. You can then run the experiment by clicking ![play](./screenshots/v0.1/play.png).
+
+An experiment consists basically of two things: a set of _sync settings_, and sequence of _stimuli_ (where each stimulus has an associated set of parameters). Experiment files are written using [the JSON data format](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/JSON). Here's a basic example of an experiment file with only one stimulus and no sync:
+
+```JSON
+{
+    "sync settings": {
+        "sync": false
+    },
+    "stimuli": [
+        {
+            "name": "drifting grating",
+            "params": {
+                "spatial frequency": 0.1,
+                "temporal frequency": 0.4,
+                "orientation": 0.0,
+                "stimulus duration": 10.0
+            }
+        }
+    ]
+}
+```
+
+Here's an example with sync and multiple stimuli:
+
+```JSON
+{
+    "sync settings": {
+        "sync": true,
+        "trigger duration": 5.0,
+        "sync interval": 60,
+        "pulse length": 3
+    },
+    "stimuli": [
+        {
+            "name": "drifting grating",
+            "params": {
+                "spatial frequency": 0.1,
+                "temporal frequency": 0.4,
+                "orientation": 0.0,
+                "stimulus duration": 5.0
+            }
+        },
+        {
+            "name": "static grating",
+            "params": {
+                "spatial frequency": 0.2,
+                "orientation": 45.0,
+                "stimulus duration": 5.0
+            }
+        },
+        {
+            "name": "movie",
+            "params": {
+                "stimulus duration": 10.0,
+                "filename": "test.mp4",
+                "fit screen": false
+            }
+        }
+    ]
+}
+```
+
+Any experiment files you write should be saved to the top-level `experiments/` folder.

@@ -3,6 +3,7 @@ from src.interface import Interface
 
 def main():
     interface = Interface()
+    # interface.loadExperiment("test.json")
     interface.start()
 
 

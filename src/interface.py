@@ -1,5 +1,5 @@
 import copy
-from typing import Any
+from typing import Any, List
 
 from psychopy import visual, event
 
@@ -11,20 +11,30 @@ from src.constants import (
     YELLOW,
     RED,
 )
-from src.components.core import Button, PlayButton
+from src.components.core import Button, Component, PlayButton
 from src.components import (
+    ModeSelector,
     StimulusPanel,
     ParametersPanel,
     SyncPanel,
     SyncSquares,
+    ScriptSelector,
 )
-from src.stimuli import Grating, Movie, playStimulus
-from src.textures import drumTexture
+from src.stimuli import Stimulus, DriftingGrating, StaticGrating, Movie
 from src.utils import checkForEsc
+from src.experiments import (
+    str2Stim,
+    Experiment,
+    playExperiment,
+    loadExperiment as _loadExperiment,
+)
 
 
 class Interface:
     def __init__(self, fullscreen=False):
+        # start in interactive mode by default
+        self.mode = "interactive"
+
         # create window
         self.screenNum = 0
         self.fullscreen = fullscreen
@@ -38,6 +48,7 @@ class Interface:
         )
         self.displayWindow = self.controlWindow
         self.frameRate = self.displayWindow.getActualFrameRate() or 30
+        self.syncSquares = None
 
         # create mouse object to listen for click events
         self.mouse = event.Mouse(visible=True, win=self.controlWindow)
@@ -49,11 +60,14 @@ class Interface:
         # flag for whether we're currently showing stimulus
         self.playing = False
 
-        # parameters
-        self.stimulusType = "drifting grating"
-        self.parameters = copy.deepcopy(DEFAULT_PARAMS)
+        # load default experiment
+        self.loadExperiment("default.json")
 
         # create components to render
+        # (and register them)
+        self.createComponents()
+
+    def createComponents(self) -> None:
         self.components = [
             Button(
                 self.controlWindow,
@@ -62,6 +76,13 @@ class Interface:
                 PURPLE,
                 WHITE,
                 [-370, 273],
+            ),
+            ModeSelector(
+                self.controlWindow,
+                "mode-selector",
+                [-207, 275],
+                self.mode,
+                self.toggleMode,
             ),
             PlayButton(
                 self.controlWindow, "play-button", 16, [175, 270], self.onStartClicked
@@ -84,6 +105,17 @@ class Interface:
                 [390, 270],
                 onClick=self.onQuitClicked,
             ),
+        ] + (
+            self.scriptingModeComponents()
+            if self.mode == "scripting"
+            else self.interactiveModeComponents()
+        )
+        # register components (assign them to the window)
+        for i in range(len(self.components)):
+            self.components[i].register()
+
+    def interactiveModeComponents(self) -> List[Component]:
+        return [
             StimulusPanel(
                 self.controlWindow,
                 "stimulus-panel",
@@ -102,24 +134,34 @@ class Interface:
                 "sync-params-panel",
                 [256, -15],
                 self.setSyncParameter,
-                copy.deepcopy(self.parameters["sync"]),
+                copy.deepcopy(self.experiment.syncSettings),
             ),
         ]
 
-        # register components (assign them to the window)
-        for i in range(len(self.components)):
-            self.components[i].register()
+    def scriptingModeComponents(self) -> List[Component]:
+        return [
+            ScriptSelector(
+                self.controlWindow, "script-selector", [0, 0], self.loadExperiment
+            )
+        ]
 
-        # create sync squares
-        self.syncSquares = None
-        if self.parameters["sync"]["sync"]:
+    def toggleMode(self) -> None:
+        self.mode = ("interactive", "scripting")[self.mode == "interactive"]
+        self.loadExperiment("default.json")
+        self.createComponents()
+
+    def loadExperiment(self, filename):
+        self.experiment = _loadExperiment(self.displayWindow, self.frameRate, filename)
+        if self.experiment.syncSettings["sync"]:
             self.createSyncSquares()
+        elif self.syncSquares:
+            self.removeSyncSquares()
 
     def filterStimulusParams(self):
         return {
             k: v
-            for k, v in self.parameters["stimulus"].items()
-            if k in STIMULUS_PARAMETER_MAP[self.stimulusType]
+            for k, v in self.experiment.stimuli[0]["params"].items()
+            if k in STIMULUS_PARAMETER_MAP[self.experiment.stimuli[0]["name"]]
         }
 
     def createSyncSquares(self):
@@ -134,15 +176,7 @@ class Interface:
 
     def selectStimulusType(self, x):
         # set stimulus type
-        self.stimulusType = x
-
-        # adjust params if needed
-        if x == "static grating":
-            self.setStimulusParameter("temporal frequency", self.frameRate)
-        else:
-            self.setStimulusParameter(
-                "temporal frequency", DEFAULT_PARAMS["stimulus"]["temporal frequency"]
-            )
+        self.experiment.stimuli[0]["name"] = x
 
         # update the parameters shown in the params panel
         paramsPanelIdx = self.getComponentIndexById("stim-params-panel")
@@ -150,12 +184,12 @@ class Interface:
             self.components[paramsPanelIdx].resetParams(self.filterStimulusParams())
 
     def setStimulusParameter(self, key: str, value: Any) -> None:
-        self.parameters["stimulus"][key] = value
+        self.experiment.stimuli[0]["params"][key] = value
 
     def setSyncParameter(self, key: str, value: Any) -> None:
         if key == "sync":
             self.createSyncSquares() if value else self.removeSyncSquares()
-        self.parameters["sync"][key] = value
+        self.experiment.syncSettings[key] = value
 
     def getComponentIndexById(self, id: str) -> int:
         for i, c in enumerate(self.components):
@@ -174,7 +208,7 @@ class Interface:
                 colorSpace="rgb255",
             )
             self.frameRate = 30
-            if self.parameters["sync"]["sync"]:
+            if self.experiment.syncSettings["sync"]:
                 self.createSyncSquares()
             self.draw()
         else:
@@ -197,27 +231,11 @@ class Interface:
 
         # if now in "playing" state, run the selected stimulus
         if self.playing:
-            # create stimulus
-            stimulus = (
-                Grating(
-                    self.displayWindow,
-                    drumTexture(self.frameRate, self.parameters),
-                    params=self.parameters,
-                )
-                if "grating" in self.stimulusType
-                else Movie(
-                    self.displayWindow,
-                    self.parameters["stimulus"]["filename"],
-                    self.parameters["stimulus"]["fit screen"],
-                )
-            )
-
-            playStimulus(
+            playExperiment(
                 self.displayWindow,
-                stimulus,
+                self.experiment,
                 self.frameRate,
                 self.syncSquares,
-                params=self.parameters,
                 callback=self.handleInput,
                 shouldTerminate=self.shouldTerminateStimulation,
             )
