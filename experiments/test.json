@@ -1,5 +1,4 @@
 {
-    "name": "test experiment",
     "sync settings": {
         "sync": true,
         "trigger duration": 5.0,
@@ -20,7 +19,6 @@
             "name": "static grating",
             "params": {
                 "spatial frequency": 0.2,
-                "temporal frequency": 0.4,
                 "orientation": 45.0,
                 "stimulus duration": 5.0
             }

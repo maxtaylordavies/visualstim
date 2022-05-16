@@ -13,9 +13,7 @@
                 "spatial frequency": 0.1,
                 "temporal frequency": 0.4,
                 "orientation": 0.0,
-                "stimulus duration": 10.0,
-                "filename": "test.mp4",
-                "fit screen": false
+                "stimulus duration": 10.0
             }
         }
     ]
