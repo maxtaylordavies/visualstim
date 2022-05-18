@@ -17,13 +17,10 @@ class Switch(Component):
         pos: List[int],
         callback: Any,
     ):
-        self.window = window
-        self.id = id
+        super().__init__(window, id, pos)
         self.text = text
         self.value = value
-        self.pos = pos
         self.callback = callback
-        self._size = [None, None]
         self.padding = 2
 
     def onClick(self, mouse: Mouse, button: Button):
@@ -42,18 +39,18 @@ class Switch(Component):
                 self.pos,
                 bold=True,
                 onClick=self.onClick,
-                size=self._size,
+                size=self.size,
                 padding=self.padding,
             )
         ]
         super().register()
 
-    def size(self):
-        return self.children[0].size()
+    def getSize(self):
+        return self.children[0].getSize()
 
     def setSize(self, size):
-        ydiff = size[1] - self.size()[1]
-        self._size = [size[0] - ydiff / 2 + self.padding, self._size[1]]
+        ydiff = size[1] - self.getSize()[1]
+        self.size = [size[0] - ydiff / 2 + self.padding, self.size[1]]
         self.padding += ydiff / 2
         self.register()
         self.draw()

@@ -3,6 +3,7 @@ from typing import Any, Dict, List
 
 from psychopy.visual import Window
 
+from .parameter_input import ParameterInput
 from src.components.core import Component, Panel, Switch
 from .core.input import TextInput
 
@@ -16,9 +17,7 @@ class ParametersPanel(Component):
         callback: Any,
         initialParams: Dict,
     ) -> None:
-        self.window = window
-        self.id = id
-        self.pos = pos
+        super().__init__(window, id, pos)
         self.callback = callback
         self.params = initialParams
 
@@ -33,6 +32,7 @@ class ParametersPanel(Component):
         return lambda x: self.callback(k, self.cast(k, x))
 
     def register(self):
+        l = len(self.params.keys())
         self.children = [
             Panel(
                 self.window,
@@ -49,17 +49,18 @@ class ParametersPanel(Component):
                         self.makeFunc(k),
                     )
                     if type(v) == bool
-                    else TextInput(
+                    else ParameterInput(
                         self.window,
                         f"{'-'.join(k.split(' '))}-input",
                         str(v),
                         k,
                         self.pos,
                         onChange=self.makeFunc(k),
+                        zIndex=l - i,
                     )
-                    for k, v in list(self.params.items())
+                    for i, (k, v) in enumerate(self.params.items())
                 ],
-                rows=math.ceil(len(self.params.keys()) / 2),
+                rows=math.ceil(l / 2),
             )
         ]
         for c in self.children:

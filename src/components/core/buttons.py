@@ -20,13 +20,10 @@ class Button(Component):
         padding=2,
         onClick=noOp,
     ) -> None:
-        self.window = window
-        self.id = id
+        super().__init__(window, id, pos, size)
         self.text = text
         self.color = color
         self.fill = fill
-        self.pos = pos
-        self._size = size
         self.bold = bold
         self.padding = padding
         self.onClick = onClick
@@ -47,7 +44,7 @@ class Button(Component):
                 # borderColor=self.fill,
                 bold=self.bold,
                 padding=self.padding,
-                size=self._size,
+                size=self.size,
                 pos=self.pos,
                 # borderWidth=self.borderWidth,
             )
@@ -58,12 +55,12 @@ class Button(Component):
         self.children[0].fillColor = self.fill
         self.draw()
 
-    def size(self):
+    def getSize(self):
         return self.children[0].size
 
     def setSize(self, size):
-        ydiff = size[1] - self.size()[1]
-        self._size = [size[0] - ydiff / 2 + self.padding, self._size[1]]
+        ydiff = size[1] - self.getSize()[1]
+        self.size = [size[0] - ydiff / 2 + self.padding, self.size[1]]
         self.padding += ydiff / 2
         self.register()
         self.draw()
@@ -73,10 +70,8 @@ class PlayButton(Component):
     def __init__(
         self, window: Window, id: str, radius: int, pos: List[int], onClick=noOp,
     ) -> None:
-        self.window = window
-        self.id = id
+        super().__init__(window, id, pos)
         self.radius = radius
-        self.pos = pos
         self.onClick = onClick
         self.state = "play"
 

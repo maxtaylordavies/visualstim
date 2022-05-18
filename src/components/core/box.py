@@ -14,12 +14,8 @@ class Box(Component):
         pos: List[int],
         size: List[int],
     ) -> None:
-        self.window = window
-        self.id = id
+        super().__init__(window, id, pos, size)
         self.color = color
-        self.pos = pos
-        self.size = size
-        self.children = []
 
     def register(self):
         self.children = [

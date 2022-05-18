@@ -1,12 +1,12 @@
 from typing import Any, List
 from psychopy.visual import Window, TextBox2, rect
 
-from src.components.core import Component
+from src.components.core import Box, Component
 from src.constants import DARKGREY, GREEN, RED, WHITE
 from src.utils import noOp
 
 
-class TextInput(Component):
+class ParameterInput(Component):
     def __init__(
         self,
         window: Window,
@@ -16,8 +16,9 @@ class TextInput(Component):
         pos: List[int],
         size=[None, None],
         onChange=noOp,
+        zIndex=0,
     ) -> None:
-        super().__init__(window, id, pos, size)
+        super().__init__(window, id, pos, size, zIndex)
         self.initialText = text
         self.text = text
         self.labelText = labelText
@@ -87,7 +88,13 @@ class TextInput(Component):
             ],
             pos=[self.input.pos[0] - (self.input.size[0] / 2), self.input.pos[1]],
         )
-        self.children = [self.label, self.input, self.mask]
+
+        p = [self.pos[0], self.pos[1] - (10 if self.active else 0)]
+        s = [self.getSize()[0], self.getSize()[1] + (10 if self.active else 0)]
+        self.box = Box(self.window, f"{self.id}-box", GREEN, p, s)
+        self.box.register()
+
+        self.children = [self.box, self.label, self.input, self.mask]
 
     def toggle(self):
         if self.active:
@@ -96,11 +103,16 @@ class TextInput(Component):
             self.onChange(self.text)
         self.active = not self.active
         self.update()
+        self.expand(10 if self.active else -10)
 
     def update(self):
         self.register(text=self.input.text)
         self.draw()
-        self.input.hasFocus = self.active
+        # self.input.hasFocus = self.active
+
+    def expand(self, x):
+        self.children[0].size[1] += x
+        self.children[0].register()
 
     def edges(self):
         rightEdge = self.input.pos[0] + (self.input.size[0] / 2)

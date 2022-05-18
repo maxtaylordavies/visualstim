@@ -9,8 +9,7 @@ from src.components.core import Component, Box
 
 class SyncSquares(Component):
     def __init__(self, window: Window, id: str, size=30) -> None:
-        self.window = window
-        self.id = id
+        super().__init__(window, id)
 
         # not sure why, but (in my experience) on Mac the left edge
         # of the PsychoPy window is at -window_width/4; on Windows

@@ -17,9 +17,7 @@ class SyncPanel(Component):
         callback: Any,
         initialParams: Dict,
     ) -> None:
-        self.window = window
-        self.id = id
-        self.pos = pos
+        super().__init__(window, id, pos)
         self.callback = callback
         self.params = initialParams
 

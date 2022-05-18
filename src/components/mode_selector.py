@@ -11,9 +11,7 @@ class ModeSelector(Component):
     def __init__(
         self, window: Window, id: str, pos: List[int], mode: str, callback: Any
     ) -> None:
-        self.window = window
-        self.id = id
-        self.pos = pos
+        super().__init__(window, id, pos)
         self.mode = mode
         self.callback = callback
 
