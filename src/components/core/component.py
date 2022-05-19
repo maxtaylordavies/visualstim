@@ -71,5 +71,5 @@ class Component:
 
     def onKeyPress(self, key: str) -> None:
         for c in self.children:
-            if hasattr(c, "onKeyPress"):
+            if hasattr(c, "active") and c.active and hasattr(c, "onKeyPress"):
                 c.onKeyPress(key)

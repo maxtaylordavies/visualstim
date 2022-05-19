@@ -12,7 +12,7 @@ class ExpandableInput(Component):
         self,
         window: Window,
         id: str,
-        text: str,
+        value: float,
         labelText: str,
         pos: List[int],
         size=[None, None],
@@ -20,8 +20,8 @@ class ExpandableInput(Component):
         zIndex=0,
     ) -> None:
         super().__init__(window, id, pos, size, zIndex)
-        self.initialText = text
-        self.text = text
+        self.initialValue = self.start = self.stop = value
+        self.steps = 1
         self.labelText = labelText
         self.onChange = onChange
         self.active = False
@@ -33,7 +33,7 @@ class ExpandableInput(Component):
     def registerInactive(self, text):
         self.input = TextBox2(
             self.window,
-            text if text != "$" else self.text,
+            text if text != "$" else str(self.start),
             "Open Sans",
             units="pix",
             letterHeight=18,
@@ -91,7 +91,7 @@ class ExpandableInput(Component):
     def registerActive(self):
         left, right = self.edges()
 
-        boxHeightDiff = 125 - self.getSize()[1]
+        boxHeightDiff = 120 - self.getSize()[1]
         boxPos = [self.pos[0], self.pos[1] - (boxHeightDiff / 2) + 1]
 
         labelPos = self.label.pos
@@ -99,49 +99,55 @@ class ExpandableInput(Component):
         self.startInput = TextInput(
             self.window,
             f"{self.id}-start-input",
-            self.text,
+            str(self.start),
             "start",
             labelPos,
             zIndex=20,
             fill=LIGHTGREY,
             highlight=False,
+            onChange=self.onStartChange,
         )
         self.startInput.register()
         self.startInput.pos = [
-            left + 5 + self.startInput.getSize()[0] / 2,
+            left + (self.startInput.getSize()[0] / 2) + 5,
             self.startInput.pos[1] - 35,
         ]
 
         self.stopInput = TextInput(
             self.window,
             f"{self.id}-start-input",
-            self.text,
+            str(self.stop),
             "stop",
             labelPos,
             zIndex=20,
             fill=LIGHTGREY,
             highlight=False,
+            onChange=self.onStopChange,
         )
         self.stopInput.register()
         self.stopInput.pos = [
-            left + 5 + self.startInput.getSize()[0] + (self.stopInput.getSize()[0] / 2),
+            left
+            + self.startInput.getSize()[0]
+            + (self.stopInput.getSize()[0] / 2)
+            + 10,
             self.startInput.pos[1],
         ]
 
         self.stepsInput = TextInput(
             self.window,
             f"{self.id}-start-input",
-            "1",
+            str(self.steps),
             "steps",
             labelPos,
             zIndex=20,
             fill=LIGHTGREY,
             highlight=False,
+            onChange=self.onStepsChange,
         )
         self.stepsInput.register()
         self.stepsInput.pos = [
             left + 5 + self.stepsInput.getSize()[0] / 2,
-            self.stepsInput.pos[1] - 35 - self.startInput.getSize()[1],
+            self.stepsInput.pos[1] - self.startInput.getSize()[1] - 40,
         ]
 
         self.randomiseButton = Button(
@@ -162,11 +168,30 @@ class ExpandableInput(Component):
             )
         ]
 
+    def onStartChange(self, x):
+        self.start = float(x)
+        self.afterChange()
+
+    def onStopChange(self, x):
+        self.stop = float(x)
+        self.afterChange()
+
+    def onStepsChange(self, x):
+        self.steps = int(x)
+        self.afterChange()
+
+    def afterChange(self):
+        if self.start > self.stop:
+            self.start = self.stop
+        if self.start == self.stop:
+            self.steps = 1
+            self.register()
+
     def toggle(self):
-        if self.active:
-            self.input.text = self.input.text if self.input.text else self.initialText
-            self.text = self.input.text
-            self.onChange(self.text)
+        # if self.active:
+        # self.input.text = self.input.text if self.input.text else self.initialValue
+        # self.text = self.input.text
+        # self.onChange(self.text)
         self.active = not self.active
         self.update()
 
@@ -187,12 +212,3 @@ class ExpandableInput(Component):
     def setSize(self, size):
         self.size = size
         self.update()
-
-    def onKeyPress(self, key):
-        if not self.active:
-            return
-        if key == "return":
-            self.input.deleteCaretLeft()
-            self.toggle()
-        else:
-            self.update()

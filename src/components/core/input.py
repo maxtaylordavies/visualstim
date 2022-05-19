@@ -11,7 +11,7 @@ class TextInput(Component):
         self,
         window: Window,
         id: str,
-        text: str,
+        value: Any,
         labelText: str,
         pos: List[int],
         size=[None, None],
@@ -21,8 +21,7 @@ class TextInput(Component):
         highlight=True,
     ) -> None:
         super().__init__(window, id, pos, size, zIndex)
-        self.initialText = text
-        self.text = text
+        self.initialValue = self.value = value
         self.labelText = labelText
         self.onChange = onChange
         self.active = False
@@ -32,7 +31,7 @@ class TextInput(Component):
     def register(self, text="$"):
         self.input = TextBox2(
             self.window,
-            text if text != "$" else self.text,
+            text if text != "$" else str(self.value),
             "Open Sans",
             units="pix",
             letterHeight=18,
@@ -96,9 +95,11 @@ class TextInput(Component):
 
     def toggle(self):
         if self.active:
-            self.input.text = self.input.text if self.input.text else self.initialText
-            self.text = self.input.text
-            self.onChange(self.text)
+            self.input.text = (
+                self.input.text if self.input.text else str(self.initialValue)
+            )
+            self.value = type(self.initialValue)(self.input.text)
+            self.onChange(self.value)
         self.active = not self.active
         self.update()
 
