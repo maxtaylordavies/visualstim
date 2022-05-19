@@ -51,7 +51,6 @@ class Component:
     def onClick(self, mouse: Mouse, component: Any) -> None:
         for c in self.sortChildren()[::-1]:
             if c.contains(mouse) and hasattr(c, "onClick"):
-                print(c.id)
                 c.onClick(mouse, c)
                 return
             elif hasattr(c, "active") and c.active:

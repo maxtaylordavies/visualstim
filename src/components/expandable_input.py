@@ -112,6 +112,38 @@ class ExpandableInput(Component):
             self.startInput.pos[1] - 35,
         ]
 
+        self.stopInput = TextInput(
+            self.window,
+            f"{self.id}-start-input",
+            self.text,
+            "stop",
+            labelPos,
+            zIndex=20,
+            fill=LIGHTGREY,
+            highlight=False,
+        )
+        self.stopInput.register()
+        self.stopInput.pos = [
+            left + 5 + self.startInput.getSize()[0] + (self.stopInput.getSize()[0] / 2),
+            self.startInput.pos[1],
+        ]
+
+        self.stepsInput = TextInput(
+            self.window,
+            f"{self.id}-start-input",
+            "1",
+            "steps",
+            labelPos,
+            zIndex=20,
+            fill=LIGHTGREY,
+            highlight=False,
+        )
+        self.stepsInput.register()
+        self.stepsInput.pos = [
+            left + 5 + self.stepsInput.getSize()[0] / 2,
+            self.stepsInput.pos[1] - 35 - self.startInput.getSize()[1],
+        ]
+
         self.randomiseButton = Button(
             self.window, "temp-button", "temp", WHITE, GREEN, boxPos
         )
@@ -125,7 +157,7 @@ class ExpandableInput(Component):
                 [right - left + 2, self.input.size[1] + boxHeightDiff],
                 borderColor=GREEN,
                 borderWidth=3,
-                children=[self.label, self.startInput],
+                children=[self.label, self.startInput, self.stopInput, self.stepsInput],
                 onClick=lambda a, b: self.toggle(),
             )
         ]

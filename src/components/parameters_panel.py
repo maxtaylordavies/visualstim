@@ -6,6 +6,7 @@ from psychopy.visual import Window
 from .expandable_input import ExpandableInput
 from src.components.core import Component, Panel, Switch
 from .core.input import TextInput
+from src.constants import CYCLEABLE_PARAMETERS
 
 
 class ParametersPanel(Component):
@@ -49,7 +50,7 @@ class ParametersPanel(Component):
                         self.makeFunc(k),
                     )
                     if type(v) == bool
-                    else ExpandableInput(
+                    else (ExpandableInput if k in CYCLEABLE_PARAMETERS else TextInput)(
                         self.window,
                         f"{'-'.join(k.split(' '))}-input",
                         str(v),
