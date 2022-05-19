@@ -18,14 +18,12 @@ class Panel(Component):
         rows=1,
         padding=15,
     ) -> None:
-        super().__init__(window, id, pos)
+        super().__init__(window, id, pos=pos, children=children)
         self.label = label
-        self.children = children
         self.padding = padding
         self.rows = rows
 
-        for c in self.children:
-            c.register()
+        super().register()
 
         childrenPerRow = math.ceil(len(self.children) / self.rows)
 

@@ -18,15 +18,14 @@ class Button(Component):
         size=[None, None],
         bold=True,
         padding=2,
-        onClick=noOp,
+        onClick=None,
     ) -> None:
-        super().__init__(window, id, pos, size)
+        super().__init__(window, id, pos, size, onClick=onClick)
         self.text = text
         self.color = color
         self.fill = fill
         self.bold = bold
         self.padding = padding
-        self.onClick = onClick
         self.borderWidth = 0
 
     def register(self):
@@ -41,12 +40,10 @@ class Button(Component):
                 colorSpace="rgb255",
                 color=self.color,
                 fillColor=self.fill,
-                # borderColor=self.fill,
                 bold=self.bold,
                 padding=self.padding,
                 size=self.size,
                 pos=self.pos,
-                # borderWidth=self.borderWidth,
             )
         ]
 
@@ -70,9 +67,8 @@ class PlayButton(Component):
     def __init__(
         self, window: Window, id: str, radius: int, pos: List[int], onClick=noOp,
     ) -> None:
-        super().__init__(window, id, pos)
+        super().__init__(window, id, pos, onClick=onClick)
         self.radius = radius
-        self.onClick = onClick
         self.state = "play"
 
     def register(self):

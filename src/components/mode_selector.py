@@ -11,7 +11,7 @@ class ModeSelector(Component):
     def __init__(
         self, window: Window, id: str, pos: List[int], mode: str, callback: Any
     ) -> None:
-        super().__init__(window, id, pos)
+        super().__init__(window, id, pos, onClick=lambda a, b: self.callback())
         self.mode = mode
         self.callback = callback
 
@@ -56,7 +56,4 @@ class ModeSelector(Component):
                 [80 if self.mode == "interactive" else 65, 2],
             ),
         ]
-        self.children[-1].register()
-
-    def onClick(self, mouse: Mouse, component: Any) -> None:
-        self.callback()
+        super().register()

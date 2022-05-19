@@ -3,7 +3,7 @@ from typing import Any, Dict, List
 
 from psychopy.visual import Window
 
-from .parameter_input import ParameterInput
+from .expandable_input import ExpandableInput
 from src.components.core import Component, Panel, Switch
 from .core.input import TextInput
 
@@ -49,7 +49,7 @@ class ParametersPanel(Component):
                         self.makeFunc(k),
                     )
                     if type(v) == bool
-                    else ParameterInput(
+                    else ExpandableInput(
                         self.window,
                         f"{'-'.join(k.split(' '))}-input",
                         str(v),

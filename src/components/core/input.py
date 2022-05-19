@@ -16,13 +16,18 @@ class TextInput(Component):
         pos: List[int],
         size=[None, None],
         onChange=noOp,
+        zIndex=0,
+        fill=WHITE,
+        highlight=True,
     ) -> None:
-        super().__init__(window, id, pos, size)
+        super().__init__(window, id, pos, size, zIndex)
         self.initialText = text
         self.text = text
         self.labelText = labelText
         self.onChange = onChange
         self.active = False
+        self.fill = fill
+        self.highlight = highlight
 
     def register(self, text="$"):
         self.input = TextBox2(
@@ -33,8 +38,8 @@ class TextInput(Component):
             letterHeight=18,
             colorSpace="rgb255",
             color="black",
-            fillColor=WHITE,
-            borderColor=GREEN if self.active else WHITE,
+            fillColor=self.fill,
+            borderColor=GREEN if (self.active and self.highlight) else WHITE,
             borderWidth=3,
             bold=True,
             padding=5,
@@ -50,8 +55,8 @@ class TextInput(Component):
             letterHeight=18,
             colorSpace="rgb255",
             color=DARKGREY,
-            fillColor=WHITE,
-            borderColor=GREEN if self.active else WHITE,
+            fillColor=self.fill,
+            borderColor=GREEN if (self.active and self.highlight) else WHITE,
             borderWidth=3,
             bold=False,
             padding=5,
@@ -80,7 +85,7 @@ class TextInput(Component):
             self.window,
             units="pix",
             colorSpace="rgb255",
-            fillColor=WHITE,
+            fillColor=self.fill,
             size=[
                 self.input.borderWidth,
                 self.input.size[1] - self.input.borderWidth + 1,
