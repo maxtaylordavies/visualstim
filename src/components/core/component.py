@@ -49,13 +49,23 @@ class Component:
         return self.size
 
     def onClick(self, mouse: Mouse, component: Any) -> None:
-        for c in self.sortChildren()[::-1]:
+        # get list of children sorted by decreasing zIndex
+        sc = self.sortChildren()[::-1]
+
+        # deactivate any other active components
+        for c in sc:
+            if not c.contains(mouse) and hasattr(c, "active") and c.active:
+                c.toggle()
+
+        # if the cursor is inside a child component and that
+        # child component has an onClick function, then pass
+        # the event down a level and return
+        for c in sc:
             if c.contains(mouse) and hasattr(c, "onClick"):
                 c.onClick(mouse, c)
                 return
-            elif hasattr(c, "active") and c.active:
-                c.toggle()
-                return
+
+        # otherwise, handle the event at this level
         if self.onClickFallback:
             self.onClickFallback(mouse, component)
 
