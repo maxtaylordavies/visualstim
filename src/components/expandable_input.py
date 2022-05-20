@@ -1,9 +1,11 @@
 from typing import Any, List
+
+import numpy as np
 from psychopy.visual import Window, TextBox2, rect
 
 from src.components.core import Box, Button, Component, Panel
 from .core.input import TextInput
-from src.constants import DARKGREY, GREEN, LIGHTGREY, RED, WHITE
+from src.constants import DARKGREY, GREEN, LIGHTGREY, RED, WHITE, TRANSPARENT
 from src.utils import noOp
 
 
@@ -22,18 +24,22 @@ class ExpandableInput(Component):
         super().__init__(window, id, pos, size, zIndex)
         self.initialValue = self.start = self.stop = value
         self.steps = 1
+        self.random = False
         self.labelText = labelText
         self.onChange = onChange
         self.active = False
 
-    def register(self, text="$"):
-        self.registerActive() if self.active else self.registerInactive(text)
+    def register(self):
+        self.registerActive() if self.active else self.registerInactive()
         super().register()
 
-    def registerInactive(self, text):
+    def registerInactive(self):
+        text = str(self.start)
+        if self.start != self.stop:
+            text = "rand" if self.random else "cycle"
         self.input = TextBox2(
             self.window,
-            text if text != "$" else str(self.start),
+            text,
             "Open Sans",
             units="pix",
             letterHeight=18,
@@ -91,9 +97,8 @@ class ExpandableInput(Component):
     def registerActive(self):
         left, right = self.edges()
 
-        boxHeightDiff = 120 - self.getSize()[1]
+        boxHeightDiff = 116 - self.getSize()[1]
         boxPos = [self.pos[0], self.pos[1] - (boxHeightDiff / 2) + 1]
-
         labelPos = self.label.pos
 
         self.startInput = TextInput(
@@ -107,12 +112,6 @@ class ExpandableInput(Component):
             highlight=False,
             onChange=self.onStartChange,
         )
-        self.startInput.register()
-        self.startInput.pos = [
-            left + (self.startInput.getSize()[0] / 2) + 5,
-            self.startInput.pos[1] - 35,
-        ]
-
         self.stopInput = TextInput(
             self.window,
             f"{self.id}-start-input",
@@ -124,15 +123,6 @@ class ExpandableInput(Component):
             highlight=False,
             onChange=self.onStopChange,
         )
-        self.stopInput.register()
-        self.stopInput.pos = [
-            left
-            + self.startInput.getSize()[0]
-            + (self.stopInput.getSize()[0] / 2)
-            + 10,
-            self.startInput.pos[1],
-        ]
-
         self.stepsInput = TextInput(
             self.window,
             f"{self.id}-start-input",
@@ -144,14 +134,15 @@ class ExpandableInput(Component):
             highlight=False,
             onChange=self.onStepsChange,
         )
-        self.stepsInput.register()
-        self.stepsInput.pos = [
-            left + 5 + self.stepsInput.getSize()[0] / 2,
-            self.stepsInput.pos[1] - self.startInput.getSize()[1] - 40,
-        ]
-
         self.randomiseButton = Button(
-            self.window, "temp-button", "temp", WHITE, GREEN, boxPos
+            self.window,
+            "temp-button",
+            " random",
+            WHITE,
+            GREEN if self.random else LIGHTGREY,
+            labelPos,
+            size=[None, 32],
+            onClick=lambda a, b: self.toggleRandom(),
         )
 
         self.children = [
@@ -163,7 +154,24 @@ class ExpandableInput(Component):
                 [right - left + 2, self.input.size[1] + boxHeightDiff],
                 borderColor=GREEN,
                 borderWidth=3,
-                children=[self.label, self.startInput, self.stopInput, self.stepsInput],
+                children=[
+                    self.label,
+                    Panel(
+                        self.window,
+                        f"{self.id}-panel",
+                        "",
+                        [boxPos[0], boxPos[1] - 16],
+                        [
+                            self.startInput,
+                            self.stopInput,
+                            self.stepsInput,
+                            self.randomiseButton,
+                        ],
+                        rows=2,
+                        padding=8,
+                        background=TRANSPARENT,
+                    ),
+                ],
                 onClick=lambda a, b: self.toggle(),
             )
         ]
@@ -180,6 +188,10 @@ class ExpandableInput(Component):
         self.steps = int(x)
         self.afterChange()
 
+    def toggleRandom(self):
+        self.random = not self.random
+        self.register()
+
     def afterChange(self):
         if self.start > self.stop:
             self.start = self.stop
@@ -187,18 +199,20 @@ class ExpandableInput(Component):
             self.steps = 1
             self.register()
 
-    def toggle(self):
-        # if self.active:
-        # self.input.text = self.input.text if self.input.text else self.initialValue
-        # self.text = self.input.text
-        # self.onChange(self.text)
-        self.active = not self.active
-        self.update()
+    def generateValues(self):
+        if self.start == self.stop:
+            return [self.start]
+        vals = np.linspace(self.start, self.stop, self.steps)
+        if self.random:
+            np.random.shuffle(vals)
+        return list(vals)
 
-    def update(self):
-        self.register(text=self.input.text)
+    def toggle(self):
+        if self.active:
+            self.onChange(self.generateValues())
+        self.active = not self.active
+        self.register()
         self.draw()
-        self.input.hasFocus = self.active
 
     def edges(self):
         rightEdge = self.input.pos[0] + (self.input.size[0] / 2)
@@ -211,4 +225,5 @@ class ExpandableInput(Component):
 
     def setSize(self, size):
         self.size = size
-        self.update()
+        self.register()
+        self.draw()

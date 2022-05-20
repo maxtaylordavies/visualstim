@@ -18,6 +18,7 @@ STIMULUS_PARAMETER_MAP = {
 }
 CYCLEABLE_PARAMETERS = {"spatial frequency", "temporal frequency", "orientation"}
 
+TRANSPARENT = [0, 0, 0, 0]
 BLACK = [0, 0, 0]
 WHITE = [255, 255, 255]
 GREY = [127, 127, 127]

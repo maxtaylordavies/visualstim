@@ -185,6 +185,7 @@ class Interface:
 
     def setStimulusParameter(self, key: str, value: Any) -> None:
         self.experiment.stimuli[0]["params"][key] = value
+        print(self.experiment.stimuli)
 
     def setSyncParameter(self, key: str, value: Any) -> None:
         if key == "sync":

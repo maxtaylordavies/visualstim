@@ -12,16 +12,18 @@ class Panel(Component):
         self,
         window: Window,
         id: str,
-        label: str,
+        labelText: str,
         pos: List[int],
         children: List[Any],
         rows=1,
         padding=15,
+        background=LIGHTGREY,
     ) -> None:
         super().__init__(window, id, pos=pos, children=children)
-        self.label = label
-        self.padding = padding
+        self.labelText = labelText
         self.rows = rows
+        self.padding = padding
+        self.background = background
 
         super().register()
 
@@ -65,6 +67,12 @@ class Panel(Component):
                 self.children[i].pos = [x, y]
                 x += self.children[i].getSize()[0] / 2
 
-        self.box = Box(self.window, f"{id}-box", LIGHTGREY, self.pos, self.size)
-        self.label = Label(self.window, f"{id}-label", self.label, self.pos, self.size)
-        self.children = [self.box, self.label] + self.children
+        self.box = Box(self.window, f"{id}-box", self.background, self.pos, self.size)
+        children = [self.box]
+
+        if labelText:
+            children.append(
+                Label(self.window, f"{id}-label", self.labelText, self.pos, self.size)
+            )
+
+        self.children = children + self.children
