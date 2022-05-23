@@ -9,6 +9,8 @@ from src.constants import (
     PURPLE,
     YELLOW,
     RED,
+    GREEN,
+    PALEGREEN,
 )
 from src.components.core import Button, Component, PlayButton
 from src.components import (
@@ -18,6 +20,7 @@ from src.components import (
     SyncPanel,
     SyncSquares,
     ScriptSelector,
+    SaveButton,
 )
 from src.utils import checkForEsc
 from src.experiments import (
@@ -53,7 +56,7 @@ class Interface:
         # controls whether to close the interface
         self.quit = False
 
-        # flag for whether we're currently showing stimulus
+        # flag for whether we're currently playing and experiment
         self.playing = False
 
         # load default experiment
@@ -81,7 +84,11 @@ class Interface:
                 self.toggleMode,
             ),
             PlayButton(
-                self.controlWindow, "play-button", 16, [175, 270], self.onStartClicked
+                self.controlWindow,
+                "play-button",
+                16,
+                [100, 270] if self.mode == "interactive" else [175, 270],
+                self.onStartClicked,
             ),
             Button(
                 self.controlWindow,
@@ -112,6 +119,7 @@ class Interface:
 
     def interactiveModeComponents(self) -> List[Component]:
         return [
+            SaveButton(self.controlWindow, [156, 270], self.saveParameters,),
             StimulusPanel(
                 self.controlWindow,
                 "stimulus-panel",
@@ -146,6 +154,9 @@ class Interface:
         self.loadExperiment("default.json")
         self.createComponents()
 
+    def saveParameters(self):
+        print("save clicked")
+
     def loadExperiment(self, filename):
         self.experiment = _loadExperiment(self.displayWindow, self.frameRate, filename)
         if self.experiment.syncSettings["sync"]:
@@ -173,19 +184,26 @@ class Interface:
     def selectStimulusType(self, x):
         # set stimulus type
         self.experiment.stimuli[0]["name"] = x
-
         # update the parameters shown in the params panel
         paramsPanelIdx = self.getComponentIndexById("stim-params-panel")
         if paramsPanelIdx != -1:
             self.components[paramsPanelIdx].resetParams(self.filterStimulusParams())
+        self.afterParameterChange()
 
     def setStimulusParameter(self, key: str, value: Any) -> None:
         self.experiment.stimuli[0]["params"][key] = value
+        self.afterParameterChange()
 
     def setSyncParameter(self, key: str, value: Any) -> None:
         if key == "sync":
             self.createSyncSquares() if value else self.removeSyncSquares()
         self.experiment.syncSettings[key] = value
+        self.afterParameterChange()
+
+    def afterParameterChange(self):
+        saveButtonId = self.getComponentIndexById("save-button")
+        if saveButtonId != -1:
+            self.components[saveButtonId].setUnsaved()
 
     def getComponentIndexById(self, id: str) -> int:
         for i, c in enumerate(self.components):

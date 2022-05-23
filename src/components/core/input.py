@@ -121,7 +121,7 @@ class TextInput(Component):
         self.size = size
         self.update()
 
-    def onClick(self, mouse, input):
+    def onClick(self, *args):
         self.toggle()
 
     def onKeyPress(self, key):

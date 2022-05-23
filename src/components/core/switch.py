@@ -23,7 +23,7 @@ class Switch(Component):
         self.callback = callback
         self.padding = 2
 
-    def onClick(self, mouse: Mouse, button: Button):
+    def onClick(self, *args):
         self.value = not self.value
         self.callback(self.value)
         self.register()

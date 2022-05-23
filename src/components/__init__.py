@@ -6,3 +6,4 @@ from .core.input import TextInput
 from .sync_squares import SyncSquares
 from .mode_selector import ModeSelector
 from .script_selector import ScriptSelector
+from .save_button import SaveButton
