@@ -1,3 +1,4 @@
+import itertools
 import json
 import pathlib
 from typing import Any, Dict, List, Optional
@@ -52,6 +53,30 @@ def loadExperiment(window: Window, frameRate: float, filename: str) -> Experimen
     )
 
 
+def unrollExperiment(exp: Experiment) -> Experiment:
+    params = parseParams(exp.stimuli[0]["params"])
+    listKeys = [k for k, v in params.items() if type(v) == list]
+
+    print(params)
+
+    if listKeys:
+        stimuli = []
+        for combo in itertools.product(*[params[k] for k in listKeys]):
+            stimuli.append(
+                {
+                    "name": exp.stimuli[0]["name"],
+                    "params": {
+                        **params,
+                        **{listKeys[i]: combo[i] for i in range(len(listKeys))},
+                    },
+                }
+            )
+    else:
+        stimuli = [{"name": exp.stimuli[0]["name"], "params": params}]
+
+    return Experiment(exp.name, exp.syncSettings, stimuli)
+
+
 def playExperiment(
     window: Window,
     experiment: Experiment,
@@ -61,6 +86,10 @@ def playExperiment(
     shouldTerminate: Any = checkForEsc,
 ):
     window.color = STIMULATION_BACKGROUND_COLOR
+
+    # unroll the experiment if necessary - i.e. if experiment consists of a single stimulus
+    # type but with multiple values for at least one parameter, we unroll into multiple stimuli
+    experiment = unrollExperiment(experiment)
 
     # create stimuli objects from descriptions
     stimuli = list(map(lambda s: createStim(s, window, frameRate), experiment.stimuli))

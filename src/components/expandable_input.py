@@ -36,7 +36,7 @@ class ExpandableInput(Component):
     def registerInactive(self):
         text = str(self.start)
         if self.start != self.stop:
-            text = "rand" if self.random else "cycle"
+            text = "rand" if self.random else "multi"
         self.input = TextBox2(
             self.window,
             text,
@@ -201,7 +201,7 @@ class ExpandableInput(Component):
 
     def generateValues(self):
         if self.start == self.stop:
-            return [self.start]
+            return self.start
         vals = np.linspace(self.start, self.stop, self.steps)
         if self.random:
             np.random.shuffle(vals)

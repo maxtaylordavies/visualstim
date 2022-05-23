@@ -4,7 +4,6 @@ from typing import Any, List
 from psychopy import visual, event
 
 from src.constants import (
-    DEFAULT_PARAMS,
     STIMULUS_PARAMETER_MAP,
     WHITE,
     PURPLE,
@@ -20,11 +19,8 @@ from src.components import (
     SyncSquares,
     ScriptSelector,
 )
-from src.stimuli import Stimulus, DriftingGrating, StaticGrating, Movie
 from src.utils import checkForEsc
 from src.experiments import (
-    str2Stim,
-    Experiment,
     playExperiment,
     loadExperiment as _loadExperiment,
 )
@@ -185,7 +181,6 @@ class Interface:
 
     def setStimulusParameter(self, key: str, value: Any) -> None:
         self.experiment.stimuli[0]["params"][key] = value
-        print(self.experiment.stimuli)
 
     def setSyncParameter(self, key: str, value: Any) -> None:
         if key == "sync":
