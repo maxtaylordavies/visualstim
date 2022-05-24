@@ -12,41 +12,42 @@ class Panel(Component):
         self,
         window: Window,
         id: str,
-        label: str,
+        labelText: str,
         pos: List[int],
         children: List[Any],
         rows=1,
         padding=15,
+        background=LIGHTGREY,
     ) -> None:
-        self.window = window
-        self.id = id
-        self.label = label
-        self.pos = pos
-        self.children = children
-        self.padding = padding
+        super().__init__(window, id, pos=pos, children=children)
+        self.labelText = labelText
         self.rows = rows
+        self.padding = padding
+        self.background = background
 
-        for c in self.children:
-            c.register()
+        super().register()
 
         childrenPerRow = math.ceil(len(self.children) / self.rows)
 
         if self.rows > 1:
-            maxChildWidth = max(map(lambda c: c.size()[0], self.children))
-            maxChildHeight = max(map(lambda c: c.size()[1], self.children))
+            maxChildWidth = max(map(lambda c: c.getSize()[0], self.children))
+            maxChildHeight = max(map(lambda c: c.getSize()[1], self.children))
             for i in range(len(self.children)):
                 self.children[i].setSize([maxChildWidth, maxChildHeight])
 
             width = (childrenPerRow * (maxChildWidth + self.padding)) + self.padding
             height = (
-                self.rows * (self.children[0].size()[1] + self.padding) + self.padding
+                self.rows * (self.children[0].getSize()[1] + self.padding)
+                + self.padding
             )
         else:
             # compute dimensions of panel based on children
-            width = sum(map(lambda c: c.size()[0], self.children)) + (
+            width = sum(map(lambda c: c.getSize()[0], self.children)) + (
                 self.padding * (len(self.children) + 1)
             )
-            height = max(map(lambda c: c.size()[1], self.children)) + (self.padding * 2)
+            height = max(map(lambda c: c.getSize()[1], self.children)) + (
+                self.padding * 2
+            )
 
         self.size = [width, height]
 
@@ -56,16 +57,22 @@ class Panel(Component):
             y = (
                 self.pos[1]
                 + (self.size[1] / 2)
-                - (r + 1) * (self.children[0].size()[1] / 2)
+                - (r + 1) * (self.children[0].getSize()[1] / 2)
                 - (2 * r + 1) * padding
             )
             for i in range(
                 r * childrenPerRow, min((r + 1) * childrenPerRow, len(children))
             ):
-                x += self.children[i].size()[0] / 2 + padding
+                x += self.children[i].getSize()[0] / 2 + padding
                 self.children[i].pos = [x, y]
-                x += self.children[i].size()[0] / 2
+                x += self.children[i].getSize()[0] / 2
 
-        self.box = Box(self.window, f"{id}-box", LIGHTGREY, self.pos, self.size)
-        self.label = Label(self.window, f"{id}-label", self.label, self.pos, self.size)
-        self.children = [self.box, self.label] + self.children
+        self.box = Box(self.window, f"{id}-box", self.background, self.pos, self.size)
+        children = [self.box]
+
+        if labelText:
+            children.append(
+                Label(self.window, f"{id}-label", self.labelText, self.pos, self.size)
+            )
+
+        self.children = children + self.children

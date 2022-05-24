@@ -3,8 +3,10 @@ from typing import Any, Dict, List
 
 from psychopy.visual import Window
 
+from .expandable_input import ExpandableInput
 from src.components.core import Component, Panel, Switch
 from .core.input import TextInput
+from src.constants import CYCLEABLE_PARAMETERS
 
 
 class ParametersPanel(Component):
@@ -16,23 +18,22 @@ class ParametersPanel(Component):
         callback: Any,
         initialParams: Dict,
     ) -> None:
-        self.window = window
-        self.id = id
-        self.pos = pos
+        super().__init__(window, id, pos)
         self.callback = callback
         self.params = initialParams
 
-    def cast(self, k, x):
+    def helper(self, k, x):
         if k not in self.params:
             return None
-        if x == "":
+        if not x:
             return self.params[k]
-        return type(self.params[k])(x)
+        return x
 
     def makeFunc(self, k):
-        return lambda x: self.callback(k, self.cast(k, x))
+        return lambda x: self.callback(k, self.helper(k, x))
 
     def register(self):
+        l = len(self.params.keys())
         self.children = [
             Panel(
                 self.window,
@@ -49,17 +50,18 @@ class ParametersPanel(Component):
                         self.makeFunc(k),
                     )
                     if type(v) == bool
-                    else TextInput(
+                    else (ExpandableInput if k in CYCLEABLE_PARAMETERS else TextInput)(
                         self.window,
                         f"{'-'.join(k.split(' '))}-input",
-                        str(v),
+                        v,
                         k,
                         self.pos,
                         onChange=self.makeFunc(k),
+                        zIndex=l - i,
                     )
-                    for k, v in list(self.params.items())
+                    for i, (k, v) in enumerate(self.params.items())
                 ],
-                rows=math.ceil(len(self.params.keys()) / 2),
+                rows=math.ceil(l / 2),
             )
         ]
         for c in self.children:

@@ -17,21 +17,19 @@ class SyncPanel(Component):
         callback: Any,
         initialParams: Dict,
     ) -> None:
-        self.window = window
-        self.id = id
-        self.pos = pos
+        super().__init__(window, id, pos)
         self.callback = callback
         self.params = initialParams
 
-    def cast(self, k, x):
+    def helper(self, k, x):
         if k not in self.params:
             return None
-        if x == "":
+        if not x:
             return self.params[k]
-        return type(self.params[k])(x)
+        return x
 
     def makeFunc(self, k):
-        return lambda x: self.callback(k, self.cast(k, x))
+        return lambda x: self.callback(k, self.helper(k, x))
 
     def register(self):
         self.children = [

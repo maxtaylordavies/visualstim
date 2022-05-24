@@ -11,33 +11,34 @@ class TextInput(Component):
         self,
         window: Window,
         id: str,
-        text: str,
+        value: Any,
         labelText: str,
         pos: List[int],
         size=[None, None],
         onChange=noOp,
+        zIndex=0,
+        fill=WHITE,
+        highlight=True,
     ) -> None:
-        self.window = window
-        self.id = id
-        self.initialText = text
-        self.text = text
+        super().__init__(window, id, pos, size, zIndex)
+        self.initialValue = self.value = value
         self.labelText = labelText
-        self._size = size
-        self.pos = pos
         self.onChange = onChange
         self.active = False
+        self.fill = fill
+        self.highlight = highlight
 
     def register(self, text="$"):
         self.input = TextBox2(
             self.window,
-            text if text != "$" else self.text,
+            text if text != "$" else str(self.value),
             "Open Sans",
             units="pix",
             letterHeight=18,
             colorSpace="rgb255",
             color="black",
-            fillColor=WHITE,
-            borderColor=GREEN if self.active else WHITE,
+            fillColor=self.fill,
+            borderColor=GREEN if (self.active and self.highlight) else WHITE,
             borderWidth=3,
             bold=True,
             padding=5,
@@ -53,8 +54,8 @@ class TextInput(Component):
             letterHeight=18,
             colorSpace="rgb255",
             color=DARKGREY,
-            fillColor=WHITE,
-            borderColor=GREEN if self.active else WHITE,
+            fillColor=self.fill,
+            borderColor=GREEN if (self.active and self.highlight) else WHITE,
             borderWidth=3,
             bold=False,
             padding=5,
@@ -65,9 +66,9 @@ class TextInput(Component):
         self.label.pos[0] -= (self.label.size[0] + self.input.size[0]) / 2
         self.input.pos[0] -= self.label.padding + self.input.padding
 
-        if self._size != [None, None]:
-            diffx = self._size[0] - self.size()[0] if self._size[0] else 0
-            diffy = self._size[1] - self.size()[1] if self._size[1] else 0
+        if self.size != [None, None]:
+            diffx = self.size[0] - self.getSize()[0] if self.size[0] else 0
+            diffy = self.size[1] - self.getSize()[1] if self.size[1] else 0
 
             self.input.size = [self.input.size[0] + diffx, self.input.size[1] + diffy]
             self.input.pos = [self.input.pos[0] + (diffx / 2), self.input.pos[1]]
@@ -83,7 +84,7 @@ class TextInput(Component):
             self.window,
             units="pix",
             colorSpace="rgb255",
-            fillColor=WHITE,
+            fillColor=self.fill,
             size=[
                 self.input.borderWidth,
                 self.input.size[1] - self.input.borderWidth + 1,
@@ -94,9 +95,11 @@ class TextInput(Component):
 
     def toggle(self):
         if self.active:
-            self.input.text = self.input.text if self.input.text else self.initialText
-            self.text = self.input.text
-            self.onChange(self.text)
+            self.input.text = (
+                self.input.text if self.input.text else str(self.initialValue)
+            )
+            self.value = type(self.initialValue)(self.input.text)
+            self.onChange(self.value)
         self.active = not self.active
         self.update()
 
@@ -110,15 +113,15 @@ class TextInput(Component):
         leftEdge = self.label.pos[0] - (self.label.size[0] / 2)
         return [leftEdge, rightEdge]
 
-    def size(self):
+    def getSize(self):
         leftEdge, rightEdge = self.edges()
         return [rightEdge - leftEdge, self.input.size[1]]
 
     def setSize(self, size):
-        self._size = size
+        self.size = size
         self.update()
 
-    def onClick(self, mouse, input):
+    def onClick(self, *args):
         self.toggle()
 
     def onKeyPress(self, key):

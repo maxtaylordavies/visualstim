@@ -16,7 +16,9 @@ STIMULUS_PARAMETER_MAP = {
     "static grating": ["spatial frequency", "orientation", "stimulus duration"],
     "movie": ["stimulus duration", "filename", "fit screen"],
 }
+CYCLEABLE_PARAMETERS = {"spatial frequency", "temporal frequency", "orientation"}
 
+TRANSPARENT = [0, 0, 0, 0]
 BLACK = [0, 0, 0]
 WHITE = [255, 255, 255]
 GREY = [127, 127, 127]
@@ -29,6 +31,7 @@ RED = [255, 64, 64]
 PURPLE = [125, 76, 219]
 PALEGREEN = [205, 255, 237]
 PALERED = [255, 207, 207]
+MEDIUMGREEN = [145, 248, 212]
 
 WINDOW_WIDTH = 1440
 WINDOW_HEIGHT = 900

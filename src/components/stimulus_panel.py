@@ -9,8 +9,7 @@ from src.components.core import Component, Panel, Button
 
 class StimulusPanel(Component):
     def __init__(self, window: Window, id: str, pos: List[int], callback: Any) -> None:
-        self.window = window
-        self.id = id
+        super().__init__(window, id, pos)
 
         def onClick(mouse: Mouse, button: Button):
             for i, c in enumerate(self.panel.children):
@@ -25,7 +24,7 @@ class StimulusPanel(Component):
             self.window,
             self.id,
             "stimulus type",
-            pos,
+            self.pos,
             children=[
                 Button(
                     self.window,
@@ -33,7 +32,7 @@ class StimulusPanel(Component):
                     "drifting grating",
                     WHITE,
                     GREEN,
-                    pos,
+                    self.pos,
                     padding=5,
                     onClick=onClick,
                 ),
@@ -43,7 +42,7 @@ class StimulusPanel(Component):
                     "static grating",
                     WHITE,
                     MEDIUMGREY,
-                    pos,
+                    self.pos,
                     padding=5,
                     onClick=onClick,
                 ),
@@ -53,7 +52,7 @@ class StimulusPanel(Component):
                     "    movie   ",
                     WHITE,
                     MEDIUMGREY,
-                    pos,
+                    self.pos,
                     padding=5,
                     onClick=onClick,
                 ),
