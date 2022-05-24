@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, List
 from psychopy import event
 
 from src.constants import DEFAULT_PARAMS

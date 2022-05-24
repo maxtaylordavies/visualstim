@@ -19,6 +19,7 @@ class Button(Component):
         bold=True,
         padding=2,
         onClick=None,
+        opacity=1
     ) -> None:
         super().__init__(window, id, pos, size, onClick=onClick)
         self.text = text
@@ -27,7 +28,8 @@ class Button(Component):
         self.bold = bold
         self.padding = padding
         self.borderWidth = 0
-
+        self.opacity = opacity
+        
     def register(self):
         self.children = [
             TextBox2(
@@ -44,6 +46,7 @@ class Button(Component):
                 padding=self.padding,
                 size=self.size,
                 pos=self.pos,
+                opacity=self.opacity
             )
         ]
 

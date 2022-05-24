@@ -1,5 +1,4 @@
 {
-    "name": "default experiment",
     "sync settings": {
         "sync": false,
         "trigger duration": 5.0,

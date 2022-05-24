@@ -9,8 +9,6 @@ from src.constants import (
     PURPLE,
     YELLOW,
     RED,
-    GREEN,
-    PALEGREEN,
 )
 from src.components.core import Button, Component, PlayButton
 from src.components import (
@@ -26,6 +24,7 @@ from src.utils import checkForEsc
 from src.experiments import (
     playExperiment,
     loadExperiment as _loadExperiment,
+    saveExperiment as saveExperiment,
 )
 
 
@@ -155,7 +154,7 @@ class Interface:
         self.createComponents()
 
     def saveParameters(self):
-        print("save clicked")
+        saveExperiment(self.experiment)
 
     def loadExperiment(self, filename):
         self.experiment = _loadExperiment(self.displayWindow, self.frameRate, filename)

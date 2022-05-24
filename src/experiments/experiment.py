@@ -1,3 +1,4 @@
+from datetime import datetime
 import itertools
 import json
 import pathlib
@@ -35,6 +36,9 @@ class Experiment:
         self.syncSettings = syncSettings
         self.stimuli = stimuli
 
+    def toDict(self):
+        return {"sync settings": self.syncSettings, "stimuli": self.stimuli}
+
 
 def loadExperiment(window: Window, frameRate: float, filename: str) -> Experiment:
     # TODO: check file exists / error handling
@@ -53,11 +57,18 @@ def loadExperiment(window: Window, frameRate: float, filename: str) -> Experimen
     )
 
 
+def saveExperiment(exp: Experiment, filename=""):
+    if not filename:
+        filename = f"{str(datetime.now())[:19].replace(' ', '_')}.json"
+    with open(
+        pathlib.Path().resolve().joinpath("experiments").joinpath(filename), "w"
+    ) as f:
+        json.dump(unrollExperiment(exp).toDict(), f, indent=4)
+
+
 def unrollExperiment(exp: Experiment) -> Experiment:
     params = parseParams(exp.stimuli[0]["params"])
     listKeys = [k for k, v in params.items() if type(v) == list]
-
-    print(params)
 
     if listKeys:
         stimuli = []
