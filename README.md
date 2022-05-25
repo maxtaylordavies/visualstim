@@ -20,7 +20,7 @@ This is the **visualstim control window**. It contains elements for interactivel
 
 ### Modes
 
-The visualstim software has two different usage modes: **interactive** and **scripting**. In interactive mode (enabled by default), you can use the GUI panels to play around with the parameters and display a **single stimulus**. **Scripting mode** lets you load and display a multi-stimulus sequence defined in an external file. For details on how to write such files, jump to SECTION REFERENCE
+The visualstim software has two different usage modes: **interactive** and **scripting**. In interactive mode (enabled by default), you can use the GUI panels to play around with the parameters and display a **single stimulus type**. **Scripting mode** lets you load and display a multi-stimulus sequence defined in an external file. For details on how to write such files, jump to [Scripting mode and experiment files](#scripting-mode-and-experiment-files).
 
 ### Stimulus type
 
@@ -34,7 +34,13 @@ More stimulus types will be added in future updates.
 
 ### Stimulus parameters
 
-The **stimulus parameters** panel lets you adjust the parameters of the visual stimulation. The set of parameters available to control depends on which stimulus type is currently selected - e.g. for **drifting grating** we need to know the `temporal frequency`, for **movie** we need to know the `filename` etc
+The **stimulus parameters** panel lets you adjust the parameters of the visual stimulation. The set of parameters available to control depends on which stimulus type is currently selected - e.g. for **drifting grating** we need to know the `temporal frequency`, for **movie** we need to know the `filename` etc. Some parameters, such as `stimulus duration`, can take only a single scalar value, e.g. `10.0`. Other parameters, such as `orientation` or `spatial frequency` can be given multiple values to cycle through during stimulation. For one of these parameters, clicking on their input will open an expanded box that looks like this:
+
+![expanded select box](./screenshots/v0.1/expanded-select.png)
+
+You can then select appropriate start and stop values, as well as number of steps. For example, setting `start: 0.0`, `stop: 60.0` and `steps: 4` will give you the array of orientation values `[0.0, 15.0, 30.0, 45.0, 60.0]`. Selecting `random` shuffles the order of the array.
+
+If you set multiple values for more than one parameter, then the stimulation will include all combinations of the multi-valued parameters. E.g. if you set 4 values for `orientation` and 2 values for `spatial frequency`, you will see 8 different variations of the selected stimulus.
 
 ### Sync parameters
 
@@ -50,6 +56,10 @@ In **sync mode**, clicking ![play](./screenshots/v0.1/play.png) will not begin p
 - This photodiode should be connected to the appropriate input(s) of whatever external system(s) you want to trigger
 
 After the user-defined trigger duration has elapsed, the selected stimulus will begin playing as normal. In **sync mode**, while the stimulus is playing, the **sync square** will flash white every `n` frames (where `n` is the value supplied for `sync interval`). This allows the user to send a regular synchronisation pulse to an external clock system, in order to align the stimulus frame timestamps with data from any other systems (e.g. 2P imaging data).
+
+### Saving parameters
+
+If you want to recreate/reuse a particular selection of parameters in interactive mode at a later point, you can click the ![save](./screenshots/v0.1/save-button.png) button in the top bar. This will export your selection to an **experiment file** (named according to the current date and time) in the top-level `experiments/` folder. You can then select and play this file when in **scripting mode** in order to recreate your selection.
 
 ### Scripting mode and experiment files
 
