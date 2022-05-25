@@ -70,20 +70,20 @@ def unrollExperiment(exp: Experiment) -> Experiment:
     params = parseParams(exp.stimuli[0]["params"])
     listKeys = [k for k, v in params.items() if type(v) == list]
 
-    if listKeys:
-        stimuli = []
-        for combo in itertools.product(*[params[k] for k in listKeys]):
-            stimuli.append(
-                {
-                    "name": exp.stimuli[0]["name"],
-                    "params": {
-                        **params,
-                        **{listKeys[i]: combo[i] for i in range(len(listKeys))},
-                    },
-                }
-            )
-    else:
-        stimuli = [{"name": exp.stimuli[0]["name"], "params": params}]
+    if not listKeys:
+        return exp
+
+    stimuli = []
+    for combo in itertools.product(*[params[k] for k in listKeys]):
+        stimuli.append(
+            {
+                "name": exp.stimuli[0]["name"],
+                "params": {
+                    **params,
+                    **{listKeys[i]: combo[i] for i in range(len(listKeys))},
+                },
+            }
+        )
 
     return Experiment(exp.name, exp.syncSettings, stimuli)
 
@@ -96,6 +96,7 @@ def playExperiment(
     callback: Any = None,
     shouldTerminate: Any = checkForEsc,
 ):
+
     window.color = STIMULATION_BACKGROUND_COLOR
 
     # unroll the experiment if necessary - i.e. if experiment consists of a single stimulus
@@ -135,13 +136,16 @@ def playExperiment(
             window.flip()
 
     # cycle through + display stimuli
+    stop = False
     for stimulus in stimuli:
-        playStimulus(
+        stop = playStimulus(
             window, stimulus, frameRate, syncSquares, _callback, shouldTerminate,
         )
         if syncSquares:
             syncSquares.turn_off(0)
             window.flip()
+        if stop:
+            break
 
     # reset window colour
     window.color = DEFAULT_BACKGROUND_COLOR

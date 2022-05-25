@@ -195,9 +195,11 @@ class ExpandableInput(Component):
     def afterChange(self):
         if self.start > self.stop:
             self.start = self.stop
-        if self.start == self.stop:
+        elif self.start == self.stop:
             self.steps = 1
-            self.register()
+        else:
+            self.steps = max(self.steps, 2)
+        self.register()
 
     def generateValues(self):
         if self.start == self.stop:
