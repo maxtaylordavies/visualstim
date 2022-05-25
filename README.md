@@ -1,5 +1,22 @@
 # visualstim
 
+
+---
+
+- [visualstim](#visualstim)
+  - [Getting started](#getting-started)
+  - [Basic usage](#basic-usage)
+    - [Control window vs display window](#control-window-vs-display-window)
+    - [Modes](#modes)
+    - [Stimulus type](#stimulus-type)
+    - [Stimulus parameters](#stimulus-parameters)
+    - [Sync parameters](#sync-parameters)
+    - [Saving parameters](#saving-parameters)
+    - [Scripting mode and experiment files](#scripting-mode-and-experiment-files)
+
+---
+
+
 ## Getting started
 
 1. clone this repo: `git clone https://github.com/maxtaylordavies/visualstim.git` and `cd visualstim`
