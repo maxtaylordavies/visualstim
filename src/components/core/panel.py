@@ -35,7 +35,8 @@ class Panel(Component):
             for i in range(len(self.children)):
                 self.children[i].setSize([maxChildWidth, maxChildHeight])
 
-            width = (childrenPerRow * (maxChildWidth + self.padding)) + self.padding
+            width = (childrenPerRow * (maxChildWidth + 15)) + 15
+
             height = (
                 self.rows * (self.children[0].getSize()[1] + self.padding)
                 + self.padding

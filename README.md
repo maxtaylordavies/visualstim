@@ -43,7 +43,7 @@ The visualstim software has two different usage modes: **interactive** and **scr
 
 The **stimulus type** panel lets you choose the stimulus you want to display. Currently, the options are
 
-- _drifting grating_: a sinusoidal grating that moves across the display window
+- _drift grating_: a sinusoidal grating that moves across the display window
 - _static grating_: a sinusoidal grating that does not move (i.e. is static)
 - _movie_: an arbitrary video file - should be placed in the `movies/` folder and be in a format supported by [AVbin](https://avbin.github.io/docs/) (e.g. `.mp4`, `.avi`, `.mov` etc)
 
@@ -51,7 +51,7 @@ More stimulus types will be added in future updates.
 
 ### Stimulus parameters
 
-The **stimulus parameters** panel lets you adjust the parameters of the visual stimulation. The set of parameters available to control depends on which stimulus type is currently selected - e.g. for **drifting grating** we need to know the `temporal frequency`, for **movie** we need to know the `filename` etc. Some parameters, such as `stimulus duration`, can take only a single scalar value, e.g. `10.0`. Other parameters, such as `orientation` or `spatial frequency` can be given multiple values to cycle through during stimulation. For one of these parameters, clicking on their input will open an expanded box that looks like this:
+The **stimulus parameters** panel lets you adjust the parameters of the visual stimulation. The set of parameters available to control depends on which stimulus type is currently selected - e.g. for **drift grating** we need to know the `temporal frequency`, for **movie** we need to know the `filename` etc. Some parameters, such as `stimulus duration`, can take only a single scalar value, e.g. `10.0`. Other parameters, such as `orientation` or `spatial frequency` can be given multiple values to cycle through during stimulation. For one of these parameters, clicking on their input will open an expanded box that looks like this:
 
 ![expanded select box](./screenshots/v0.1/expanded-select.png)
 
@@ -95,7 +95,7 @@ An experiment consists basically of two things: a set of _sync settings_, and se
     },
     "stimuli": [
         {
-            "name": "drifting grating",
+            "name": "drift grating",
             "params": {
                 "spatial frequency": 0.1,
                 "temporal frequency": 0.4,
@@ -119,7 +119,7 @@ Here's an example with sync and multiple stimuli:
     },
     "stimuli": [
         {
-            "name": "drifting grating",
+            "name": "drift grating",
             "params": {
                 "spatial frequency": 0.1,
                 "temporal frequency": 0.4,

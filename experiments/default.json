@@ -1,19 +1,19 @@
 {
-    "sync settings": {
-        "sync": false,
-        "trigger duration": 5.0,
-        "sync interval": 60,
-        "pulse length": 3
-    },
-    "stimuli": [
-        {
-            "name": "drifting grating",
-            "params": {
-                "spatial frequency": 0.1,
-                "temporal frequency": 0.4,
-                "orientation": 0.0,
-                "stimulus duration": 10.0
-            }
-        }
-    ]
+  "sync settings": {
+    "sync": false,
+    "trigger duration": 5.0,
+    "sync interval": 60,
+    "pulse length": 3
+  },
+  "stimuli": [
+    {
+      "name": "drift grating",
+      "params": {
+        "spatial frequency": 0.1,
+        "temporal frequency": 0.2,
+        "orientation": 0.0,
+        "stimulus duration": 10.0
+      }
+    }
+  ]
 }

@@ -1,20 +1,23 @@
 DEFAULT_PARAMS = {
     "spatial frequency": 0.1,
-    "temporal frequency": 0.4,
+    "temporal frequency": 0.2,
     "orientation": 0.0,
     "stimulus duration": 10.0,
     "filename": "test.mp4",
     "fit screen": False,
+    "scale": 0.05,
+    "sparseness": 0.7,
 }
 STIMULUS_PARAMETER_MAP = {
-    "drifting grating": [
+    "drift grating": [
         "spatial frequency",
         "temporal frequency",
         "orientation",
         "stimulus duration",
     ],
     "static grating": ["spatial frequency", "orientation", "stimulus duration"],
-    "movie": ["stimulus duration", "filename", "fit screen"],
+    "sparse noise": ["temporal frequency", "scale", "sparseness", "stimulus duration"],
+    "movie": ["filename", "fit screen", "stimulus duration"],
 }
 CYCLEABLE_PARAMETERS = {"spatial frequency", "temporal frequency", "orientation"}
 

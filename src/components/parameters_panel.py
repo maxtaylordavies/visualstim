@@ -25,7 +25,7 @@ class ParametersPanel(Component):
     def helper(self, k, x):
         if k not in self.params:
             return None
-        if not x:
+        if x == "":
             return self.params[k]
         return x
 

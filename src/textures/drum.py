@@ -10,9 +10,7 @@ AmpFactor = 0.000197
 drumgrating_Amp_sinu = 5
 
 
-def drumTexture(
-    frameRate: float, params: Dict[str, Any] = DEFAULT_PARAMS
-) -> List:
+def drum(frameRate: float, params: Dict[str, Any] = DEFAULT_PARAMS) -> List:
     pixelangle = np.empty(
         shape=[1, WINDOW_WIDTH]
     )  # pixel has to be 2D since the image is 2D

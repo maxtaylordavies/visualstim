@@ -1,11 +1,12 @@
 import copy
 from typing import Any, Dict, List, Optional
 
+import numpy as np
 from psychopy.visual import Window
 from psychopy.visual.grating import GratingStim
 
 from src.constants import WINDOW_WIDTH, DEFAULT_PARAMS
-from src.textures import drumTexture
+from src.textures import drum
 from .stimulus import Stimulus
 
 
@@ -15,8 +16,11 @@ class DriftingGrating(Stimulus):
     ):
         super().__init__(window, frameRate, params)
 
-        self.texture = drumTexture(self.frameRate, self.params)
-        self._grating = GratingStim(
+        self.texture = drum(self.frameRate, self.params)
+
+        print([np.max(self.texture[0]), np.min(self.texture[0])])
+
+        self._stim = GratingStim(
             win=self.window,
             size=[WINDOW_WIDTH, WINDOW_WIDTH],
             units="pix",
@@ -24,8 +28,8 @@ class DriftingGrating(Stimulus):
         )
 
     def drawFrame(self) -> None:
-        self._grating.tex = self.texture[self.frameIdx % len(self.texture)]
-        self._grating.draw()
+        self._stim.tex = self.texture[self.frameIdx % len(self.texture)]
+        self._stim.draw()
         self.frameIdx += 1
 
 
@@ -38,8 +42,8 @@ class StaticGrating(Stimulus):
 
         super().__init__(window, frameRate, params)
 
-        self.texture = drumTexture(self.frameRate, self.params)
-        self._grating = GratingStim(
+        self.texture = drum(self.frameRate, self.params)
+        self._stim = GratingStim(
             win=self.window,
             size=[WINDOW_WIDTH, WINDOW_WIDTH],
             units="pix",
@@ -47,6 +51,6 @@ class StaticGrating(Stimulus):
         )
 
     def drawFrame(self) -> None:
-        self._grating.tex = self.texture[self.frameIdx % len(self.texture)]
-        self._grating.draw()
+        self._stim.tex = self.texture[self.frameIdx % len(self.texture)]
+        self._stim.draw()
         self.frameIdx += 1

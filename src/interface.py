@@ -122,7 +122,7 @@ class Interface:
             StimulusPanel(
                 self.controlWindow,
                 "stimulus-panel",
-                [-123, 60],
+                [-118, 75],
                 self.selectStimulusType,
             ),
             ParametersPanel(

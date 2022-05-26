@@ -6,7 +6,14 @@ from typing import Any, Dict, List, Optional
 
 from psychopy.visual import Window
 
-from src.stimuli import Stimulus, StaticGrating, DriftingGrating, Movie, playStimulus
+from src.stimuli import (
+    Stimulus,
+    StaticGrating,
+    DriftingGrating,
+    SparseNoise,
+    Movie,
+    playStimulus,
+)
 from src.components import SyncSquares
 from src.constants import (
     DEFAULT_BACKGROUND_COLOR,
@@ -18,8 +25,9 @@ from src.utils import checkForEsc, parseParams
 def str2Stim(s: str) -> Stimulus:
     return {
         "static grating": StaticGrating,
-        "drifting grating": DriftingGrating,
+        "drift grating": DriftingGrating,
         "movie": Movie,
+        "sparse noise": SparseNoise,
     }[s]
 
 
