@@ -1,9 +1,14 @@
+from datetime import datetime
 from typing import Any, Dict
 
 import numpy as np
 from psychopy import event
 
 from src.constants import DEFAULT_PARAMS
+
+
+def log(message: str):
+    print(f"{datetime.now()}: {message}")
 
 
 def checkForEsc():

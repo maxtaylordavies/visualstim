@@ -5,15 +5,20 @@ from psychopy.event import Mouse
 
 from src.components.core import Component, Box
 from src.constants import DARKGREY, GREY
+from src.utils import log
 
 
 class ModeSelector(Component):
     def __init__(
         self, window: Window, id: str, pos: List[int], mode: str, callback: Any
     ) -> None:
-        super().__init__(window, id, pos, onClick=lambda a, b: self.callback())
+        super().__init__(window, id, pos)
         self.mode = mode
         self.callback = callback
+
+    def onClick(self, a, b):
+        log("mode_selector clicked")
+        self.callback()
 
     def register(self) -> None:
         self.children = [

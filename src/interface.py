@@ -20,7 +20,7 @@ from src.components import (
     ScriptSelector,
     SaveButton,
 )
-from src.utils import checkForEsc
+from src.utils import checkForEsc, log
 from src.experiments import (
     playExperiment,
     loadExperiment as _loadExperiment,
@@ -150,8 +150,11 @@ class Interface:
 
     def toggleMode(self) -> None:
         self.mode = ("interactive", "scripting")[self.mode == "interactive"]
+        log("loading experiment")
         self.loadExperiment("default.json")
+        log("creating components")
         self.createComponents()
+        log("done")
 
     def saveParameters(self):
         saveExperiment(self.experiment)
