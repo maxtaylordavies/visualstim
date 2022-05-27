@@ -4,6 +4,7 @@ from psychopy.visual import rect, Window, TextBox2
 
 from src.components.core import Component
 from src.constants import WHITE
+from src.utils import log
 
 
 class Box(Component):
@@ -45,6 +46,6 @@ class Box(Component):
 
     def changeColor(self, color: List[int], draw=True):
         self.color = color
-        self.register()
+        self.children[0].fillColor = self.color
         if draw:
             self.draw()

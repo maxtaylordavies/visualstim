@@ -184,12 +184,15 @@ class Interface:
         self.components = [c for c in self.components if c.id != "sync-squares"]
 
     def selectStimulusType(self, x):
+        log("setting stimulus type")
         # set stimulus type
         self.experiment.stimuli[0]["name"] = x
         # update the parameters shown in the params panel
         paramsPanelIdx = self.getComponentIndexById("stim-params-panel")
+        log(f"got paramsPanelIdx")
         if paramsPanelIdx != -1:
             self.components[paramsPanelIdx].resetParams(self.filterStimulusParams())
+        log("finished resetting params")
         self.afterParameterChange()
 
     def setStimulusParameter(self, key: str, value: Any) -> None:
