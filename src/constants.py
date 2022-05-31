@@ -9,13 +9,19 @@ DEFAULT_PARAMS = {
     "sparseness": 0.7,
 }
 STIMULUS_PARAMETER_MAP = {
+    "static grating": ["spatial frequency", "orientation", "stimulus duration"],
     "drift grating": [
         "spatial frequency",
         "temporal frequency",
         "orientation",
         "stimulus duration",
     ],
-    "static grating": ["spatial frequency", "orientation", "stimulus duration"],
+    "osc grating": [
+        "spatial frequency",
+        "temporal frequency",
+        "orientation",
+        "stimulus duration",
+    ],
     "sparse noise": ["temporal frequency", "scale", "sparseness", "stimulus duration"],
     "checkerboard": ["temporal frequency", "scale", "stimulus duration"],
     "movie": ["filename", "fit screen", "stimulus duration"],

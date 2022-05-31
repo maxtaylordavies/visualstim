@@ -29,3 +29,7 @@ def parseParams(params: Dict):
 def normalise(x):
     # normalise x to within the range [-1, 1]
     return np.nan_to_num((2 * (x - np.min(x)) / (np.max(x) - np.min(x))) - 1)
+
+
+def sinDeg(x):
+    return np.sin(x * np.pi / 180)

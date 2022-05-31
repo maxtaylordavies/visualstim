@@ -28,6 +28,16 @@ class StimulusPanel(Component):
             children=[
                 Button(
                     self.window,
+                    "stimtype-static-grating",
+                    "  static grating",
+                    WHITE,
+                    MEDIUMGREY,
+                    self.pos,
+                    padding=2,
+                    onClick=onClick,
+                ),
+                Button(
+                    self.window,
                     "stimtype-drift-grating",
                     "   drift grating",
                     WHITE,
@@ -38,8 +48,8 @@ class StimulusPanel(Component):
                 ),
                 Button(
                     self.window,
-                    "stimtype-static-grating",
-                    "  static grating",
+                    "stimtype-osc-grating",
+                    "    osc grating",
                     WHITE,
                     MEDIUMGREY,
                     self.pos,
