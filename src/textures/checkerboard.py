@@ -6,15 +6,5 @@ from src.utils import normalise
 
 
 def checkerboard(params: Dict[str, Any] = DEFAULT_PARAMS):
-    width, height = (
-        int(WINDOW_WIDTH * params["scale"]),
-        int(WINDOW_HEIGHT * params["scale"]),
-    )
-
-    m = np.ones((height, width))
-    for i in range(height):
-        for j in range(width):
-            if (i + j) % 2 == 0:
-                m[i, j] = -1
-
-    return m
+    l = int(max(WINDOW_WIDTH, WINDOW_HEIGHT) * params["scale"])
+    return 2 * (np.indices((l, l)).sum(axis=0) % 2) - 1
