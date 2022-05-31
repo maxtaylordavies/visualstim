@@ -2,7 +2,7 @@ from typing import Any, Dict
 import numpy as np
 
 from src.constants import WINDOW_WIDTH, WINDOW_HEIGHT, DEFAULT_PARAMS
-from src.utils import normalise
+from src.utils import normalise, roundToPowerOf2
 
 
 def sparseNoise(frameRate: float, params: Dict[str, Any] = DEFAULT_PARAMS):
@@ -12,7 +12,7 @@ def sparseNoise(frameRate: float, params: Dict[str, Any] = DEFAULT_PARAMS):
         frameRate * params["stimulus duration"] * params["temporal frequency"]
     )
 
-    l = int(max(WINDOW_WIDTH, WINDOW_HEIGHT) * params["scale"])
+    l = roundToPowerOf2(max(WINDOW_WIDTH, WINDOW_HEIGHT) * params["scale"])
 
     def randomMatrix():
         x = (

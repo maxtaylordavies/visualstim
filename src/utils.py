@@ -33,3 +33,11 @@ def normalise(x):
 
 def sinDeg(x):
     return np.sin(x * np.pi / 180)
+
+
+def roundToPowerOf2(x):
+    # adapted from https://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
+    x = int(x) - 1
+    for e in [1, 2, 4, 8, 16]:
+        x |= x >> e
+    return x + 1
