@@ -4,6 +4,7 @@ from psychopy.visual import Window
 from psychopy.visual.grating import GratingStim
 
 from src.constants import WINDOW_WIDTH, DEFAULT_PARAMS
+from src.utils import sinDeg
 from .stimulus import Stimulus
 
 
@@ -24,16 +25,8 @@ class StaticGrating(Stimulus):
             sf=self.params["spatial frequency"],
         )
 
-    def drawFrame(self) -> None:
-        self._stim.draw()
-        self.frameIdx += 1
-
-
-class DriftingGrating(StaticGrating):
     def updatePhase(self):
-        self._stim.phase = (self.frameIdx / self.frameRate) * self.params[
-            "temporal frequency"
-        ]
+        pass
 
     def drawFrame(self) -> None:
         # draw the grating to the screen
@@ -44,3 +37,18 @@ class DriftingGrating(StaticGrating):
 
         # increment frame counter
         self.frameIdx += 1
+
+
+class DriftingGrating(StaticGrating):
+    def updatePhase(self):
+        self._stim.phase = (self.frameIdx / self.frameRate) * self.params[
+            "temporal frequency"
+        ]
+
+
+class OscillatingGrating(StaticGrating):
+    def updatePhase(self):
+        self._stim.phase = sinDeg(
+            self.params["temporal frequency"] * self.frameIdx * (360 / self.frameRate)
+        )
+

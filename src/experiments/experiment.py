@@ -10,6 +10,7 @@ from src.stimuli import (
     Stimulus,
     StaticGrating,
     DriftingGrating,
+    OscillatingGrating,
     SparseNoise,
     Movie,
     playStimulus,
@@ -26,6 +27,7 @@ def str2Stim(s: str) -> Stimulus:
     return {
         "static grating": StaticGrating,
         "drift grating": DriftingGrating,
+        "osc grating": OscillatingGrating,
         "movie": Movie,
         "sparse noise": SparseNoise,
     }[s]
