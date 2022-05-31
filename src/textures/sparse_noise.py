@@ -1,7 +1,6 @@
 from typing import Any, Dict, List
 import numpy as np
 
-
 from src.constants import WINDOW_WIDTH, WINDOW_HEIGHT, DEFAULT_PARAMS
 from src.utils import normalise
 

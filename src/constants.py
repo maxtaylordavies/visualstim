@@ -17,6 +17,7 @@ STIMULUS_PARAMETER_MAP = {
     ],
     "static grating": ["spatial frequency", "orientation", "stimulus duration"],
     "sparse noise": ["temporal frequency", "scale", "sparseness", "stimulus duration"],
+    "checkerboard": ["temporal frequency", "scale", "stimulus duration"],
     "movie": ["filename", "fit screen", "stimulus duration"],
 }
 CYCLEABLE_PARAMETERS = {"spatial frequency", "temporal frequency", "orientation"}

@@ -12,6 +12,7 @@ from src.stimuli import (
     DriftingGrating,
     SparseNoise,
     Movie,
+    Checkerboard,
     playStimulus,
 )
 from src.components import SyncSquares
@@ -28,6 +29,7 @@ def str2Stim(s: str) -> Stimulus:
         "drift grating": DriftingGrating,
         "movie": Movie,
         "sparse noise": SparseNoise,
+        "checkerboard": Checkerboard,
     }[s]
 
 
