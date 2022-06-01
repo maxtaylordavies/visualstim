@@ -3,7 +3,7 @@ from typing import Any, Dict
 from psychopy.visual import Window
 from psychopy.visual.grating import GratingStim
 
-from src.constants import WINDOW_WIDTH, DEFAULT_PARAMS
+from src.constants import WINDOW_WIDTH, DEFAULT_PARAMS, DEG_PER_PIX
 from src.utils import sinDeg
 from .stimulus import Stimulus
 
@@ -22,7 +22,7 @@ class StaticGrating(Stimulus):
             tex="sin",
             mask=None,
             phase=0,
-            sf=self.params["spatial frequency"],
+            sf=self.params["spat freq"] * DEG_PER_PIX,
         )
 
     def updatePhase(self):
@@ -41,14 +41,12 @@ class StaticGrating(Stimulus):
 
 class DriftingGrating(StaticGrating):
     def updatePhase(self):
-        self._stim.phase = (self.frameIdx / self.frameRate) * self.params[
-            "temporal frequency"
-        ]
+        self._stim.phase = (self.frameIdx / self.frameRate) * self.params["temp freq"]
 
 
 class OscillatingGrating(StaticGrating):
     def updatePhase(self):
         self._stim.phase = sinDeg(
-            self.params["temporal frequency"] * self.frameIdx * (360 / self.frameRate)
+            self.params["temp freq"] * self.frameIdx * (360 / self.frameRate)
         )
 

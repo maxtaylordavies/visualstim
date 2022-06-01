@@ -35,13 +35,13 @@ def drum(frameRate: float, params: Dict[str, Any] = DEFAULT_PARAMS) -> List:
     inc = drumgrating_gray * drumgrating_contrast
 
     # frames to be calculated per period
-    frames = round(frameRate / params["temporal frequency"])
+    frames = round(frameRate / params["temp freq"])
 
     phase = np.array(range(int(frames)))
     phase = (
         drumgrating_Amp_sinu
         * np.sin((phase / frames) * 2 * np.pi)
-        * params["spatial frequency"]
+        * params["spat freq"]
         * 2
         * np.pi
     )
@@ -54,9 +54,7 @@ def drum(frameRate: float, params: Dict[str, Any] = DEFAULT_PARAMS) -> List:
                 (
                     drumgrating_gray
                     + inc
-                    * np.sin(
-                        pixelangle * params["spatial frequency"] * 2 * np.pi + phase[i]
-                    )
+                    * np.sin(pixelangle * params["spat freq"] * 2 * np.pi + phase[i])
                 )
                 / AmpFactor
             )

@@ -1,32 +1,33 @@
+from math import degrees, atan2
+
 DEFAULT_PARAMS = {
-    "spatial frequency": 0.1,
-    "temporal frequency": 0.2,
+    "spat freq": 0.1,
+    "temp freq": 0.2,
     "orientation": 0.0,
-    "stimulus duration": 10.0,
+    "stim duration": 10.0,
     "filename": "test.mp4",
     "fit screen": False,
     "scale": 0.05,
     "sparseness": 0.7,
 }
 STIMULUS_PARAMETER_MAP = {
-    "static grating": ["spatial frequency", "orientation", "stimulus duration"],
-    "drift grating": [
-        "spatial frequency",
-        "temporal frequency",
-        "orientation",
-        "stimulus duration",
-    ],
-    "osc grating": [
-        "spatial frequency",
-        "temporal frequency",
-        "orientation",
-        "stimulus duration",
-    ],
-    "sparse noise": ["temporal frequency", "scale", "sparseness", "stimulus duration"],
-    "checkerboard": ["temporal frequency", "scale", "stimulus duration"],
-    "movie": ["filename", "fit screen", "stimulus duration"],
+    "static grating": {"spat freq", "orientation", "stim duration"},
+    "drift grating": {"spat freq", "temp freq", "orientation", "stim duration",},
+    "osc grating": {"spat freq", "temp freq", "orientation", "stim duration",},
+    "sparse noise": {"temp freq", "scale", "sparseness", "stim duration"},
+    "checkerboard": {"temp freq", "scale", "stim duration"},
+    "movie": {"filename", "fit screen", "stim duration"},
 }
-CYCLEABLE_PARAMETERS = {"spatial frequency", "temporal frequency", "orientation"}
+UNITS_MAP = {
+    "spat freq": "cyc/deg",
+    "temp freq": "Hz",
+    "orientation": "deg",
+    "stim duration": "s",
+    "trigger duration": "s",
+    "sync interval": "frames",
+    "pulse length": "frames",
+}
+CYCLEABLE_PARAMETERS = {"spat freq", "temp freq", "orientation"}
 
 TRANSPARENT = [0, 0, 0, 0]
 BLACK = [0, 0, 0]
@@ -43,10 +44,17 @@ PALEGREEN = [205, 255, 237]
 PALERED = [255, 207, 207]
 MEDIUMGREEN = [145, 248, 212]
 
+# these two in pixels
 WINDOW_WIDTH = 1440
 WINDOW_HEIGHT = 900
+
+# these three in mm
 DISP_WIDTH = 518
 DISP_HEIGHT = 323
+DISP_DISTANCE = 300
+
+DEG_PER_PIX = degrees(atan2(DISP_HEIGHT / 2, DISP_DISTANCE)) / (WINDOW_HEIGHT / 2)
+
 PIXEL_SIZE = DISP_WIDTH / WINDOW_WIDTH
 
 DEFAULT_BACKGROUND_COLOR = WHITE

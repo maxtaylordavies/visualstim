@@ -23,13 +23,12 @@ class SparseNoise(Stimulus):
             units="pix",
             ori=self.params["orientation"],
         )
-        self.drawInterval = int(1 / self.params["temporal frequency"])
+        self.drawInterval = int(1 / self.params["temp freq"])
 
     def drawFrame(self) -> None:
         if self.frameIdx % self.drawInterval == 0:
             self._stim.tex = self.texture[
-                int(self.frameIdx * self.params["temporal frequency"])
-                % len(self.texture)
+                int(self.frameIdx * self.params["temp freq"]) % len(self.texture)
             ]
         self._stim.draw()
         self.frameIdx += 1

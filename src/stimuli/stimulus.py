@@ -29,7 +29,7 @@ def playStimulus(
     callback: Any = None,
     shouldTerminate: Any = checkForEsc,
 ) -> bool:
-    duration = stimulus["params"]["stimulus duration"] or stimulus.duration
+    duration = stimulus["params"]["stim duration"] or stimulus.duration
     for frameIdx in range(int(frameRate * duration)):
         # check if we should terminate
         if shouldTerminate():
@@ -44,5 +44,5 @@ def playStimulus(
         if syncSquares:
             syncSquares.draw()
         window.flip()
-    
+
     return False

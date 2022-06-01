@@ -122,13 +122,13 @@ class Interface:
             StimulusPanel(
                 self.controlWindow,
                 "stimulus-panel",
-                [-118, 75],
+                [-132, 75],
                 self.selectStimulusType,
             ),
             ParametersPanel(
                 self.controlWindow,
                 "stim-params-panel",
-                [-117, -67],
+                [-140, -67],
                 self.setStimulusParameter,
                 self.filterStimulusParams(),
             ),

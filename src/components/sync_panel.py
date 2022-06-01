@@ -1,11 +1,10 @@
 from typing import Any, Dict, List
 
 from psychopy.visual import Window
-from psychopy.event import Mouse
 
-from src.components.core import Component, Panel, Button, Switch
+from src.components.core import Component, Panel, Switch
 from .core.input import TextInput
-from src.constants import PALEGREEN, PALERED, RED, GREEN
+from src.utils import paramLabelWithUnits
 
 
 class SyncPanel(Component):
@@ -42,7 +41,7 @@ class SyncPanel(Component):
                     Switch(
                         self.window,
                         f"{'-'.join(k.split(' '))}-switch",
-                        k,
+                        paramLabelWithUnits(k),
                         v,
                         self.pos,
                         self.makeFunc(k),
@@ -52,7 +51,7 @@ class SyncPanel(Component):
                         self.window,
                         f"{'-'.join(k.split(' '))}-input",
                         str(v),
-                        k,
+                        paramLabelWithUnits(k),
                         self.pos,
                         onChange=self.makeFunc(k),
                     )
