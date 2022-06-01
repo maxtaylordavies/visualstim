@@ -3,10 +3,11 @@ from typing import Any, Dict, List
 
 from psychopy.visual import Window
 
-from .expandable_input import ExpandableInput
 from src.components.core import Component, Panel, Switch
+from .expandable_input import ExpandableInput
 from .core.input import TextInput
 from src.constants import CYCLEABLE_PARAMETERS
+from src.utils import paramLabelWithUnits
 
 
 class ParametersPanel(Component):
@@ -44,7 +45,7 @@ class ParametersPanel(Component):
                     Switch(
                         self.window,
                         f"{'-'.join(k.split(' '))}-switch",
-                        k,
+                        paramLabelWithUnits(k),
                         v,
                         self.pos,
                         self.makeFunc(k),
@@ -54,7 +55,7 @@ class ParametersPanel(Component):
                         self.window,
                         f"{'-'.join(k.split(' '))}-input",
                         v,
-                        k,
+                        paramLabelWithUnits(k),
                         self.pos,
                         onChange=self.makeFunc(k),
                         zIndex=l - i,

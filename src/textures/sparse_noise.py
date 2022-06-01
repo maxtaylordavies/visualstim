@@ -8,9 +8,7 @@ from src.utils import normalise, roundToPowerOf2
 def sparseNoise(frameRate: float, params: Dict[str, Any] = DEFAULT_PARAMS):
     rng = np.random.default_rng()
 
-    nFrames = round(
-        frameRate * params["stimulus duration"] * params["temporal frequency"]
-    )
+    nFrames = round(frameRate * params["stim duration"] * params["temp freq"])
 
     l = roundToPowerOf2(max(WINDOW_WIDTH, WINDOW_HEIGHT) * params["scale"])
 

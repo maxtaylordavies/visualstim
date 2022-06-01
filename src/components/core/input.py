@@ -48,7 +48,7 @@ class TextInput(Component):
         )
         self.label = TextBox2(
             self.window,
-            f"{self.labelText}:",
+            self.labelText,
             "Open Sans",
             units="pix",
             letterHeight=18,

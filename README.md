@@ -51,13 +51,13 @@ More stimulus types will be added in future updates.
 
 ### Stimulus parameters
 
-The **stimulus parameters** panel lets you adjust the parameters of the visual stimulation. The set of parameters available to control depends on which stimulus type is currently selected - e.g. for **drift grating** we need to know the `temporal frequency`, for **movie** we need to know the `filename` etc. Some parameters, such as `stimulus duration`, can take only a single scalar value, e.g. `10.0`. Other parameters, such as `orientation` or `spatial frequency` can be given multiple values to cycle through during stimulation. For one of these parameters, clicking on their input will open an expanded box that looks like this:
+The **stimulus parameters** panel lets you adjust the parameters of the visual stimulation. The set of parameters available to control depends on which stimulus type is currently selected - e.g. for **drift grating** we need to know the `temp freq`, for **movie** we need to know the `filename` etc. Some parameters, such as `stim duration`, can take only a single scalar value, e.g. `10.0`. Other parameters, such as `orientation` or `spat freq` can be given multiple values to cycle through during stimulation. For one of these parameters, clicking on their input will open an expanded box that looks like this:
 
 ![expanded select box](./screenshots/v0.1/expanded-select.png)
 
 You can then select appropriate start and stop values, as well as number of steps. For example, setting `start: 0.0`, `stop: 60.0` and `steps: 4` will give you the array of orientation values `[0.0, 15.0, 30.0, 45.0, 60.0]`. Selecting `random` shuffles the order of the array.
 
-If you set multiple values for more than one parameter, then the stimulation will include all combinations of the multi-valued parameters. E.g. if you set 4 values for `orientation` and 2 values for `spatial frequency`, you will see 8 different variations of the selected stimulus.
+If you set multiple values for more than one parameter, then the stimulation will include all combinations of the multi-valued parameters. E.g. if you set 4 values for `orientation` and 2 values for `spat freq`, you will see 8 different variations of the selected stimulus.
 
 ### Sync parameters
 
@@ -97,10 +97,10 @@ An experiment consists basically of two things: a set of _sync settings_, and se
         {
             "name": "drift grating",
             "params": {
-                "spatial frequency": 0.1,
-                "temporal frequency": 0.4,
+                "spat freq": 0.1,
+                "temp freq": 0.4,
                 "orientation": 0.0,
-                "stimulus duration": 10.0
+                "stim duration": 10.0
             }
         }
     ]
@@ -121,24 +121,24 @@ Here's an example with sync and multiple stimuli:
         {
             "name": "drift grating",
             "params": {
-                "spatial frequency": 0.1,
-                "temporal frequency": 0.4,
+                "spat freq": 0.1,
+                "temp freq": 0.4,
                 "orientation": 0.0,
-                "stimulus duration": 5.0
+                "stim duration": 5.0
             }
         },
         {
             "name": "static grating",
             "params": {
-                "spatial frequency": 0.2,
+                "spat freq": 0.2,
                 "orientation": 45.0,
-                "stimulus duration": 5.0
+                "stim duration": 5.0
             }
         },
         {
             "name": "movie",
             "params": {
-                "stimulus duration": 10.0,
+                "stim duration": 10.0,
                 "filename": "test.mp4",
                 "fit screen": false
             }

@@ -24,7 +24,7 @@ class Checkerboard(Stimulus):
             ori=self.params["orientation"],
             tex=self.texture,
         )
-        self.drawInterval = int(1 / self.params["temporal frequency"])
+        self.drawInterval = int(1 / self.params["temp freq"])
 
     def drawFrame(self) -> None:
         if self.frameIdx % self.drawInterval == 0:

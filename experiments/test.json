@@ -9,24 +9,24 @@
     {
       "name": "drift grating",
       "params": {
-        "spatial frequency": 0.1,
-        "temporal frequency": 0.4,
+        "spat freq": 0.1,
+        "temp freq": 0.4,
         "orientation": 0.0,
-        "stimulus duration": 5.0
+        "stim duration": 5.0
       }
     },
     {
       "name": "static grating",
       "params": {
-        "spatial frequency": 0.2,
+        "spat freq": 0.2,
         "orientation": 45.0,
-        "stimulus duration": 5.0
+        "stim duration": 5.0
       }
     },
     {
       "name": "movie",
       "params": {
-        "stimulus duration": 10.0,
+        "stim duration": 10.0,
         "filename": "test.mp4",
         "fit screen": false
       }
