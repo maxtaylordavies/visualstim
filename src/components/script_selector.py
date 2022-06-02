@@ -9,8 +9,8 @@ from src.constants import WHITE, GREEN, MEDIUMGREY
 
 
 class ScriptSelector(Component):
-    def __init__(self, window: Window, id: str, pos: List[int], callback: Any) -> None:
-        super().__init__(window, id, pos)
+    def __init__(self, window: Window, id: str, pos: List[int], callback: Any, hide=False) -> None:
+        super().__init__(window, id, pos, hide=hide)
         self.callback = callback
 
         expDirPath = pathlib.Path().resolve().joinpath("experiments")

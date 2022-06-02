@@ -17,7 +17,8 @@ class ModeSelector(Component):
         self.callback = callback
 
     def onClick(self, a, b):
-        log("mode_selector clicked")
+        self.mode = ("interactive", "scripting")[self.mode == "interactive"]
+        self.register()
         self.callback()
 
     def register(self) -> None:

@@ -16,6 +16,7 @@ class Component:
         zIndex: int = 0,
         children: List[Any] = [],
         onClick=None,
+        hide=False,
     ) -> None:
         self.window = window
         self.id = id
@@ -24,11 +25,15 @@ class Component:
         self.zIndex = zIndex
         self.children = children
         self.onClickFallback = onClick
+        self.hide = hide
 
     def register(self) -> None:
         for c in self.children:
             if hasattr(c, "register"):
                 c.register()
+
+    def toggleHidden(self) -> None:
+        self.hide = not self.hide
 
     def sortChildren(self) -> List:
         return sorted(
@@ -36,6 +41,8 @@ class Component:
         )
 
     def draw(self) -> None:
+        if self.hide:
+            return
         for c in self.sortChildren():
             c.draw()
 
@@ -47,6 +54,10 @@ class Component:
 
     def getSize(self):
         return self.size
+
+    def setPos(self, pos):
+        self.pos = pos
+        self.register()
 
     def onClick(self, mouse: Mouse, component: Any) -> None:
         # get list of children sorted by decreasing zIndex

@@ -19,9 +19,10 @@ class Button(Component):
         bold=True,
         padding=2,
         onClick=None,
-        opacity=1
+        opacity=1,
+        hide=False
     ) -> None:
-        super().__init__(window, id, pos, size, onClick=onClick)
+        super().__init__(window, id, pos, size, onClick=onClick, hide=hide)
         self.text = text
         self.color = color
         self.fill = fill
