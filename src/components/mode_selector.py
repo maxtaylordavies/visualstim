@@ -1,11 +1,9 @@
 from typing import Any, List
 
-from psychopy.visual import Window, TextBox2
-from psychopy.event import Mouse
+from psychopy.visual import Window
 
-from src.components.core import Component, Box
+from src.components.core import Component, Box, Textbox
 from src.constants import DARKGREY, GREY
-from src.utils import log
 
 
 class ModeSelector(Component):
@@ -23,33 +21,25 @@ class ModeSelector(Component):
 
     def register(self) -> None:
         self.children = [
-            TextBox2(
+            Textbox(
                 self.window,
+                f"{self.id}-interactive",
+                [self.pos[0] - 50, self.pos[1]],
                 "interactive",
-                "Open Sans",
-                alignment="center",
-                units="pix",
-                letterHeight=16,
-                colorSpace="rgb255",
                 color=(GREY, DARKGREY)[self.mode == "interactive"],
                 bold=self.mode == "interactive",
                 padding=2,
-                pos=[self.pos[0] - 50, self.pos[1]],
-                size=[None, None],
+                fontSize=16,
             ),
-            TextBox2(
+            Textbox(
                 self.window,
+                f"{self.id}-scripting",
+                [self.pos[0] + 28, self.pos[1]],
                 "scripting",
-                "Open Sans",
-                alignment="center",
-                units="pix",
-                letterHeight=16,
-                colorSpace="rgb255",
                 color=(GREY, DARKGREY)[self.mode == "scripting"],
                 bold=self.mode == "scripting",
                 padding=2,
-                pos=[self.pos[0] + 28, self.pos[1]],
-                size=[None, None],
+                fontSize=16,
             ),
             Box(
                 self.window,

@@ -1,7 +1,7 @@
 from typing import Any, List
-from psychopy.visual import Window, TextBox2, rect
+from psychopy.visual import Window, rect
 
-from src.components.core import Component
+from src.components.core import Component, Textbox
 from src.constants import DARKGREY, GREEN, RED, WHITE
 from src.utils import noOp
 
@@ -29,56 +29,52 @@ class TextInput(Component):
         self.highlight = highlight
 
     def register(self, text="$"):
-        self.input = TextBox2(
+        self.input = Textbox(
             self.window,
+            f"{self.id}-input",
+            self.pos,
             text if text != "$" else str(self.value),
-            "Open Sans",
-            units="pix",
-            letterHeight=18,
-            colorSpace="rgb255",
-            color="black",
-            fillColor=self.fill,
+            fill=self.fill,
             borderColor=GREEN if (self.active and self.highlight) else WHITE,
             borderWidth=3,
             bold=True,
-            padding=5,
-            size=[None, None],
-            pos=self.pos,
             editable=self.active,
         )
-        self.label = TextBox2(
+
+        self.label = Textbox(
             self.window,
+            f"{self.id}-label",
+            self.pos,
             self.labelText,
-            "Open Sans",
-            units="pix",
-            letterHeight=18,
-            colorSpace="rgb255",
             color=DARKGREY,
-            fillColor=self.fill,
+            fill=self.fill,
             borderColor=GREEN if (self.active and self.highlight) else WHITE,
             borderWidth=3,
-            bold=False,
-            padding=5,
-            size=[None, None],
-            pos=self.pos,
         )
 
-        self.label.pos[0] -= (self.label.size[0] + self.input.size[0]) / 2
-        self.input.pos[0] -= self.label.padding + self.input.padding
+        labelSize, inputSize = self.label.size, self.input.size
+        self.label.setPos(
+            [self.label.pos[0] - (labelSize[0] + inputSize[0]) / 2, self.label.pos[1]]
+        )
+        self.input.setPos(
+            [
+                self.input.pos[0] - self.label.padding + self.input.padding,
+                self.input.pos[1],
+            ]
+        )
 
         if self.size != [None, None]:
             diffx = self.size[0] - self.getSize()[0] if self.size[0] else 0
             diffy = self.size[1] - self.getSize()[1] if self.size[1] else 0
 
-            self.input.size = [self.input.size[0] + diffx, self.input.size[1] + diffy]
-            self.input.pos = [self.input.pos[0] + (diffx / 2), self.input.pos[1]]
-            self.label.size = [self.label.size[0], self.label.size[1] + diffy]
+            self.input.setSize([inputSize[0] + diffx, inputSize[1] + diffy])
+            self.input.setPos([self.input.pos[0] + (diffx / 2), self.input.pos[1]])
+            self.label.setSize([labelSize[0], labelSize[1] + diffy])
 
         left, right = self.edges()
         center = (left + right) / 2
-
-        self.label.pos[0] += self.pos[0] - center
-        self.input.pos[0] += self.pos[0] - center
+        self.label.setPos([self.label.pos[0] + self.pos[0] - center, self.label.pos[1]])
+        self.input.setPos([self.input.pos[0] + self.pos[0] - center, self.input.pos[1]])
 
         self.mask = rect.Rect(
             self.window,
@@ -95,16 +91,16 @@ class TextInput(Component):
 
     def toggle(self):
         if self.active:
-            self.input.text = (
-                self.input.text if self.input.text else str(self.initialValue)
+            self.input.setText(
+                self.input.getText() if self.input.getText() else str(self.initialValue)
             )
-            self.value = type(self.initialValue)(self.input.text)
+            self.value = type(self.initialValue)(self.input.getText())
             self.onChange(self.value)
         self.active = not self.active
         self.update()
 
     def update(self):
-        self.register(text=self.input.text)
+        self.register(text=self.input.getText())
         self.draw()
         self.input.hasFocus = self.active
 

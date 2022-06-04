@@ -1,9 +1,9 @@
 from typing import Any, List
 
 import numpy as np
-from psychopy.visual import Window, TextBox2, rect
+from psychopy.visual import Window
 
-from src.components.core import Box, Button, Component, Panel
+from src.components.core import Box, Button, Component, Panel, Textbox
 from .core.input import TextInput
 from src.constants import DARKGREY, GREEN, LIGHTGREY, RED, WHITE, TRANSPARENT
 from src.utils import noOp
@@ -37,50 +37,41 @@ class ExpandableInput(Component):
         text = str(self.start)
         if self.start != self.stop:
             text = "rand" if self.random else "multi"
-        self.input = TextBox2(
+        self.input = Textbox(
             self.window,
+            f"{self.id}-input",
+            self.pos,
             text,
-            "Open Sans",
-            units="pix",
-            letterHeight=18,
-            colorSpace="rgb255",
-            color="black",
-            fillColor=WHITE,
             bold=True,
-            padding=5,
-            size=[None, None],
-            pos=self.pos,
             editable=self.active,
         )
-        self.label = TextBox2(
-            self.window,
-            f"{self.labelText}",
-            "Open Sans",
-            units="pix",
-            letterHeight=18,
-            colorSpace="rgb255",
-            color=DARKGREY,
-            fillColor=WHITE,
-            bold=False,
-            padding=5,
-            size=[None, None],
-            pos=self.pos,
+        self.label = Textbox(
+            self.window, f"{self.id}-label", self.pos, self.labelText, color=DARKGREY
         )
 
-        self.label.pos[0] -= (self.label.size[0] + self.input.size[0]) / 2
-        self.input.pos[0] -= self.label.padding + self.input.padding
+        labelSize, inputSize = self.label.size, self.input.size
+        self.label.setPos(
+            [self.label.pos[0] - (labelSize[0] + inputSize[0]) / 2, self.label.pos[1]]
+        )
+        self.input.setPos(
+            [
+                self.input.pos[0] - self.label.padding + self.input.padding,
+                self.input.pos[1],
+            ]
+        )
 
         if self.size != [None, None]:
             diffx = self.size[0] - self.getSize()[0] if self.size[0] else 0
             diffy = self.size[1] - self.getSize()[1] if self.size[1] else 0
-            self.input.size = [self.input.size[0] + diffx, self.input.size[1] + diffy]
-            self.input.pos = [self.input.pos[0] + (diffx / 2), self.input.pos[1]]
-            self.label.size = [self.label.size[0], self.label.size[1] + diffy]
+
+            self.input.setSize([inputSize[0] + diffx, inputSize[1] + diffy])
+            self.input.setPos([self.input.pos[0] + (diffx / 2), self.input.pos[1]])
+            self.label.setSize([labelSize[0], labelSize[1] + diffy])
 
         left, right = self.edges()
         center = (left + right) / 2
-        self.label.pos[0] += self.pos[0] - center
-        self.input.pos[0] += self.pos[0] - center
+        self.label.setPos([self.label.pos[0] + self.pos[0] - center, self.label.pos[1]])
+        self.input.setPos([self.input.pos[0] + self.pos[0] - center, self.input.pos[1]])
 
         self.children = [
             Box(

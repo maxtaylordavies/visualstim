@@ -17,6 +17,7 @@ class Component:
         children: List[Any] = [],
         onClick=None,
         hide=False,
+        clickable=True
     ) -> None:
         self.window = window
         self.id = id
@@ -26,6 +27,7 @@ class Component:
         self.children = children
         self.onClickFallback = onClick
         self.hide = hide
+        self.clickable = clickable
 
     def register(self) -> None:
         for c in self.children:
@@ -72,7 +74,7 @@ class Component:
         # child component has an onClick function, then pass
         # the event down a level and return
         for c in sc:
-            if c.contains(mouse) and hasattr(c, "onClick"):
+            if c.contains(mouse) and hasattr(c, "onClick") and c.clickable:
                 c.onClick(mouse, c)
                 return
 

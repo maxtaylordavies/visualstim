@@ -1,7 +1,8 @@
 from typing import Any, List
-from psychopy.visual import Window, TextBox2, circle
+from psychopy.visual import Window, circle
 
 from src.components.core import Component
+from .textbox import Textbox
 from src.constants import GREEN, RED, WHITE, BLACK
 from src.utils import noOp
 
@@ -20,7 +21,7 @@ class Button(Component):
         padding=2,
         onClick=None,
         opacity=1,
-        hide=False
+        hide=False,
     ) -> None:
         super().__init__(window, id, pos, size, onClick=onClick, hide=hide)
         self.text = text
@@ -30,30 +31,26 @@ class Button(Component):
         self.padding = padding
         self.borderWidth = 0
         self.opacity = opacity
-        
+
     def register(self):
         self.children = [
-            TextBox2(
+            Textbox(
                 self.window,
+                self.id,
+                self.pos,
                 f" {self.text} ",
-                "Open Sans",
-                alignment="center",
-                units="pix",
-                letterHeight=18,
-                colorSpace="rgb255",
                 color=self.color,
-                fillColor=self.fill,
+                fill=self.fill,
                 bold=self.bold,
                 padding=self.padding,
                 size=self.size,
-                pos=self.pos,
-                opacity=self.opacity
+                opacity=self.opacity,
             )
         ]
 
     def changeFill(self, fill):
         self.fill = fill
-        self.children[0].fillColor = self.fill
+        self.register()
         self.draw()
 
     def getSize(self):

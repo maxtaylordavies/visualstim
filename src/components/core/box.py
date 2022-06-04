@@ -1,8 +1,9 @@
 from typing import List
 
-from psychopy.visual import rect, Window, TextBox2
+from psychopy.visual import rect, Window
 
 from src.components.core import Component
+from .textbox import Textbox
 from src.constants import WHITE
 from src.utils import log
 
@@ -29,15 +30,13 @@ class Box(Component):
 
     def register(self):
         self.children = [
-            TextBox2(
+            Textbox(
                 self.window,
-                units="pix",
-                colorSpace="rgb255",
-                fillColor=self.color,
+                self.id,
+                self.pos,
+                "",
+                fill=self.color,
                 size=self.size,
-                pos=self.pos,
-                text="",
-                font="Courier",
                 borderColor=self.borderColor,
                 borderWidth=self.borderWidth,
             )
