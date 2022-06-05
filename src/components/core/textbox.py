@@ -13,7 +13,6 @@ class Textbox(Component):
         id: str,
         pos: List[int],
         text: str,
-        size=[None, None],
         fontSize=18,
         color=BLACK,
         fill=WHITE,
@@ -23,10 +22,10 @@ class Textbox(Component):
         borderWidth=0,
         opacity=1,
         editable=False,
-        hide=False,
         clickable=False,
+        **kwargs
     ):
-        super().__init__(window, id, pos, size, hide=hide, clickable=clickable)
+        super().__init__(window, id, pos, clickable=clickable, **kwargs)
         self.text = text
         self.fontSize = fontSize
         self.color = color
@@ -37,7 +36,6 @@ class Textbox(Component):
         self.borderWidth = borderWidth
         self.opacity = opacity
         self.editable = editable
-        self.hide = hide
 
         self.children = [
             TextBox2(
@@ -76,4 +74,13 @@ class Textbox(Component):
     def setText(self, text):
         self.text = text
         self.children[0].text = self.text
+
+    def toggleFocus(self):
+        self.children[0].hasFocus = not self.children[0].hasFocus
+
+    def deleteCaret(self, direction="left"):
+        if direction == "left":
+            self.children[0].deleteCaretLeft()
+        else:
+            self.children[0].deleteCaretRight()
 

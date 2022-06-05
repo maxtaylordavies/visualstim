@@ -17,11 +17,10 @@ class ExpandableInput(Component):
         value: float,
         labelText: str,
         pos: List[int],
-        size=[None, None],
         onChange=noOp,
-        zIndex=0,
+        **kwargs,
     ) -> None:
-        super().__init__(window, id, pos, size, zIndex)
+        super().__init__(window, id, pos, listenForKeyPresses=True, **kwargs)
         self.initialValue = self.start = self.stop = value
         self.steps = 1
         self.random = False
@@ -127,7 +126,7 @@ class ExpandableInput(Component):
         )
         self.randomiseButton = Button(
             self.window,
-            "temp-button",
+            f"{self.id}-randomise-button",
             " random",
             WHITE,
             GREEN if self.random else LIGHTGREY,
@@ -161,9 +160,11 @@ class ExpandableInput(Component):
                         rows=2,
                         padding=5,
                         background=TRANSPARENT,
+                        listenForKeyPresses=True
                     ),
                 ],
                 onClick=lambda a, b: self.toggle(),
+                listenForKeyPresses=True
             )
         ]
 

@@ -16,21 +16,17 @@ class Button(Component):
         color: List[int],
         fill: List[int],
         pos: List[int],
-        size=[None, None],
         bold=True,
         padding=2,
-        onClick=None,
-        opacity=1,
-        hide=False,
+        **kwargs,
     ) -> None:
-        super().__init__(window, id, pos, size, onClick=onClick, hide=hide)
+        super().__init__(window, id, pos, **kwargs)
         self.text = text
         self.color = color
         self.fill = fill
         self.bold = bold
         self.padding = padding
         self.borderWidth = 0
-        self.opacity = opacity
 
     def register(self):
         self.children = [
@@ -44,7 +40,6 @@ class Button(Component):
                 bold=self.bold,
                 padding=self.padding,
                 size=self.size,
-                opacity=self.opacity,
             )
         ]
 

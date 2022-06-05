@@ -16,7 +16,7 @@ class SyncPanel(Component):
         callback: Any,
         initialParams: Dict,
     ) -> None:
-        super().__init__(window, id, pos)
+        super().__init__(window, id, pos, listenForKeyPresses=True)
         self.callback = callback
         self.params = initialParams
 
@@ -59,6 +59,7 @@ class SyncPanel(Component):
                     for k, v in list(self.params.items())
                 ],
                 rows=4,
+                listenForKeyPresses=self.listenForKeyPresses,
             )
         ]
 

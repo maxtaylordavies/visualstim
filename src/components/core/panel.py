@@ -18,9 +18,9 @@ class Panel(Component):
         rows=1,
         padding=15,
         background=LIGHTGREY,
-        hide=False,
+        **kwargs,
     ) -> None:
-        super().__init__(window, id, pos=pos, children=children, hide=hide)
+        super().__init__(window, id, pos=pos, children=children, **kwargs)
         self.labelText = labelText
         self.rows = rows
         self.padding = padding

@@ -19,7 +19,7 @@ class ParametersPanel(Component):
         callback: Any,
         initialParams: Dict,
     ) -> None:
-        super().__init__(window, id, pos)
+        super().__init__(window, id, pos, listenForKeyPresses=True)
         self.callback = callback
         self.params = initialParams
 
@@ -63,6 +63,7 @@ class ParametersPanel(Component):
                     for i, (k, v) in enumerate(self.params.items())
                 ],
                 rows=math.ceil(l / 2),
+                listenForKeyPresses = self.listenForKeyPresses
             )
         ]
         for c in self.children:

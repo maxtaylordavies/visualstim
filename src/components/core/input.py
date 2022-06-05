@@ -3,7 +3,7 @@ from psychopy.visual import Window, rect
 
 from src.components.core import Component, Textbox
 from src.constants import DARKGREY, GREEN, RED, WHITE
-from src.utils import noOp
+from src.utils import noOp, log
 
 
 class TextInput(Component):
@@ -14,19 +14,18 @@ class TextInput(Component):
         value: Any,
         labelText: str,
         pos: List[int],
-        size=[None, None],
         onChange=noOp,
-        zIndex=0,
         fill=WHITE,
         highlight=True,
+        **kwargs,
     ) -> None:
-        super().__init__(window, id, pos, size, zIndex)
+        super().__init__(window, id, pos, **kwargs)
         self.initialValue = self.value = value
         self.labelText = labelText
         self.onChange = onChange
-        self.active = False
         self.fill = fill
         self.highlight = highlight
+        self.active = False
 
     def register(self, text="$"):
         self.input = Textbox(
@@ -101,8 +100,8 @@ class TextInput(Component):
 
     def update(self):
         self.register(text=self.input.getText())
+        self.input.toggleFocus()
         self.draw()
-        self.input.hasFocus = self.active
 
     def edges(self):
         rightEdge = self.input.pos[0] + (self.input.size[0] / 2)
@@ -124,7 +123,7 @@ class TextInput(Component):
         if not self.active:
             return
         if key == "return":
-            self.input.deleteCaretLeft()
+            self.input.deleteCaret()
             self.toggle()
         else:
             self.update()

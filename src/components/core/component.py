@@ -3,7 +3,7 @@ from typing import Any, List
 from psychopy.visual import Window
 from psychopy.event import Mouse
 
-from src.utils import noOp
+from src.utils import log
 
 
 class Component:
@@ -18,6 +18,7 @@ class Component:
         onClick=None,
         hide=False,
         clickable=True,
+        listenForKeyPresses=False,
     ) -> None:
         self.window = window
         self.id = id
@@ -28,6 +29,11 @@ class Component:
         self.onClickFallback = onClick
         self.hide = hide
         self.clickable = clickable
+        self.listenForKeyPresses = listenForKeyPresses
+
+        if self.listenForKeyPresses:
+            for i in range(len(self.children)):
+                self.children[i].listenForKeyPresses = True
 
     def register(self) -> None:
         for c in self.children:
@@ -88,5 +94,6 @@ class Component:
 
     def onKeyPress(self, key: str) -> None:
         for c in self.children:
-            if hasattr(c, "active") and c.active and hasattr(c, "onKeyPress"):
+            if isinstance(c, Component) and c.listenForKeyPresses:
+                log(f"{c.id}: {key}")
                 c.onKeyPress(key)

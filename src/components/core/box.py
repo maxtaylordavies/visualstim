@@ -17,12 +17,9 @@ class Box(Component):
         size: List[int],
         borderColor: List[int] = WHITE,
         borderWidth: int = 0,
-        children: List[Component] = [],
-        onClick=None,
+        **kwargs,
     ) -> None:
-        super().__init__(
-            window, id, pos=pos, size=size, children=children, onClick=onClick
-        )
+        super().__init__(window, id, pos=pos, size=size, **kwargs)
         self.color = color
         self.borderColor = borderColor
         self.borderWidth = borderWidth
