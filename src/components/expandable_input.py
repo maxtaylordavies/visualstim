@@ -5,7 +5,7 @@ from psychopy.visual import Window
 
 from src.components.core import Box, Button, Component, Panel, Textbox
 from .core.input import TextInput
-from src.constants import DARKGREY, GREEN, LIGHTGREY, RED, WHITE, TRANSPARENT
+from src.constants import DARKGREY, GREEN, LIGHTGREY, WHITE, TRANSPARENT, BLACK
 from src.utils import noOp
 
 
@@ -151,7 +151,7 @@ class ExpandableInput(Component):
                         self.window,
                         f"{self.id}-panel",
                         "",
-                        [boxPos[0], boxPos[1] - 16],
+                        [boxPos[0] + 14, boxPos[1] - 16],
                         [
                             self.startInput,
                             self.stopInput,
@@ -159,7 +159,7 @@ class ExpandableInput(Component):
                             self.randomiseButton,
                         ],
                         rows=2,
-                        padding=8,
+                        padding=5,
                         background=TRANSPARENT,
                     ),
                 ],

@@ -45,6 +45,7 @@ class SyncPanel(Component):
                         v,
                         self.pos,
                         self.makeFunc(k),
+                        leftSpaces=11,
                     )
                     if type(v) == bool
                     else TextInput(

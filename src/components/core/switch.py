@@ -16,12 +16,14 @@ class Switch(Component):
         value: bool,
         pos: List[int],
         callback: Any,
+        leftSpaces=5,
     ):
         super().__init__(window, id, pos)
         self.text = text
         self.value = value
         self.callback = callback
         self.padding = 2
+        self.leftSpaces = leftSpaces
 
     def onClick(self, *args):
         self.value = not self.value
@@ -33,7 +35,7 @@ class Switch(Component):
             Button(
                 self.window,
                 self.id,
-                f"      {self.text}: {('FALSE','TRUE')[int(self.value)]}",
+                f"{' ' * self.leftSpaces}{self.text}: {('FALSE','TRUE')[int(self.value)]}",
                 (RED, GREEN)[int(self.value)],
                 (PALERED, PALEGREEN)[int(self.value)],
                 self.pos,

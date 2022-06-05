@@ -18,7 +18,7 @@ class Panel(Component):
         rows=1,
         padding=15,
         background=LIGHTGREY,
-        hide=False
+        hide=False,
     ) -> None:
         super().__init__(window, id, pos=pos, children=children, hide=hide)
         self.labelText = labelText
@@ -53,21 +53,18 @@ class Panel(Component):
 
         self.size = [width, height]
 
-        # position children automatically
+        # position children automatically in grid layout
+        y = self.pos[1] + (self.size[1] / 2)
         for r in range(self.rows):
             x = self.pos[0] - (self.size[0] / 2)
-            y = (
-                self.pos[1]
-                + (self.size[1] / 2)
-                - (r + 1) * (self.children[0].getSize()[1] / 2)
-                - (2 * r + 1) * padding
-            )
+            y -= (self.children[0].getSize()[1] / 2) + padding
             for i in range(
                 r * childrenPerRow, min((r + 1) * childrenPerRow, len(children))
             ):
                 x += self.children[i].getSize()[0] / 2 + padding
                 self.children[i].pos = [x, y]
                 x += self.children[i].getSize()[0] / 2
+            y -= self.children[0].getSize()[1] / 2
 
         self.box = Box(self.window, f"{id}-box", self.background, self.pos, self.size)
         children = [self.box]

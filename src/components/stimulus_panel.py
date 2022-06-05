@@ -33,7 +33,7 @@ class StimulusPanel(Component):
                     WHITE,
                     MEDIUMGREY,
                     self.pos,
-                    padding=2,
+                    padding=4,
                     onClick=onClick,
                 ),
                 Button(
@@ -43,7 +43,7 @@ class StimulusPanel(Component):
                     WHITE,
                     GREEN,
                     self.pos,
-                    padding=2,
+                    padding=4,
                     onClick=onClick,
                 ),
                 Button(
@@ -53,7 +53,7 @@ class StimulusPanel(Component):
                     WHITE,
                     MEDIUMGREY,
                     self.pos,
-                    padding=2,
+                    padding=4,
                     onClick=onClick,
                 ),
                 Button(
@@ -63,7 +63,7 @@ class StimulusPanel(Component):
                     WHITE,
                     MEDIUMGREY,
                     self.pos,
-                    padding=2,
+                    padding=4,
                     onClick=onClick,
                 ),
                 Button(
@@ -73,7 +73,7 @@ class StimulusPanel(Component):
                     WHITE,
                     MEDIUMGREY,
                     self.pos,
-                    padding=2,
+                    padding=4,
                     onClick=onClick,
                 ),
                 Button(
@@ -83,11 +83,11 @@ class StimulusPanel(Component):
                     WHITE,
                     MEDIUMGREY,
                     self.pos,
-                    padding=2,
+                    padding=4,
                     onClick=onClick,
                 ),
             ],
             rows=2,
-            padding=12.5,
+            padding=10,
         )
         self.children = [self.panel]

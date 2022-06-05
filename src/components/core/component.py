@@ -17,7 +17,7 @@ class Component:
         children: List[Any] = [],
         onClick=None,
         hide=False,
-        clickable=True
+        clickable=True,
     ) -> None:
         self.window = window
         self.id = id
@@ -34,8 +34,12 @@ class Component:
             if hasattr(c, "register"):
                 c.register()
 
-    def toggleHidden(self) -> None:
+    def toggleHidden(self, propagate=False) -> None:
         self.hide = not self.hide
+        if propagate:
+            for c in self.children:
+                if hasattr(c, "toggleHidden"):
+                    c.toggleHidden(propagate=propagate)
 
     def sortChildren(self) -> List:
         return sorted(
