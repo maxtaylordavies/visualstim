@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Optional
 from psychopy.visual import Window
 
 from src.components import SyncSquares
-from src.constants import DEFAULT_STIMULUS_PARAMS
+from src.constants import DEFAULT_SCREEN_PARAMS, DEFAULT_STIMULUS_PARAMS
 from src.utils import checkForEsc
 
 
@@ -13,10 +13,12 @@ class Stimulus:
         window: Window,
         frameRate: float,
         stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
+        screenParams: Dict[str, Any] = DEFAULT_SCREEN_PARAMS
     ) -> None:
         self.window = window
         self.frameRate = frameRate
         self.stimParams = stimParams
+        self.screenParams = screenParams
         self.duration = 0
         self.frameIdx = 0
 

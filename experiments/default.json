@@ -1,4 +1,12 @@
 {
+  "screen settings": {
+    "width": 518,
+    "height": 523,
+    "h res": 1400,
+    "v res": 900,
+    "distance": 300,
+    "warp": false
+  },
   "sync settings": {
     "sync": false,
     "trigger duration": 5.0,

@@ -35,16 +35,21 @@ def str2Stim(s: str) -> Stimulus:
     }[s]
 
 
-def createStim(x: Dict, window: Window, frameRate: float) -> Dict:
+def createStim(x: Dict, window: Window, frameRate: float, screenSettings: Dict) -> Dict:
     return {
-        "stimulus": str2Stim(x["name"])(window, frameRate, stimParams=x["params"]),
+        "stimulus": str2Stim(x["name"])(
+            window, frameRate, stimParams=x["params"], screenParams=screenSettings
+        ),
         "params": x["params"],
     }
 
 
 class Experiment:
-    def __init__(self, name: str, syncSettings: Dict, stimuli: List[Dict]) -> None:
+    def __init__(
+        self, name: str, screenSettings: Dict, syncSettings: Dict, stimuli: List[Dict]
+    ) -> None:
         self.name = name
+        self.screenSettings = screenSettings
         self.syncSettings = syncSettings
         self.stimuli = stimuli
 
@@ -59,6 +64,7 @@ def loadExperiment(window: Window, frameRate: float, filename: str) -> Experimen
 
     return Experiment(
         filename,
+        data["screen settings"],
         data["sync settings"],
         list(
             map(
@@ -97,7 +103,7 @@ def unrollExperiment(exp: Experiment) -> Experiment:
             }
         )
 
-    return Experiment(exp.name, exp.syncSettings, stimuli)
+    return Experiment(exp.name, exp.screenSettings, exp.syncSettings, stimuli)
 
 
 def playExperiment(
@@ -116,7 +122,12 @@ def playExperiment(
     experiment = unrollExperiment(experiment)
 
     # create stimuli objects from descriptions
-    stimuli = list(map(lambda s: createStim(s, window, frameRate), experiment.stimuli))
+    stimuli = list(
+        map(
+            lambda s: createStim(s, window, frameRate, experiment.screenSettings),
+            experiment.stimuli,
+        )
+    )
 
     def _callback(frameIdx: int):
         # send a sync pulse if needed

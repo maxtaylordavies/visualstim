@@ -14,8 +14,9 @@ class StaticGrating(Stimulus):
         window: Window,
         frameRate: float,
         stimParams: Dict = DEFAULT_STIMULUS_PARAMS,
+        screenParams: Dict = DEFAULT_SCREEN_PARAMS,
     ):
-        super().__init__(window, frameRate, stimParams)
+        super().__init__(window, frameRate, stimParams, screenParams)
 
         self._stim = GratingStim(
             win=self.window,
@@ -25,7 +26,7 @@ class StaticGrating(Stimulus):
             tex="sin",
             mask=None,
             phase=0,
-            sf=pix2deg(self.stimParams["spat freq"], DEFAULT_SCREEN_PARAMS),
+            sf=pix2deg(self.stimParams["spat freq"], screenParams),
         )
 
     def updatePhase(self):

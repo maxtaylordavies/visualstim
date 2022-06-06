@@ -4,7 +4,7 @@ import numpy as np
 from psychopy.visual import Window
 from psychopy.visual.grating import GratingStim
 
-from src.constants import WINDOW_WIDTH, DEFAULT_STIMULUS_PARAMS
+from src.constants import WINDOW_WIDTH, DEFAULT_STIMULUS_PARAMS, DEFAULT_SCREEN_PARAMS
 from src.textures import checkerboard
 from .stimulus import Stimulus
 
@@ -15,8 +15,9 @@ class Checkerboard(Stimulus):
         window: Window,
         frameRate: float,
         stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
+        screenParams: Dict = DEFAULT_SCREEN_PARAMS,
     ):
-        super().__init__(window, frameRate, stimParams)
+        super().__init__(window, frameRate, stimParams, screenParams)
 
         self.texture = checkerboard(self.stimParams)
 
