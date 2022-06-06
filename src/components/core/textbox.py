@@ -9,13 +9,9 @@ from src.constants import BLACK, WHITE
 class Textbox(Component):
     def __init__(
         self,
-        window: Window,
-        id: str,
-        pos: List[int],
+        *args,
         text: str,
         fontSize=18,
-        color=BLACK,
-        fill=WHITE,
         bold=False,
         padding=5,
         borderColor=None,
@@ -25,11 +21,9 @@ class Textbox(Component):
         clickable=False,
         **kwargs
     ):
-        super().__init__(window, id, pos, clickable=clickable, **kwargs)
+        super().__init__(*args, clickable=clickable, **kwargs)
         self.text = text
         self.fontSize = fontSize
-        self.color = color
-        self.fill = fill
         self.bold = bold
         self.padding = padding
         self.borderColor = borderColor

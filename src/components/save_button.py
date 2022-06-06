@@ -8,17 +8,17 @@ from src.constants import GREEN, PALEGREEN, MEDIUMGREEN, WHITE
 
 
 class SaveButton(Button):
-    def __init__(self, window: Window, pos: List[int], callback: Any) -> None:
+    def __init__(self, *args, callback: Any, **kwargs) -> None:
         self.saved = False
         self.callback = callback
         super().__init__(
-            window,
+            *args,
             "save-button",
-            " save ",
-            GREEN,
-            PALEGREEN,
-            pos,
+            text=" save ",
+            color=GREEN,
+            fill=PALEGREEN,
             onClick=self.onClick,
+            **kwargs
         )
 
     def setUnsaved(self):

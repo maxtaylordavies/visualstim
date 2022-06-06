@@ -1,29 +1,16 @@
-from typing import Any, List
+from typing import List
 from psychopy.visual import Window, circle
 
 from src.components.core import Component
 from .textbox import Textbox
-from src.constants import GREEN, RED, WHITE, BLACK
+from src.constants import GREEN, RED, WHITE
 from src.utils import noOp
 
 
 class Button(Component):
-    def __init__(
-        self,
-        window: Window,
-        id: str,
-        text: str,
-        color: List[int],
-        fill: List[int],
-        pos: List[int],
-        bold=True,
-        padding=2,
-        **kwargs,
-    ) -> None:
-        super().__init__(window, id, pos, **kwargs)
+    def __init__(self, *args, text="", bold=True, padding=2, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
         self.text = text
-        self.color = color
-        self.fill = fill
         self.bold = bold
         self.padding = padding
         self.borderWidth = 0
@@ -33,8 +20,8 @@ class Button(Component):
             Textbox(
                 self.window,
                 self.id,
-                self.pos,
-                f" {self.text} ",
+                pos=self.pos,
+                text=f" {self.text} ",
                 color=self.color,
                 fill=self.fill,
                 bold=self.bold,

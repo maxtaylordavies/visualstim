@@ -3,13 +3,13 @@ from typing import Any, List
 from psychopy.visual import Window
 from psychopy.event import Mouse
 
-from src.constants import MEDIUMGREY, GREEN, WHITE
+from src.constants import LIGHTGREY, MEDIUMGREY, GREEN, WHITE
 from src.components.core import Component, Panel, Button
 
 
 class StimulusPanel(Component):
-    def __init__(self, window: Window, id: str, pos: List[int], callback: Any) -> None:
-        super().__init__(window, id, pos)
+    def __init__(self, *args, callback: Any, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
 
         def onClick(mouse: Mouse, button: Button):
             for i, c in enumerate(self.panel.children):
@@ -23,71 +23,72 @@ class StimulusPanel(Component):
         self.panel = Panel(
             self.window,
             self.id,
-            "stimulus type",
-            self.pos,
+            labelText="stimulus type",
+            pos=self.pos,
             children=[
                 Button(
                     self.window,
                     "stimtype-static-grating",
-                    "  static grating",
-                    WHITE,
-                    MEDIUMGREY,
-                    self.pos,
+                    text="  static grating",
+                    color=WHITE,
+                    fill=MEDIUMGREY,
+                    pos=self.pos,
                     padding=4,
                     onClick=onClick,
                 ),
                 Button(
                     self.window,
                     "stimtype-drift-grating",
-                    "   drift grating",
-                    WHITE,
-                    GREEN,
-                    self.pos,
+                    text="   drift grating",
+                    color=WHITE,
+                    fill=GREEN,
+                    pos=self.pos,
                     padding=4,
                     onClick=onClick,
                 ),
                 Button(
                     self.window,
                     "stimtype-osc-grating",
-                    "    osc grating",
-                    WHITE,
-                    MEDIUMGREY,
-                    self.pos,
+                    text="    osc grating",
+                    color=WHITE,
+                    fill=MEDIUMGREY,
+                    pos=self.pos,
                     padding=4,
                     onClick=onClick,
                 ),
                 Button(
                     self.window,
                     "stimtype-movie",
-                    "       movie",
-                    WHITE,
-                    MEDIUMGREY,
-                    self.pos,
+                    text="       movie",
+                    color=WHITE,
+                    fill=MEDIUMGREY,
+                    pos=self.pos,
                     padding=4,
                     onClick=onClick,
                 ),
                 Button(
                     self.window,
                     "stimtype-sparse-noise",
-                    "  sparse noise",
-                    WHITE,
-                    MEDIUMGREY,
-                    self.pos,
+                    text="  sparse noise",
+                    color=WHITE,
+                    fill=MEDIUMGREY,
+                    pos=self.pos,
                     padding=4,
                     onClick=onClick,
                 ),
                 Button(
                     self.window,
                     "stimtype-checkerboard",
-                    " checkerboard",
-                    WHITE,
-                    MEDIUMGREY,
-                    self.pos,
+                    text=" checkerboard",
+                    color=WHITE,
+                    fill=MEDIUMGREY,
+                    pos=self.pos,
                     padding=4,
                     onClick=onClick,
                 ),
             ],
             rows=2,
             padding=10,
+            fill=LIGHTGREY,
         )
         self.children = [self.panel]

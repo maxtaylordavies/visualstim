@@ -5,22 +5,15 @@ from psychopy.visual import Window
 
 from src.components.core import Box, Button, Component, Panel, Textbox
 from .core.input import TextInput
-from src.constants import DARKGREY, GREEN, LIGHTGREY, WHITE, TRANSPARENT, BLACK
+from src.constants import DARKGREY, GREEN, LIGHTGREY, WHITE, TRANSPARENT
 from src.utils import noOp
 
 
 class ExpandableInput(Component):
     def __init__(
-        self,
-        window: Window,
-        id: str,
-        value: float,
-        labelText: str,
-        pos: List[int],
-        onChange=noOp,
-        **kwargs,
+        self, *args, value: float, labelText: str, onChange=noOp, **kwargs,
     ) -> None:
-        super().__init__(window, id, pos, listenForKeyPresses=True, **kwargs)
+        super().__init__(*args, listenForKeyPresses=True, **kwargs)
         self.initialValue = self.start = self.stop = value
         self.steps = 1
         self.random = False
@@ -39,13 +32,17 @@ class ExpandableInput(Component):
         self.input = Textbox(
             self.window,
             f"{self.id}-input",
-            self.pos,
-            text,
+            pos=self.pos,
+            text=text,
             bold=True,
             editable=self.active,
         )
         self.label = Textbox(
-            self.window, f"{self.id}-label", self.pos, self.labelText, color=DARKGREY
+            self.window,
+            f"{self.id}-label",
+            pos=self.pos,
+            text=self.labelText,
+            color=DARKGREY,
         )
 
         labelSize, inputSize = self.label.size, self.input.size
@@ -76,9 +73,9 @@ class ExpandableInput(Component):
             Box(
                 self.window,
                 f"{self.id}-box",
-                WHITE,
-                [self.pos[0], self.pos[1] + 1],
-                [right - left + 2, self.input.size[1] + 2],
+                pos=[self.pos[0], self.pos[1] + 1],
+                size=[right - left + 2, self.input.size[1] + 2],
+                color=WHITE,
                 children=[self.label, self.input],
                 onClick=lambda a, b: self.toggle(),
             )
@@ -94,9 +91,9 @@ class ExpandableInput(Component):
         self.startInput = TextInput(
             self.window,
             f"{self.id}-start-input",
-            str(self.start),
-            "start",
-            labelPos,
+            value=str(self.start),
+            labelText="start",
+            pos=labelPos,
             zIndex=20,
             fill=LIGHTGREY,
             highlight=False,
@@ -105,9 +102,9 @@ class ExpandableInput(Component):
         self.stopInput = TextInput(
             self.window,
             f"{self.id}-start-input",
-            str(self.stop),
-            "stop",
-            labelPos,
+            value=str(self.stop),
+            labelText="stop",
+            pos=labelPos,
             zIndex=20,
             fill=LIGHTGREY,
             highlight=False,
@@ -116,9 +113,9 @@ class ExpandableInput(Component):
         self.stepsInput = TextInput(
             self.window,
             f"{self.id}-start-input",
-            str(self.steps),
-            "steps",
-            labelPos,
+            value=str(self.steps),
+            labelText="steps",
+            pos=labelPos,
             zIndex=20,
             fill=LIGHTGREY,
             highlight=False,
@@ -127,10 +124,10 @@ class ExpandableInput(Component):
         self.randomiseButton = Button(
             self.window,
             f"{self.id}-randomise-button",
-            " random",
-            WHITE,
-            GREEN if self.random else LIGHTGREY,
-            labelPos,
+            text=" random",
+            color=WHITE,
+            fill=GREEN if self.random else LIGHTGREY,
+            pos=labelPos,
             size=[None, 32],
             onClick=lambda a, b: self.toggleRandom(),
         )
@@ -139,9 +136,9 @@ class ExpandableInput(Component):
             Box(
                 self.window,
                 f"{self.id}-box",
-                WHITE,
-                boxPos,
-                [right - left + 2, self.input.size[1] + boxHeightDiff],
+                pos=boxPos,
+                size=[right - left + 2, self.input.size[1] + boxHeightDiff],
+                color=WHITE,
                 borderColor=GREEN,
                 borderWidth=3,
                 children=[
@@ -149,9 +146,9 @@ class ExpandableInput(Component):
                     Panel(
                         self.window,
                         f"{self.id}-panel",
-                        "",
-                        [boxPos[0] + 14, boxPos[1] - 16],
-                        [
+                        labelText="",
+                        pos=[boxPos[0] + 14, boxPos[1] - 16],
+                        children=[
                             self.startInput,
                             self.stopInput,
                             self.stepsInput,
@@ -159,12 +156,12 @@ class ExpandableInput(Component):
                         ],
                         rows=2,
                         padding=5,
-                        background=TRANSPARENT,
-                        listenForKeyPresses=True
+                        fill=TRANSPARENT,
+                        listenForKeyPresses=True,
                     ),
                 ],
                 onClick=lambda a, b: self.toggle(),
-                listenForKeyPresses=True
+                listenForKeyPresses=True,
             )
         ]
 

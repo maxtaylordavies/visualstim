@@ -5,18 +5,12 @@ from psychopy.visual import Window
 from src.components.core import Component, Panel, Switch
 from .core.input import TextInput
 from src.utils import paramLabelWithUnits
+from src.constants import LIGHTGREY
 
 
 class SyncPanel(Component):
-    def __init__(
-        self,
-        window: Window,
-        id: str,
-        pos: List[int],
-        callback: Any,
-        initialParams: Dict,
-    ) -> None:
-        super().__init__(window, id, pos, listenForKeyPresses=True)
+    def __init__(self, *args, callback: Any, initialParams: Dict, **kwargs,) -> None:
+        super().__init__(*args, listenForKeyPresses=True, **kwargs)
         self.callback = callback
         self.params = initialParams
 
@@ -35,31 +29,32 @@ class SyncPanel(Component):
             Panel(
                 self.window,
                 self.id,
-                "sync parameters",
-                self.pos,
+                labelText="sync parameters",
+                pos=self.pos,
                 children=[
                     Switch(
                         self.window,
                         f"{'-'.join(k.split(' '))}-switch",
-                        paramLabelWithUnits(k),
-                        v,
-                        self.pos,
-                        self.makeFunc(k),
+                        text=paramLabelWithUnits(k),
+                        value=v,
+                        pos=self.pos,
+                        callback=self.makeFunc(k),
                         leftSpaces=11,
                     )
                     if type(v) == bool
                     else TextInput(
                         self.window,
                         f"{'-'.join(k.split(' '))}-input",
-                        str(v),
-                        paramLabelWithUnits(k),
-                        self.pos,
+                        value=str(v),
+                        labelText=paramLabelWithUnits(k),
+                        pos=self.pos,
                         onChange=self.makeFunc(k),
                     )
                     for k, v in list(self.params.items())
                 ],
                 rows=4,
                 listenForKeyPresses=self.listenForKeyPresses,
+                fill=LIGHTGREY,
             )
         ]
 

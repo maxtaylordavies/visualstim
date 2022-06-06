@@ -4,6 +4,7 @@ from psychopy.visual import Window
 from psychopy.event import Mouse
 
 from src.utils import log
+from src.constants import WHITE, BLACK
 
 
 class Component:
@@ -13,6 +14,8 @@ class Component:
         id: str,
         pos: List[int] = [0, 0],
         size: List[Any] = [None, None],
+        color: List[int] = BLACK,
+        fill: List[int] = WHITE,
         zIndex: int = 0,
         children: List[Any] = [],
         onClick=None,
@@ -24,6 +27,8 @@ class Component:
         self.id = id
         self.pos = pos
         self.size = size
+        self.color = color
+        self.fill = fill
         self.zIndex = zIndex
         self.children = children
         self.onClickFallback = onClick

@@ -10,15 +10,14 @@ from psychopy.event import Mouse
 class Switch(Component):
     def __init__(
         self,
-        window: Window,
-        id: str,
+        *args,
         text: str,
         value: bool,
-        pos: List[int],
         callback: Any,
         leftSpaces=5,
+        **kwargs,
     ):
-        super().__init__(window, id, pos)
+        super().__init__(*args, **kwargs)
         self.text = text
         self.value = value
         self.callback = callback
@@ -35,10 +34,10 @@ class Switch(Component):
             Button(
                 self.window,
                 self.id,
-                f"{' ' * self.leftSpaces}{self.text}: {('FALSE','TRUE')[int(self.value)]}",
-                (RED, GREEN)[int(self.value)],
-                (PALERED, PALEGREEN)[int(self.value)],
-                self.pos,
+                text=f"{' ' * self.leftSpaces}{self.text}: {('FALSE','TRUE')[int(self.value)]}",
+                color=(RED, GREEN)[int(self.value)],
+                fill=(PALERED, PALEGREEN)[int(self.value)],
+                pos=self.pos,
                 bold=True,
                 onClick=self.onClick,
                 size=self.size,

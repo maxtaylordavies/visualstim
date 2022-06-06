@@ -8,23 +8,11 @@ from src.constants import LIGHTGREY
 
 
 class Panel(Component):
-    def __init__(
-        self,
-        window: Window,
-        id: str,
-        labelText: str,
-        pos: List[int],
-        children: List[Any],
-        rows=1,
-        padding=15,
-        background=LIGHTGREY,
-        **kwargs,
-    ) -> None:
-        super().__init__(window, id, pos=pos, children=children, **kwargs)
+    def __init__(self, *args, labelText: str, rows=1, padding=15, **kwargs,) -> None:
+        super().__init__(*args, **kwargs)
         self.labelText = labelText
         self.rows = rows
         self.padding = padding
-        self.background = background
 
         super().register()
 
@@ -59,19 +47,27 @@ class Panel(Component):
             x = self.pos[0] - (self.size[0] / 2)
             y -= (self.children[0].getSize()[1] / 2) + padding
             for i in range(
-                r * childrenPerRow, min((r + 1) * childrenPerRow, len(children))
+                r * childrenPerRow, min((r + 1) * childrenPerRow, len(self.children))
             ):
                 x += self.children[i].getSize()[0] / 2 + padding
                 self.children[i].pos = [x, y]
                 x += self.children[i].getSize()[0] / 2
             y -= self.children[0].getSize()[1] / 2
 
-        self.box = Box(self.window, f"{id}-box", self.background, self.pos, self.size)
+        self.box = Box(
+            self.window, f"{id}-box", pos=self.pos, size=self.size, color=self.fill,
+        )
         children = [self.box]
 
         if labelText:
             children.append(
-                Label(self.window, f"{id}-label", self.labelText, self.pos, self.size)
+                Label(
+                    self.window,
+                    f"{id}-label",
+                    text=self.labelText,
+                    pos=self.pos,
+                    size=self.size,
+                )
             )
 
         self.children = children + self.children

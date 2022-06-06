@@ -1,18 +1,14 @@
 import pathlib
 import os
-from typing import Any, List
-
-from psychopy.visual import Window
+from typing import Any
 
 from src.components.core import Button, Component, Panel
-from src.constants import WHITE, GREEN, MEDIUMGREY
+from src.constants import LIGHTGREY, WHITE, GREEN, MEDIUMGREY
 
 
 class ScriptSelector(Component):
-    def __init__(
-        self, window: Window, id: str, pos: List[int], callback: Any, **kwargs
-    ) -> None:
-        super().__init__(window, id, pos, **kwargs)
+    def __init__(self, *args, callback: Any, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
         self.callback = callback
 
         expDirPath = pathlib.Path().resolve().joinpath("experiments")
@@ -37,21 +33,22 @@ class ScriptSelector(Component):
             Panel(
                 self.window,
                 f"{self.id}-panel",
-                "load experiment",
-                self.pos,
-                [
+                labelText="load experiment",
+                pos=self.pos,
+                children=[
                     Button(
                         self.window,
                         f"{self.id}-button-{i}",
-                        filename.replace(".json", ""),
-                        WHITE,
-                        GREEN if self.selected == filename else MEDIUMGREY,
-                        self.pos,
+                        text=filename.replace(".json", ""),
+                        color=WHITE,
+                        fill=GREEN if self.selected == filename else MEDIUMGREY,
+                        pos=self.pos,
                         padding=5,
                         onClick=self.makeFunc(filename),
                     )
                     for i, filename in enumerate(self.filenames)
                 ],
+                fill=LIGHTGREY,
             )
         ]
         super().register()

@@ -7,10 +7,8 @@ from src.constants import DARKGREY, GREY
 
 
 class ModeSelector(Component):
-    def __init__(
-        self, window: Window, id: str, pos: List[int], mode: str, callback: Any
-    ) -> None:
-        super().__init__(window, id, pos)
+    def __init__(self, *args, mode: str, callback: Any, **kwargs,) -> None:
+        super().__init__(*args, **kwargs)
         self.mode = mode
         self.callback = callback
 
@@ -24,8 +22,8 @@ class ModeSelector(Component):
             Textbox(
                 self.window,
                 f"{self.id}-interactive",
-                [self.pos[0] - 50, self.pos[1]],
-                "interactive",
+                pos=[self.pos[0] - 50, self.pos[1]],
+                text="interactive",
                 color=(GREY, DARKGREY)[self.mode == "interactive"],
                 bold=self.mode == "interactive",
                 padding=2,
@@ -34,8 +32,8 @@ class ModeSelector(Component):
             Textbox(
                 self.window,
                 f"{self.id}-scripting",
-                [self.pos[0] + 28, self.pos[1]],
-                "scripting",
+                pos=[self.pos[0] + 28, self.pos[1]],
+                text="scripting",
                 color=(GREY, DARKGREY)[self.mode == "scripting"],
                 bold=self.mode == "scripting",
                 padding=2,
@@ -44,12 +42,12 @@ class ModeSelector(Component):
             Box(
                 self.window,
                 f"{self.id}-underline",
-                DARKGREY,
-                [
+                pos=[
                     self.pos[0] + (-52 if self.mode == "interactive" else 26),
                     self.pos[1] - 11,
                 ],
-                [80 if self.mode == "interactive" else 65, 2],
+                size=[80 if self.mode == "interactive" else 65, 2],
+                color=DARKGREY,
             ),
         ]
         super().register()

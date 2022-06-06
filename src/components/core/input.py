@@ -9,21 +9,17 @@ from src.utils import noOp, log
 class TextInput(Component):
     def __init__(
         self,
-        window: Window,
-        id: str,
+        *args,
         value: Any,
         labelText: str,
-        pos: List[int],
         onChange=noOp,
-        fill=WHITE,
         highlight=True,
         **kwargs,
     ) -> None:
-        super().__init__(window, id, pos, **kwargs)
+        super().__init__(*args, **kwargs)
         self.initialValue = self.value = value
         self.labelText = labelText
         self.onChange = onChange
-        self.fill = fill
         self.highlight = highlight
         self.active = False
 
@@ -31,8 +27,8 @@ class TextInput(Component):
         self.input = Textbox(
             self.window,
             f"{self.id}-input",
-            self.pos,
-            text if text != "$" else str(self.value),
+            pos=self.pos,
+            text=text if text != "$" else str(self.value),
             fill=self.fill,
             borderColor=GREEN if (self.active and self.highlight) else WHITE,
             borderWidth=3,
@@ -43,8 +39,8 @@ class TextInput(Component):
         self.label = Textbox(
             self.window,
             f"{self.id}-label",
-            self.pos,
-            self.labelText,
+            pos=self.pos,
+            text=self.labelText,
             color=DARKGREY,
             fill=self.fill,
             borderColor=GREEN if (self.active and self.highlight) else WHITE,

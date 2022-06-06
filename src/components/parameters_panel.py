@@ -6,20 +6,22 @@ from psychopy.visual import Window
 from src.components.core import Component, Panel, Switch
 from .expandable_input import ExpandableInput
 from .core.input import TextInput
-from src.constants import CYCLEABLE_PARAMETERS
+from src.constants import CYCLEABLE_PARAMETERS, LIGHTGREY
 from src.utils import paramLabelWithUnits
 
 
 class ParametersPanel(Component):
     def __init__(
         self,
-        window: Window,
-        id: str,
-        pos: List[int],
+        *args,
+        # window: Window,
+        # id: str,
+        # pos: List[int],
         callback: Any,
         initialParams: Dict,
+        **kwargs,
     ) -> None:
-        super().__init__(window, id, pos, listenForKeyPresses=True)
+        super().__init__(*args, listenForKeyPresses=True, **kwargs)
         self.callback = callback
         self.params = initialParams
 
@@ -39,31 +41,32 @@ class ParametersPanel(Component):
             Panel(
                 self.window,
                 self.id,
-                "stimulus parameters",
-                self.pos,
+                labelText="stimulus parameters",
+                pos=self.pos,
                 children=[
                     Switch(
                         self.window,
                         f"{'-'.join(k.split(' '))}-switch",
-                        paramLabelWithUnits(k),
-                        v,
-                        self.pos,
-                        self.makeFunc(k),
+                        text=paramLabelWithUnits(k),
+                        value=v,
+                        pos=self.pos,
+                        callback=self.makeFunc(k),
                     )
                     if type(v) == bool
                     else (ExpandableInput if k in CYCLEABLE_PARAMETERS else TextInput)(
                         self.window,
                         f"{'-'.join(k.split(' '))}-input",
-                        v,
-                        paramLabelWithUnits(k),
-                        self.pos,
+                        value=v,
+                        labelText=paramLabelWithUnits(k),
+                        pos=self.pos,
                         onChange=self.makeFunc(k),
                         zIndex=l - i,
                     )
                     for i, (k, v) in enumerate(self.params.items())
                 ],
                 rows=math.ceil(l / 2),
-                listenForKeyPresses = self.listenForKeyPresses
+                listenForKeyPresses=self.listenForKeyPresses,
+                fill=LIGHTGREY,
             )
         ]
         for c in self.children:

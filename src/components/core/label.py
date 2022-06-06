@@ -7,10 +7,8 @@ from src.constants import LIGHTGREY, DARKGREY
 
 
 class Label(Component):
-    def __init__(
-        self, window: Window, id: str, text: str, pos: List[int], size: List[int],
-    ) -> None:
-        super().__init__(window, id, pos, size)
+    def __init__(self, *args, text: str, **kwargs,) -> None:
+        super().__init__(*args, **kwargs)
         self.text = text
 
     def register(self):
@@ -18,8 +16,8 @@ class Label(Component):
             Textbox(
                 self.window,
                 self.id,
-                self.pos,
-                f"  {self.text} ",
+                pos=self.pos,
+                text=f"  {self.text} ",
                 fontSize=14,
                 color=DARKGREY,
                 fill=LIGHTGREY,

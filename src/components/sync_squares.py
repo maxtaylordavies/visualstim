@@ -9,8 +9,8 @@ from src.utils import log
 
 
 class SyncSquares(Component):
-    def __init__(self, window: Window, id: str, size=30) -> None:
-        super().__init__(window, id)
+    def __init__(self, *args, size=30) -> None:
+        super().__init__(*args)
 
         # not sure why, but (in my experience) on Mac the left edge
         # of the PsychoPy window is at -window_width/4; on Windows
@@ -23,22 +23,22 @@ class SyncSquares(Component):
             Box(
                 self.window,
                 f"{self.id}-0",
-                BLACK,
-                [
+                pos=[
                     (-self.window.size[0] / factor) + size / 2,
                     (-self.window.size[1] / factor) + (size * (3 / 2)),
                 ],
-                [size, size],
+                size=[size, size],
+                color=BLACK,
             ),
             Box(
                 self.window,
                 f"{self.id}-1",
-                BLACK,
-                [
+                pos=[
                     (-self.window.size[0] / factor) + size / 2,
                     (-self.window.size[1] / factor) + size / 2,
                 ],
-                [size, size],
+                size=[size, size],
+                color=BLACK,
             ),
         ]
 
