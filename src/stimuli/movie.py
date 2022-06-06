@@ -4,21 +4,26 @@ from typing import Any, Dict
 from psychopy.visual import Window
 from psychopy.visual.movie3 import MovieStim3
 
-from src.constants import WINDOW_HEIGHT, WINDOW_WIDTH, DEFAULT_PARAMS
+from src.constants import WINDOW_HEIGHT, WINDOW_WIDTH, DEFAULT_STIMULUS_PARAMS
 from .stimulus import Stimulus
 
 
 class Movie(Stimulus):
     def __init__(
-        self, window: Window, frameRate: float, params: Dict[str, Any] = DEFAULT_PARAMS
+        self,
+        window: Window,
+        frameRate: float,
+        stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
     ) -> None:
-        super().__init__(window, frameRate, params)
+        super().__init__(window, frameRate, stimParams)
 
         self._movie = MovieStim3(
             self.window,
-            pathlib.Path().resolve().joinpath(f"movies/{self.params['filename']}"),
+            pathlib.Path().resolve().joinpath(f"movies/{self.stimParams['filename']}"),
             noAudio=True,
-            size=[WINDOW_WIDTH, WINDOW_HEIGHT] if self.params["fit screen"] else None,
+            size=[WINDOW_WIDTH, WINDOW_HEIGHT]
+            if self.stimParams["fit screen"]
+            else None,
         )
 
         self.duration = self._movie.duration

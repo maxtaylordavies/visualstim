@@ -1,10 +1,11 @@
 from datetime import datetime
+from math import degrees, atan2
 from typing import Any, Dict
 
 import numpy as np
 from psychopy import event
 
-from src.constants import DEFAULT_PARAMS, UNITS_MAP
+from src.constants import DEFAULT_STIMULUS_PARAMS, UNITS_MAP
 
 
 def log(message: str) -> None:
@@ -21,8 +22,8 @@ def noOp(args: Any) -> None:
 
 def parseParams(params: Dict) -> Dict:
     return {
-        k: params[k] if k in params else DEFAULT_PARAMS[k]
-        for k in DEFAULT_PARAMS.keys()
+        k: params[k] if k in params else DEFAULT_STIMULUS_PARAMS[k]
+        for k in DEFAULT_STIMULUS_PARAMS.keys()
     }
 
 
@@ -45,3 +46,11 @@ def roundToPowerOf2(x: float) -> int:
 
 def paramLabelWithUnits(key: str) -> str:
     return f"{key} ({UNITS_MAP[key]})" if key in UNITS_MAP else key
+
+
+def pix2deg(pix, screenParams):
+    return (
+        pix
+        * degrees(atan2(screenParams["height"] / 2, screenParams["distance"]))
+        / (screenParams["v res"] / 2)
+    )

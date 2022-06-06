@@ -37,7 +37,7 @@ def str2Stim(s: str) -> Stimulus:
 
 def createStim(x: Dict, window: Window, frameRate: float) -> Dict:
     return {
-        "stimulus": str2Stim(x["name"])(window, frameRate, params=x["params"]),
+        "stimulus": str2Stim(x["name"])(window, frameRate, stimParams=x["params"]),
         "params": x["params"],
     }
 

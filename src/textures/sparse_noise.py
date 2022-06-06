@@ -1,11 +1,11 @@
 from typing import Any, Dict
 import numpy as np
 
-from src.constants import WINDOW_WIDTH, WINDOW_HEIGHT, DEFAULT_PARAMS
+from src.constants import WINDOW_WIDTH, WINDOW_HEIGHT, DEFAULT_STIMULUS_PARAMS
 from src.utils import normalise, roundToPowerOf2
 
 
-def sparseNoise(frameRate: float, params: Dict[str, Any] = DEFAULT_PARAMS):
+def sparseNoise(frameRate: float, params: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS):
     rng = np.random.default_rng()
 
     nFrames = round(frameRate * params["stim duration"] * params["temp freq"])

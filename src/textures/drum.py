@@ -1,7 +1,7 @@
 from typing import Any, Dict, List
 import numpy as np
 
-from src.constants import WINDOW_WIDTH, PIXEL_SIZE, DISP_WIDTH, DEFAULT_PARAMS
+from src.constants import WINDOW_WIDTH, PIXEL_SIZE, DISP_WIDTH, DEFAULT_STIMULUS_PARAMS
 
 drumgrating_contrast = 1
 drumgrating_MeanLum = 35
@@ -10,7 +10,7 @@ AmpFactor = 0.000197
 drumgrating_Amp_sinu = 5
 
 
-def drum(frameRate: float, params: Dict[str, Any] = DEFAULT_PARAMS) -> List:
+def drum(frameRate: float, params: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS) -> List:
     pixelangle = np.empty(
         shape=[1, WINDOW_WIDTH]
     )  # pixel has to be 2D since the image is 2D

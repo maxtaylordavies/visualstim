@@ -3,26 +3,29 @@ from typing import Any, Dict
 from psychopy.visual import Window
 from psychopy.visual.grating import GratingStim
 
-from src.constants import WINDOW_WIDTH, DEFAULT_PARAMS, DEG_PER_PIX
-from src.utils import sinDeg
+from src.constants import WINDOW_WIDTH, DEFAULT_STIMULUS_PARAMS, DEFAULT_SCREEN_PARAMS
+from src.utils import sinDeg, pix2deg
 from .stimulus import Stimulus
 
 
 class StaticGrating(Stimulus):
     def __init__(
-        self, window: Window, frameRate: float, params: Dict[str, Any] = DEFAULT_PARAMS
+        self,
+        window: Window,
+        frameRate: float,
+        stimParams: Dict = DEFAULT_STIMULUS_PARAMS,
     ):
-        super().__init__(window, frameRate, params)
+        super().__init__(window, frameRate, stimParams)
 
         self._stim = GratingStim(
             win=self.window,
             size=[WINDOW_WIDTH, WINDOW_WIDTH],
             units="pix",
-            ori=self.params["orientation"],
+            ori=self.stimParams["orientation"],
             tex="sin",
             mask=None,
             phase=0,
-            sf=self.params["spat freq"] * DEG_PER_PIX,
+            sf=pix2deg(self.stimParams["spat freq"], DEFAULT_SCREEN_PARAMS),
         )
 
     def updatePhase(self):
@@ -41,12 +44,14 @@ class StaticGrating(Stimulus):
 
 class DriftingGrating(StaticGrating):
     def updatePhase(self):
-        self._stim.phase = (self.frameIdx / self.frameRate) * self.params["temp freq"]
+        self._stim.phase = (self.frameIdx / self.frameRate) * self.stimParams[
+            "temp freq"
+        ]
 
 
 class OscillatingGrating(StaticGrating):
     def updatePhase(self):
         self._stim.phase = sinDeg(
-            self.params["temp freq"] * self.frameIdx * (360 / self.frameRate)
+            self.stimParams["temp freq"] * self.frameIdx * (360 / self.frameRate)
         )
 

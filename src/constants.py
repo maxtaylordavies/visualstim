@@ -1,6 +1,14 @@
 from math import degrees, atan2
 
-DEFAULT_PARAMS = {
+DEFAULT_SCREEN_PARAMS = {
+    "width": 518,
+    "height": 523,
+    "h res": 1400,
+    "v res": 900,
+    "distance": 300,
+    "warp": False,
+}
+DEFAULT_STIMULUS_PARAMS = {
     "spat freq": 0.1,
     "temp freq": 0.2,
     "orientation": 0.0,
@@ -29,6 +37,7 @@ UNITS_MAP = {
 }
 CYCLEABLE_PARAMETERS = {"spat freq", "temp freq", "orientation"}
 
+# colors
 TRANSPARENT = [0, 0, 0, 0]
 BLACK = [0, 0, 0]
 WHITE = [255, 255, 255]
@@ -53,7 +62,7 @@ DISP_WIDTH = 518
 DISP_HEIGHT = 323
 DISP_DISTANCE = 300
 
-DEG_PER_PIX = degrees(atan2(DISP_HEIGHT / 2, DISP_DISTANCE)) / (WINDOW_HEIGHT / 2)
+# DEG_PER_PIX = degrees(atan2(DISP_HEIGHT / 2, DISP_DISTANCE)) / (WINDOW_HEIGHT / 2)
 
 PIXEL_SIZE = DISP_WIDTH / WINDOW_WIDTH
 

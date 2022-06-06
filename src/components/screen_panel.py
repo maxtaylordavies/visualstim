@@ -6,7 +6,7 @@ from src.utils import paramLabelWithUnits
 from src.constants import LIGHTGREY
 
 
-class SyncPanel(Component):
+class ScreenPanel(Component):
     def __init__(self, *args, callback: Any, initialParams: Dict, **kwargs,) -> None:
         super().__init__(*args, listenForKeyPresses=True, **kwargs)
         self.callback = callback
@@ -27,7 +27,7 @@ class SyncPanel(Component):
             Panel(
                 self.window,
                 self.id,
-                labelText="sync parameters",
+                labelText="screen parameters",
                 pos=self.pos,
                 children=[
                     Switch(
@@ -37,7 +37,6 @@ class SyncPanel(Component):
                         value=v,
                         pos=self.pos,
                         callback=self.makeFunc(k),
-                        leftSpaces=11,
                     )
                     if type(v) == bool
                     else TextInput(
