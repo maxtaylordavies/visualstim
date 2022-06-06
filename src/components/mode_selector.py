@@ -1,64 +1,53 @@
 from typing import Any, List
 
-from psychopy.visual import Window, TextBox2
-from psychopy.event import Mouse
+from psychopy.visual import Window
 
-from src.components.core import Component, Box
+from src.components.core import Component, Box, Textbox
 from src.constants import DARKGREY, GREY
-from src.utils import log
 
 
 class ModeSelector(Component):
-    def __init__(
-        self, window: Window, id: str, pos: List[int], mode: str, callback: Any
-    ) -> None:
-        super().__init__(window, id, pos)
+    def __init__(self, *args, mode: str, callback: Any, **kwargs,) -> None:
+        super().__init__(*args, **kwargs)
         self.mode = mode
         self.callback = callback
 
     def onClick(self, a, b):
-        log("mode_selector clicked")
+        self.mode = ("interactive", "scripting")[self.mode == "interactive"]
+        self.register()
         self.callback()
 
     def register(self) -> None:
         self.children = [
-            TextBox2(
+            Textbox(
                 self.window,
-                "interactive",
-                "Open Sans",
-                alignment="center",
-                units="pix",
-                letterHeight=16,
-                colorSpace="rgb255",
+                f"{self.id}-interactive",
+                pos=[self.pos[0] - 50, self.pos[1]],
+                text="interactive",
                 color=(GREY, DARKGREY)[self.mode == "interactive"],
                 bold=self.mode == "interactive",
                 padding=2,
-                pos=[self.pos[0] - 50, self.pos[1]],
-                size=[None, None],
+                fontSize=16,
             ),
-            TextBox2(
+            Textbox(
                 self.window,
-                "scripting",
-                "Open Sans",
-                alignment="center",
-                units="pix",
-                letterHeight=16,
-                colorSpace="rgb255",
+                f"{self.id}-scripting",
+                pos=[self.pos[0] + 28, self.pos[1]],
+                text="scripting",
                 color=(GREY, DARKGREY)[self.mode == "scripting"],
                 bold=self.mode == "scripting",
                 padding=2,
-                pos=[self.pos[0] + 28, self.pos[1]],
-                size=[None, None],
+                fontSize=16,
             ),
             Box(
                 self.window,
                 f"{self.id}-underline",
-                DARKGREY,
-                [
+                pos=[
                     self.pos[0] + (-52 if self.mode == "interactive" else 26),
                     self.pos[1] - 11,
                 ],
-                [80 if self.mode == "interactive" else 65, 2],
+                size=[80 if self.mode == "interactive" else 65, 2],
+                color=DARKGREY,
             ),
         ]
         super().register()

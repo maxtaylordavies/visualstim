@@ -1,6 +1,6 @@
 from typing import List
 
-from psychopy.visual import rect, Window, TextBox2
+from psychopy.visual import TextBox2
 
 from src.components.core import Component
 from src.constants import WHITE
@@ -9,21 +9,9 @@ from src.utils import log
 
 class Box(Component):
     def __init__(
-        self,
-        window: Window,
-        id: str,
-        color: List[int],
-        pos: List[int],
-        size: List[int],
-        borderColor: List[int] = WHITE,
-        borderWidth: int = 0,
-        children: List[Component] = [],
-        onClick=None,
+        self, *args, borderColor: List[int] = WHITE, borderWidth: int = 0, **kwargs,
     ) -> None:
-        super().__init__(
-            window, id, pos=pos, size=size, children=children, onClick=onClick
-        )
-        self.color = color
+        super().__init__(*args, **kwargs)
         self.borderColor = borderColor
         self.borderWidth = borderWidth
 
@@ -37,7 +25,7 @@ class Box(Component):
                 size=self.size,
                 pos=self.pos,
                 text="",
-                font="Courier",
+                font="Open Sans",
                 borderColor=self.borderColor,
                 borderWidth=self.borderWidth,
             )

@@ -1,84 +1,75 @@
 from typing import Any, List
-from psychopy.visual import Window, TextBox2, rect
+from psychopy.visual import Window, rect
 
-from src.components.core import Component
+from src.components.core import Component, Textbox
 from src.constants import DARKGREY, GREEN, RED, WHITE
-from src.utils import noOp
+from src.utils import noOp, log
 
 
 class TextInput(Component):
     def __init__(
         self,
-        window: Window,
-        id: str,
+        *args,
         value: Any,
         labelText: str,
-        pos: List[int],
-        size=[None, None],
         onChange=noOp,
-        zIndex=0,
-        fill=WHITE,
         highlight=True,
+        **kwargs,
     ) -> None:
-        super().__init__(window, id, pos, size, zIndex)
+        super().__init__(*args, **kwargs)
         self.initialValue = self.value = value
         self.labelText = labelText
         self.onChange = onChange
-        self.active = False
-        self.fill = fill
         self.highlight = highlight
+        self.active = False
 
     def register(self, text="$"):
-        self.input = TextBox2(
+        self.input = Textbox(
             self.window,
-            text if text != "$" else str(self.value),
-            "Open Sans",
-            units="pix",
-            letterHeight=18,
-            colorSpace="rgb255",
-            color="black",
-            fillColor=self.fill,
+            f"{self.id}-input",
+            pos=self.pos,
+            text=text if text != "$" else str(self.value),
+            fill=self.fill,
             borderColor=GREEN if (self.active and self.highlight) else WHITE,
             borderWidth=3,
             bold=True,
-            padding=5,
-            size=[None, None],
-            pos=self.pos,
             editable=self.active,
         )
-        self.label = TextBox2(
+
+        self.label = Textbox(
             self.window,
-            self.labelText,
-            "Open Sans",
-            units="pix",
-            letterHeight=18,
-            colorSpace="rgb255",
+            f"{self.id}-label",
+            pos=self.pos,
+            text=self.labelText,
             color=DARKGREY,
-            fillColor=self.fill,
+            fill=self.fill,
             borderColor=GREEN if (self.active and self.highlight) else WHITE,
             borderWidth=3,
-            bold=False,
-            padding=5,
-            size=[None, None],
-            pos=self.pos,
         )
 
-        self.label.pos[0] -= (self.label.size[0] + self.input.size[0]) / 2
-        self.input.pos[0] -= self.label.padding + self.input.padding
+        labelSize, inputSize = self.label.size, self.input.size
+        self.label.setPos(
+            [self.label.pos[0] - (labelSize[0] + inputSize[0]) / 2, self.label.pos[1]]
+        )
+        self.input.setPos(
+            [
+                self.input.pos[0] - self.label.padding + self.input.padding,
+                self.input.pos[1],
+            ]
+        )
 
         if self.size != [None, None]:
             diffx = self.size[0] - self.getSize()[0] if self.size[0] else 0
             diffy = self.size[1] - self.getSize()[1] if self.size[1] else 0
 
-            self.input.size = [self.input.size[0] + diffx, self.input.size[1] + diffy]
-            self.input.pos = [self.input.pos[0] + (diffx / 2), self.input.pos[1]]
-            self.label.size = [self.label.size[0], self.label.size[1] + diffy]
+            self.input.setSize([inputSize[0] + diffx, inputSize[1] + diffy])
+            self.input.setPos([self.input.pos[0] + (diffx / 2), self.input.pos[1]])
+            self.label.setSize([labelSize[0], labelSize[1] + diffy])
 
         left, right = self.edges()
         center = (left + right) / 2
-
-        self.label.pos[0] += self.pos[0] - center
-        self.input.pos[0] += self.pos[0] - center
+        self.label.setPos([self.label.pos[0] + self.pos[0] - center, self.label.pos[1]])
+        self.input.setPos([self.input.pos[0] + self.pos[0] - center, self.input.pos[1]])
 
         self.mask = rect.Rect(
             self.window,
@@ -95,18 +86,18 @@ class TextInput(Component):
 
     def toggle(self):
         if self.active:
-            self.input.text = (
-                self.input.text if self.input.text else str(self.initialValue)
+            self.input.setText(
+                self.input.getText() if self.input.getText() else str(self.initialValue)
             )
-            self.value = type(self.initialValue)(self.input.text)
+            self.value = type(self.initialValue)(self.input.getText())
             self.onChange(self.value)
         self.active = not self.active
         self.update()
 
     def update(self):
-        self.register(text=self.input.text)
+        self.register(text=self.input.getText())
+        self.input.toggleFocus()
         self.draw()
-        self.input.hasFocus = self.active
 
     def edges(self):
         rightEdge = self.input.pos[0] + (self.input.size[0] / 2)
@@ -128,7 +119,7 @@ class TextInput(Component):
         if not self.active:
             return
         if key == "return":
-            self.input.deleteCaretLeft()
+            self.input.deleteCaret()
             self.toggle()
         else:
             self.update()

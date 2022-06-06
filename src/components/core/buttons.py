@@ -1,58 +1,38 @@
-from typing import Any, List
-from psychopy.visual import Window, TextBox2, circle
+from typing import List
+from psychopy.visual import Window, circle
 
 from src.components.core import Component
-from src.constants import GREEN, RED, WHITE, BLACK
+from .textbox import Textbox
+from src.constants import GREEN, RED, WHITE
 from src.utils import noOp
 
 
 class Button(Component):
-    def __init__(
-        self,
-        window: Window,
-        id: str,
-        text: str,
-        color: List[int],
-        fill: List[int],
-        pos: List[int],
-        size=[None, None],
-        bold=True,
-        padding=2,
-        onClick=None,
-        opacity=1
-    ) -> None:
-        super().__init__(window, id, pos, size, onClick=onClick)
+    def __init__(self, *args, text="", bold=True, padding=2, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
         self.text = text
-        self.color = color
-        self.fill = fill
         self.bold = bold
         self.padding = padding
         self.borderWidth = 0
-        self.opacity = opacity
-        
+
     def register(self):
         self.children = [
-            TextBox2(
+            Textbox(
                 self.window,
-                f" {self.text} ",
-                "Open Sans",
-                alignment="center",
-                units="pix",
-                letterHeight=18,
-                colorSpace="rgb255",
+                self.id,
+                pos=self.pos,
+                text=f" {self.text} ",
                 color=self.color,
-                fillColor=self.fill,
+                fill=self.fill,
                 bold=self.bold,
                 padding=self.padding,
                 size=self.size,
-                pos=self.pos,
-                opacity=self.opacity
             )
         ]
 
     def changeFill(self, fill):
         self.fill = fill
-        self.children[0].fillColor = self.fill
+        self.register()
         self.draw()
 
     def getSize(self):

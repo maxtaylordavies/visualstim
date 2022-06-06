@@ -1,27 +1,19 @@
 from typing import Any, List
 
 import numpy as np
-from psychopy.visual import Window, TextBox2, rect
+from psychopy.visual import Window
 
-from src.components.core import Box, Button, Component, Panel
+from src.components.core import Box, Button, Component, Panel, Textbox
 from .core.input import TextInput
-from src.constants import DARKGREY, GREEN, LIGHTGREY, RED, WHITE, TRANSPARENT
+from src.constants import DARKGREY, GREEN, LIGHTGREY, WHITE, TRANSPARENT
 from src.utils import noOp
 
 
 class ExpandableInput(Component):
     def __init__(
-        self,
-        window: Window,
-        id: str,
-        value: float,
-        labelText: str,
-        pos: List[int],
-        size=[None, None],
-        onChange=noOp,
-        zIndex=0,
+        self, *args, value: float, labelText: str, onChange=noOp, **kwargs,
     ) -> None:
-        super().__init__(window, id, pos, size, zIndex)
+        super().__init__(*args, listenForKeyPresses=True, **kwargs)
         self.initialValue = self.start = self.stop = value
         self.steps = 1
         self.random = False
@@ -37,58 +29,53 @@ class ExpandableInput(Component):
         text = str(self.start)
         if self.start != self.stop:
             text = "rand" if self.random else "multi"
-        self.input = TextBox2(
+        self.input = Textbox(
             self.window,
-            text,
-            "Open Sans",
-            units="pix",
-            letterHeight=18,
-            colorSpace="rgb255",
-            color="black",
-            fillColor=WHITE,
-            bold=True,
-            padding=5,
-            size=[None, None],
+            f"{self.id}-input",
             pos=self.pos,
+            text=text,
+            bold=True,
             editable=self.active,
         )
-        self.label = TextBox2(
+        self.label = Textbox(
             self.window,
-            f"{self.labelText}",
-            "Open Sans",
-            units="pix",
-            letterHeight=18,
-            colorSpace="rgb255",
-            color=DARKGREY,
-            fillColor=WHITE,
-            bold=False,
-            padding=5,
-            size=[None, None],
+            f"{self.id}-label",
             pos=self.pos,
+            text=self.labelText,
+            color=DARKGREY,
         )
 
-        self.label.pos[0] -= (self.label.size[0] + self.input.size[0]) / 2
-        self.input.pos[0] -= self.label.padding + self.input.padding
+        labelSize, inputSize = self.label.size, self.input.size
+        self.label.setPos(
+            [self.label.pos[0] - (labelSize[0] + inputSize[0]) / 2, self.label.pos[1]]
+        )
+        self.input.setPos(
+            [
+                self.input.pos[0] - self.label.padding + self.input.padding,
+                self.input.pos[1],
+            ]
+        )
 
         if self.size != [None, None]:
             diffx = self.size[0] - self.getSize()[0] if self.size[0] else 0
             diffy = self.size[1] - self.getSize()[1] if self.size[1] else 0
-            self.input.size = [self.input.size[0] + diffx, self.input.size[1] + diffy]
-            self.input.pos = [self.input.pos[0] + (diffx / 2), self.input.pos[1]]
-            self.label.size = [self.label.size[0], self.label.size[1] + diffy]
+
+            self.input.setSize([inputSize[0] + diffx, inputSize[1] + diffy])
+            self.input.setPos([self.input.pos[0] + (diffx / 2), self.input.pos[1]])
+            self.label.setSize([labelSize[0], labelSize[1] + diffy])
 
         left, right = self.edges()
         center = (left + right) / 2
-        self.label.pos[0] += self.pos[0] - center
-        self.input.pos[0] += self.pos[0] - center
+        self.label.setPos([self.label.pos[0] + self.pos[0] - center, self.label.pos[1]])
+        self.input.setPos([self.input.pos[0] + self.pos[0] - center, self.input.pos[1]])
 
         self.children = [
             Box(
                 self.window,
                 f"{self.id}-box",
-                WHITE,
-                [self.pos[0], self.pos[1] + 1],
-                [right - left + 2, self.input.size[1] + 2],
+                pos=[self.pos[0], self.pos[1] + 1],
+                size=[right - left + 2, self.input.size[1] + 2],
+                color=WHITE,
                 children=[self.label, self.input],
                 onClick=lambda a, b: self.toggle(),
             )
@@ -104,9 +91,9 @@ class ExpandableInput(Component):
         self.startInput = TextInput(
             self.window,
             f"{self.id}-start-input",
-            str(self.start),
-            "start",
-            labelPos,
+            value=str(self.start),
+            labelText="start",
+            pos=labelPos,
             zIndex=20,
             fill=LIGHTGREY,
             highlight=False,
@@ -115,9 +102,9 @@ class ExpandableInput(Component):
         self.stopInput = TextInput(
             self.window,
             f"{self.id}-start-input",
-            str(self.stop),
-            "stop",
-            labelPos,
+            value=str(self.stop),
+            labelText="stop",
+            pos=labelPos,
             zIndex=20,
             fill=LIGHTGREY,
             highlight=False,
@@ -126,9 +113,9 @@ class ExpandableInput(Component):
         self.stepsInput = TextInput(
             self.window,
             f"{self.id}-start-input",
-            str(self.steps),
-            "steps",
-            labelPos,
+            value=str(self.steps),
+            labelText="steps",
+            pos=labelPos,
             zIndex=20,
             fill=LIGHTGREY,
             highlight=False,
@@ -136,11 +123,11 @@ class ExpandableInput(Component):
         )
         self.randomiseButton = Button(
             self.window,
-            "temp-button",
-            " random",
-            WHITE,
-            GREEN if self.random else LIGHTGREY,
-            labelPos,
+            f"{self.id}-randomise-button",
+            text=" random",
+            color=WHITE,
+            fill=GREEN if self.random else LIGHTGREY,
+            pos=labelPos,
             size=[None, 32],
             onClick=lambda a, b: self.toggleRandom(),
         )
@@ -149,9 +136,9 @@ class ExpandableInput(Component):
             Box(
                 self.window,
                 f"{self.id}-box",
-                WHITE,
-                boxPos,
-                [right - left + 2, self.input.size[1] + boxHeightDiff],
+                pos=boxPos,
+                size=[right - left + 2, self.input.size[1] + boxHeightDiff],
+                color=WHITE,
                 borderColor=GREEN,
                 borderWidth=3,
                 children=[
@@ -159,20 +146,22 @@ class ExpandableInput(Component):
                     Panel(
                         self.window,
                         f"{self.id}-panel",
-                        "",
-                        [boxPos[0], boxPos[1] - 16],
-                        [
+                        labelText="",
+                        pos=[boxPos[0] + 14, boxPos[1] - 16],
+                        children=[
                             self.startInput,
                             self.stopInput,
                             self.stepsInput,
                             self.randomiseButton,
                         ],
                         rows=2,
-                        padding=8,
-                        background=TRANSPARENT,
+                        padding=5,
+                        fill=TRANSPARENT,
+                        listenForKeyPresses=True,
                     ),
                 ],
                 onClick=lambda a, b: self.toggle(),
+                listenForKeyPresses=True,
             )
         ]
 

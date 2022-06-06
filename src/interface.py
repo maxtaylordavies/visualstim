@@ -61,100 +61,107 @@ class Interface:
         # load default experiment
         self.loadExperiment("default.json")
 
-        # create components to render
-        # (and register them)
-        self.createComponents()
+        # create + register children
+        self.register()
 
-    def createComponents(self) -> None:
-        self.components = [
+    def register(self) -> None:
+        self.children = [
+            # common components (rendered in both modes)
             Button(
                 self.controlWindow,
                 "logo-button",
-                "visualstim v0.1",
-                PURPLE,
-                WHITE,
-                [-370, 273],
+                text="visualstim v0.1",
+                pos=[-370, 273],
+                color=PURPLE,
+                fill=WHITE,
             ),
             ModeSelector(
                 self.controlWindow,
                 "mode-selector",
-                [-207, 275],
-                self.mode,
-                self.toggleMode,
+                pos=[-207, 275],
+                mode=self.mode,
+                callback=self.toggleMode,
             ),
             PlayButton(
-                self.controlWindow,
-                "play-button",
-                16,
-                [100, 270] if self.mode == "interactive" else [175, 270],
-                self.onStartClicked,
+                self.controlWindow, "play-button", 16, [100, 270], self.onStartClicked,
             ),
             Button(
                 self.controlWindow,
                 "switch-screen-button",
-                "switch screen",
-                WHITE,
-                YELLOW,
-                [265, 270],
+                text="switch screen",
+                color=WHITE,
+                fill=YELLOW,
+                pos=[265, 270],
                 onClick=self.onSwitchScreenClicked,
             ),
             Button(
                 self.controlWindow,
                 "quit-button",
-                "quit (esc)",
-                WHITE,
-                RED,
-                [390, 270],
+                text="quit (esc)",
+                color=WHITE,
+                fill=RED,
+                pos=[390, 270],
                 onClick=self.onQuitClicked,
             ),
-        ] + (
-            self.scriptingModeComponents()
-            if self.mode == "scripting"
-            else self.interactiveModeComponents()
-        )
-        # register components (assign them to the window)
-        for i in range(len(self.components)):
-            self.components[i].register()
-
-    def interactiveModeComponents(self) -> List[Component]:
-        return [
-            SaveButton(self.controlWindow, [156, 270], self.saveParameters,),
+            # interactive mode components
+            SaveButton(
+                self.controlWindow, pos=[156, 270], callback=self.saveParameters
+            ),
             StimulusPanel(
                 self.controlWindow,
                 "stimulus-panel",
-                [-132, 75],
-                self.selectStimulusType,
+                pos=[-145, 75],
+                callback=self.selectStimulusType,
             ),
             ParametersPanel(
                 self.controlWindow,
                 "stim-params-panel",
-                [-140, -67],
-                self.setStimulusParameter,
-                self.filterStimulusParams(),
+                pos=[-135, -67],
+                callback=self.setStimulusParameter,
+                initialParams=self.filterStimulusParams(),
             ),
             SyncPanel(
                 self.controlWindow,
                 "sync-params-panel",
-                [256, -15],
-                self.setSyncParameter,
-                copy.deepcopy(self.experiment.syncSettings),
+                pos=[256, -15],
+                callback=self.setSyncParameter,
+                initialParams=copy.deepcopy(self.experiment.syncSettings),
+            ),
+            # scripting mode components
+            ScriptSelector(
+                self.controlWindow,
+                "script-selector",
+                pos=[0, 0],
+                callback=self.loadExperiment,
+                hide=True,
             ),
         ]
 
-    def scriptingModeComponents(self) -> List[Component]:
-        return [
-            ScriptSelector(
-                self.controlWindow, "script-selector", [0, 0], self.loadExperiment
-            )
-        ]
+        # register children (assign them to the window)
+        for i in range(len(self.children)):
+            self.children[i].register()
 
     def toggleMode(self) -> None:
+        # set self.mode
         self.mode = ("interactive", "scripting")[self.mode == "interactive"]
-        log("loading experiment")
+
+        # load default experiment
         self.loadExperiment("default.json")
-        log("creating components")
-        self.createComponents()
-        log("done")
+
+        # update UI
+        for i, c in enumerate(self.children):
+            if c.id not in {
+                "logo-button",
+                "mode-selector",
+                "play-button",
+                "switch-screen-button",
+                "quit-button",
+            }:
+                self.children[i].toggleHidden()
+            elif c.id == "play-button":
+                self.children[i].setPos(
+                    [100, 270] if self.mode == "interactive" else [175, 270]
+                )
 
     def saveParameters(self):
         saveExperiment(self.experiment)
@@ -175,13 +182,13 @@ class Interface:
 
     def createSyncSquares(self):
         self.syncSquares = SyncSquares(self.displayWindow, "sync-squares")
-        self.components = [c for c in self.components if c.id != "sync-squares"]
-        self.components.append(self.syncSquares)
-        self.components[-1].register()
+        self.children = [c for c in self.children if c.id != "sync-squares"]
+        self.children.append(self.syncSquares)
+        self.children[-1].register()
 
     def removeSyncSquares(self):
         self.syncSquares = None
-        self.components = [c for c in self.components if c.id != "sync-squares"]
+        self.children = [c for c in self.children if c.id != "sync-squares"]
 
     def selectStimulusType(self, x):
         log("setting stimulus type")
@@ -191,7 +198,7 @@ class Interface:
         paramsPanelIdx = self.getComponentIndexById("stim-params-panel")
         log(f"got paramsPanelIdx")
         if paramsPanelIdx != -1:
-            self.components[paramsPanelIdx].resetParams(self.filterStimulusParams())
+            self.children[paramsPanelIdx].resetParams(self.filterStimulusParams())
         log("finished resetting params")
         self.afterParameterChange()
 
@@ -208,10 +215,10 @@ class Interface:
     def afterParameterChange(self):
         saveButtonId = self.getComponentIndexById("save-button")
         if saveButtonId != -1:
-            self.components[saveButtonId].setUnsaved()
+            self.children[saveButtonId].setUnsaved()
 
     def getComponentIndexById(self, id: str) -> int:
-        for i, c in enumerate(self.components):
+        for i, c in enumerate(self.children):
             if c.id == id:
                 return i
         return -1
@@ -226,7 +233,7 @@ class Interface:
                 color=[255, 255, 255],
                 colorSpace="rgb255",
             )
-            self.frameRate = 30
+            self.frameRate = self.displayWindow.getActualFrameRate() or 30
             if self.experiment.syncSettings["sync"]:
                 self.createSyncSquares()
             self.draw()
@@ -245,7 +252,7 @@ class Interface:
 
         # toggle play button
         self.playing = not self.playing
-        self.components[playButtonIdx].toggle()
+        self.children[playButtonIdx].toggle()
         self.draw()
 
         # if now in "playing" state, run the selected stimulus
@@ -262,12 +269,12 @@ class Interface:
             # if the stimulation hasn't been stopped prematurely by the user,
             # then we need to toggle the playing state + button
             if self.playing:
-                self.components[playButtonIdx].toggle()
+                self.children[playButtonIdx].toggle()
                 self.draw()
                 self.playing = not self.playing
 
     def onClick(self) -> None:
-        for component in self.components:
+        for component in self.children:
             if component.contains(self.mouse) and hasattr(component, "onClick"):
                 component.onClick(self.mouse, component)
                 break
@@ -277,7 +284,7 @@ class Interface:
             self.quit = True
             return
         for key in keys:
-            for component in self.components:
+            for component in self.children:
                 if hasattr(component, "onKeyPress"):
                     component.onKeyPress(key)
 
@@ -295,7 +302,7 @@ class Interface:
         self.onKeyPress(keys)
 
     def draw(self) -> None:
-        for component in self.components:
+        for component in self.children:
             component.draw()
         self.controlWindow.flip()
         if self.screenNum:
