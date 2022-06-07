@@ -8,3 +8,4 @@ from .sync_squares import SyncSquares
 from .mode_selector import ModeSelector
 from .script_selector import ScriptSelector
 from .save_button import SaveButton
+from .header_bar import HeaderBar

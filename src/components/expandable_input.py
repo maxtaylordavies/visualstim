@@ -1,7 +1,4 @@
-from typing import Any, List
-
 import numpy as np
-from psychopy.visual import Window
 
 from src.components.core import Box, Button, Component, Panel, Textbox
 from .core.input import TextInput

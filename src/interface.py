@@ -3,23 +3,16 @@ from typing import Any
 
 from psychopy import event
 
-from src.constants import (
-    STIMULUS_PARAMETER_MAP,
-    WHITE,
-    PURPLE,
-    YELLOW,
-    RED,
-)
-from src.components.core import Button, PlayButton
+from src.constants import STIMULUS_PARAMETER_MAP
+from src.components.core import Button, Component
 from src.components import (
-    ModeSelector,
     StimulusPanel,
     ParametersPanel,
     SyncPanel,
     ScreenPanel,
     SyncSquares,
     ScriptSelector,
-    SaveButton,
+    HeaderBar,
 )
 from src.utils import checkForEsc, log, createWindow, getScreenResolution
 from src.experiments import (
@@ -29,8 +22,10 @@ from src.experiments import (
 )
 
 
-class Interface:
+class Interface(Component):
     def __init__(self, fullscreen=False):
+        self.id = "root"
+
         # start in interactive mode by default
         self.mode = "interactive"
 
@@ -64,46 +59,15 @@ class Interface:
 
     def register(self) -> None:
         self.children = [
-            # common components (rendered in both modes)
-            Button(
+            HeaderBar(
                 self.controlWindow,
-                "logo-button",
-                text="visualstim v0.1",
-                pos=[-420, 302],
-                color=PURPLE,
-                fill=WHITE,
-            ),
-            ModeSelector(
-                self.controlWindow,
-                "mode-selector",
-                pos=[-257, 302],
+                "headerbar",
                 mode=self.mode,
-                callback=self.toggleMode,
-            ),
-            PlayButton(
-                self.controlWindow, "play-button", 16, [150, 302], self.onStartClicked,
-            ),
-            Button(
-                self.controlWindow,
-                "switch-screen-button",
-                text="switch screen",
-                color=WHITE,
-                fill=YELLOW,
-                pos=[315, 302],
-                onClick=self.onSwitchScreenClicked,
-            ),
-            Button(
-                self.controlWindow,
-                "quit-button",
-                text="quit (esc)",
-                color=WHITE,
-                fill=RED,
-                pos=[440, 302],
-                onClick=self.onQuitClicked,
-            ),
-            # interactive mode components
-            SaveButton(
-                self.controlWindow, pos=[206, 302], callback=self.saveParameters
+                toggleModeCallback=self.toggleMode,
+                onStartClicked=self.onStartClicked,
+                onSaveClicked=self.saveParameters,
+                onSwitchScreenClicked=self.onSwitchScreenClicked,
+                onQuitClicked=self.onQuitClicked,
             ),
             StimulusPanel(
                 self.controlWindow,
@@ -132,7 +96,6 @@ class Interface:
                 callback=self.setScreenParameter,
                 initialParams=copy.deepcopy(self.experiment.screenSettings),
             ),
-            # scripting mode components
             ScriptSelector(
                 self.controlWindow,
                 "script-selector",
@@ -143,8 +106,7 @@ class Interface:
         ]
 
         # register children (assign them to the window)
-        for i in range(len(self.children)):
-            self.children[i].register()
+        super().register()
 
     def setResolution(self) -> None:
         hor, ver = getScreenResolution(self.screenNum)
@@ -160,18 +122,8 @@ class Interface:
 
         # update UI
         for i, c in enumerate(self.children):
-            if c.id not in {
-                "logo-button",
-                "mode-selector",
-                "play-button",
-                "switch-screen-button",
-                "quit-button",
-            }:
+            if c.id != "headerbar":
                 self.children[i].toggleHidden()
-            elif c.id == "play-button":
-                self.children[i].setPos(
-                    [150, 302] if self.mode == "interactive" else [225, 302]
-                )
 
     def saveParameters(self):
         saveExperiment(self.experiment)
@@ -205,10 +157,10 @@ class Interface:
         # set stimulus type
         self.experiment.stimuli[0]["name"] = x
         # update the parameters shown in the params panel
-        paramsPanelIdx = self.getComponentIndexById("stim-params-panel")
+        paramsPanel = self.getComponentById("stim-params-panel")
         log(f"got paramsPanelIdx")
-        if paramsPanelIdx != -1:
-            self.children[paramsPanelIdx].resetParams(self.filterStimulusParams())
+        if paramsPanel:
+            paramsPanel.resetParams(self.filterStimulusParams())
         log("finished resetting params")
         self.afterParameterChange()
 
@@ -227,15 +179,9 @@ class Interface:
         self.afterParameterChange()
 
     def afterParameterChange(self):
-        saveButtonId = self.getComponentIndexById("save-button")
-        if saveButtonId != -1:
-            self.children[saveButtonId].setUnsaved()
-
-    def getComponentIndexById(self, id: str) -> int:
-        for i, c in enumerate(self.children):
-            if c.id == id:
-                return i
-        return -1
+        saveButton = self.getComponentById("save-button")
+        if saveButton:
+            saveButton.setUnsaved()
 
     def onSwitchScreenClicked(self, mouse: event.Mouse, button: Button) -> None:
         self.screenNum = 1 - self.screenNum
@@ -256,13 +202,14 @@ class Interface:
         self.quit = True
 
     def onStartClicked(self, mouse: event.Mouse, button: Button) -> None:
-        playButtonIdx = self.getComponentIndexById("play-button")
-        if playButtonIdx == -1:
+        playButton = self.getComponentById("play-button")
+        if not playButton:
             return
 
         # toggle play button
         self.playing = not self.playing
-        self.children[playButtonIdx].toggle()
+        # self.children[playButtonIdx].toggle()
+        playButton.toggle()
         self.draw()
 
         # if now in "playing" state, run the selected stimulus
@@ -279,7 +226,8 @@ class Interface:
             # if the stimulation hasn't been stopped prematurely by the user,
             # then we need to toggle the playing state + button
             if self.playing:
-                self.children[playButtonIdx].toggle()
+                # self.children[playButtonIdx].toggle()
+                playButton.toggle()
                 self.draw()
                 self.playing = not self.playing
 
