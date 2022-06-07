@@ -57,6 +57,17 @@ class Component:
             self.children, key=lambda x: x.zIndex if hasattr(x, "zIndex") else 0
         )
 
+    def getComponentById(self, id: str) -> Any:
+        if self.id == id:
+            return self
+        for c in self.children:
+            if not hasattr(c, "getComponentById"):
+                continue
+            component = c.getComponentById(id)
+            if component:
+                return component
+        return None
+
     def draw(self) -> None:
         if self.hide:
             return
