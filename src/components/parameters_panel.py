@@ -11,16 +11,7 @@ from src.utils import paramLabelWithUnits
 
 
 class ParametersPanel(Component):
-    def __init__(
-        self,
-        *args,
-        # window: Window,
-        # id: str,
-        # pos: List[int],
-        callback: Any,
-        initialParams: Dict,
-        **kwargs,
-    ) -> None:
+    def __init__(self, *args, callback: Any, initialParams: Dict, **kwargs,) -> None:
         super().__init__(*args, listenForKeyPresses=True, **kwargs)
         self.callback = callback
         self.params = initialParams

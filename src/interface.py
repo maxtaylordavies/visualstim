@@ -1,7 +1,7 @@
 import copy
-from typing import Any, List
+from typing import Any
 
-from psychopy import visual, event
+from psychopy import event
 
 from src.constants import (
     STIMULUS_PARAMETER_MAP,
@@ -10,17 +10,18 @@ from src.constants import (
     YELLOW,
     RED,
 )
-from src.components.core import Button, Component, PlayButton
+from src.components.core import Button, PlayButton
 from src.components import (
     ModeSelector,
     StimulusPanel,
     ParametersPanel,
     SyncPanel,
+    ScreenPanel,
     SyncSquares,
     ScriptSelector,
     SaveButton,
 )
-from src.utils import checkForEsc, log
+from src.utils import checkForEsc, log, createWindow, getScreenResolution
 from src.experiments import (
     playExperiment,
     loadExperiment as _loadExperiment,
@@ -36,16 +37,10 @@ class Interface:
         # create window
         self.screenNum = 0
         self.fullscreen = fullscreen
-        self.controlWindow = visual.Window(
-            size=[900, 600],
-            screen=self.screenNum,
-            fullscr=self.fullscreen,
-            units="pix",
-            color=WHITE,
-            colorSpace="rgb255",
-        )
+        self.controlWindow = createWindow(fullscreen=self.fullscreen)
         self.displayWindow = self.controlWindow
         self.frameRate = self.displayWindow.getActualFrameRate() or 30
+        self.children = []
         self.syncSquares = None
 
         # create mouse object to listen for click events
@@ -61,6 +56,9 @@ class Interface:
         # load default experiment
         self.loadExperiment("default.json")
 
+        # get screen resolution and update screen params if necessary
+        self.setResolution()
+
         # create + register children
         self.register()
 
@@ -71,19 +69,19 @@ class Interface:
                 self.controlWindow,
                 "logo-button",
                 text="visualstim v0.1",
-                pos=[-370, 273],
+                pos=[-420, 302],
                 color=PURPLE,
                 fill=WHITE,
             ),
             ModeSelector(
                 self.controlWindow,
                 "mode-selector",
-                pos=[-207, 275],
+                pos=[-257, 302],
                 mode=self.mode,
                 callback=self.toggleMode,
             ),
             PlayButton(
-                self.controlWindow, "play-button", 16, [100, 270], self.onStartClicked,
+                self.controlWindow, "play-button", 16, [150, 302], self.onStartClicked,
             ),
             Button(
                 self.controlWindow,
@@ -91,7 +89,7 @@ class Interface:
                 text="switch screen",
                 color=WHITE,
                 fill=YELLOW,
-                pos=[265, 270],
+                pos=[315, 302],
                 onClick=self.onSwitchScreenClicked,
             ),
             Button(
@@ -100,32 +98,39 @@ class Interface:
                 text="quit (esc)",
                 color=WHITE,
                 fill=RED,
-                pos=[390, 270],
+                pos=[440, 302],
                 onClick=self.onQuitClicked,
             ),
             # interactive mode components
             SaveButton(
-                self.controlWindow, pos=[156, 270], callback=self.saveParameters
+                self.controlWindow, pos=[206, 302], callback=self.saveParameters
             ),
             StimulusPanel(
                 self.controlWindow,
                 "stimulus-panel",
-                pos=[-145, 75],
+                pos=[-145, 120],
                 callback=self.selectStimulusType,
             ),
             ParametersPanel(
                 self.controlWindow,
                 "stim-params-panel",
-                pos=[-135, -67],
+                pos=[-155, -20],
                 callback=self.setStimulusParameter,
                 initialParams=self.filterStimulusParams(),
             ),
             SyncPanel(
                 self.controlWindow,
                 "sync-params-panel",
-                pos=[256, -15],
+                pos=[256, 60],
                 callback=self.setSyncParameter,
                 initialParams=copy.deepcopy(self.experiment.syncSettings),
+            ),
+            ScreenPanel(
+                self.controlWindow,
+                "screen-params-panel",
+                pos=[-110, -170],
+                callback=self.setScreenParameter,
+                initialParams=copy.deepcopy(self.experiment.screenSettings),
             ),
             # scripting mode components
             ScriptSelector(
@@ -140,6 +145,11 @@ class Interface:
         # register children (assign them to the window)
         for i in range(len(self.children)):
             self.children[i].register()
+
+    def setResolution(self) -> None:
+        hor, ver = getScreenResolution(self.screenNum)
+        self.setScreenParameter("h res", hor)
+        self.setScreenParameter("v res", ver)
 
     def toggleMode(self) -> None:
         # set self.mode
@@ -160,7 +170,7 @@ class Interface:
                 self.children[i].toggleHidden()
             elif c.id == "play-button":
                 self.children[i].setPos(
-                    [100, 270] if self.mode == "interactive" else [175, 270]
+                    [150, 302] if self.mode == "interactive" else [225, 302]
                 )
 
     def saveParameters(self):
@@ -212,6 +222,10 @@ class Interface:
         self.experiment.syncSettings[key] = value
         self.afterParameterChange()
 
+    def setScreenParameter(self, key: str, value: Any) -> None:
+        self.experiment.screenSettings[key] = value
+        self.afterParameterChange()
+
     def afterParameterChange(self):
         saveButtonId = self.getComponentIndexById("save-button")
         if saveButtonId != -1:
@@ -226,12 +240,8 @@ class Interface:
     def onSwitchScreenClicked(self, mouse: event.Mouse, button: Button) -> None:
         self.screenNum = 1 - self.screenNum
         if self.screenNum:
-            self.displayWindow = visual.Window(
-                screen=self.screenNum,
-                fullscr=self.fullscreen,
-                units="pix",
-                color=[255, 255, 255],
-                colorSpace="rgb255",
+            self.displayWindow = createWindow(
+                screenNum=self.screenNum, fullscreen=self.fullscreen
             )
             self.frameRate = self.displayWindow.getActualFrameRate() or 30
             if self.experiment.syncSettings["sync"]:

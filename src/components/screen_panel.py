@@ -37,6 +37,7 @@ class ScreenPanel(Component):
                         value=v,
                         pos=self.pos,
                         callback=self.makeFunc(k),
+                        leftSpaces=4,
                     )
                     if type(v) == bool
                     else TextInput(
@@ -49,7 +50,7 @@ class ScreenPanel(Component):
                     )
                     for k, v in list(self.params.items())
                 ],
-                rows=4,
+                rows=2,
                 listenForKeyPresses=self.listenForKeyPresses,
                 fill=LIGHTGREY,
             )

@@ -1,11 +1,12 @@
 from datetime import datetime
 from math import degrees, atan2
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 import numpy as np
-from psychopy import event
+from psychopy import visual, event
+from pyglet.canvas import get_display
 
-from src.constants import DEFAULT_STIMULUS_PARAMS, UNITS_MAP
+from src.constants import DEFAULT_STIMULUS_PARAMS, UNITS_MAP, WHITE
 
 
 def log(message: str) -> None:
@@ -51,6 +52,24 @@ def paramLabelWithUnits(key: str) -> str:
 def pix2deg(pix, screenParams):
     return (
         pix
-        * degrees(atan2(screenParams["height"] / 2, screenParams["distance"]))
+        * degrees(atan2(screenParams["height"] / 2, screenParams["dist"]))
         / (screenParams["v res"] / 2)
     )
+
+
+def createWindow(size=[1000, 650], screenNum=0, fullscreen=False):
+    return visual.Window(
+        size=size,
+        screen=screenNum,
+        fullscr=fullscreen,
+        units="pix",
+        color=WHITE,
+        colorSpace="rgb255",
+    )
+
+
+def getScreenResolution(screenNum: int) -> List[int]:
+    screens = get_display().get_screens()
+    if screenNum >= len(screens):
+        raise Exception("screenNum too high")
+    return [screens[screenNum].width, screens[screenNum].height]

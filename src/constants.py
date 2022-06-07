@@ -5,7 +5,7 @@ DEFAULT_SCREEN_PARAMS = {
     "height": 523,
     "h res": 1400,
     "v res": 900,
-    "distance": 300,
+    "dist": 300,
     "warp": False,
 }
 DEFAULT_STIMULUS_PARAMS = {
@@ -27,6 +27,11 @@ STIMULUS_PARAMETER_MAP = {
     "movie": {"filename", "fit screen", "stim duration"},
 }
 UNITS_MAP = {
+    "width": "mm",
+    "height": "mm",
+    "h res": "pix",
+    "v res": "pix",
+    "dist": "mm",
     "spat freq": "cyc/deg",
     "temp freq": "Hz",
     "orientation": "deg",
