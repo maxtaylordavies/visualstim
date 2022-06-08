@@ -1,12 +1,19 @@
 from datetime import datetime
 from math import degrees, atan2
 from typing import Any, Dict, List
+import itertools
 
 import numpy as np
+import scipy.ndimage.interpolation as spndi
 from psychopy import visual, event
 from pyglet.canvas import get_display
 
-from src.constants import DEFAULT_STIMULUS_PARAMS, UNITS_MAP, WHITE
+from src.constants import (
+    DEFAULT_SCREEN_PARAMS,
+    DEFAULT_STIMULUS_PARAMS,
+    UNITS_MAP,
+    WHITE,
+)
 
 
 def log(message: str) -> None:
@@ -31,6 +38,10 @@ def parseParams(params: Dict) -> Dict:
 def normalise(x: np.ndarray) -> np.ndarray:
     # normalise x to within the range [-1, 1]
     return np.nan_to_num((2 * (x - np.min(x)) / (np.max(x) - np.min(x))) - 1)
+
+
+def scaleUp(x: np.ndarray, factor: int) -> np.ndarray:
+    return np.kron(x, np.ones((factor, factor)))
 
 
 def sinDeg(x: float) -> float:
@@ -73,3 +84,74 @@ def getScreenResolution(screenNum: int) -> List[int]:
     if screenNum >= len(screens):
         raise Exception("screenNum too high")
     return [screens[screenNum].width, screens[screenNum].height]
+
+
+def warpTexture(
+    texture: List, screenParams: Dict = DEFAULT_SCREEN_PARAMS
+) -> np.ndarray:
+    # compute (unwarped) display coordinates
+    # hRes, vRes = screenParams["h res"], screenParams["v res"]
+    vRes, hRes = texture[0].shape
+    x = np.array(range(hRes)) - hRes / 2
+    y = np.array(range(vRes)) - vRes / 2
+    vertices = np.array(list(itertools.product(y, x)))
+
+    mon_width_cm = float(screenParams["width"] / 10)
+    mon_height_cm = float(screenParams["height"] / 10)
+    distance = float(screenParams["dist"] / 10)
+    vertices = vertices.astype(np.float)
+    eyepoint = (0.5, 0.5)
+
+    # from pixels (-1920/2 -> 1920/2) to stimulus space (-0.5->0.5)
+    vertices[:, 0] = vertices[:, 0] / hRes
+    vertices[:, 1] = vertices[:, 1] / vRes
+
+    x = (vertices[:, 0] + 0.5) * mon_width_cm
+    y = (vertices[:, 1] + 0.5) * mon_height_cm
+
+    xEye = eyepoint[0] * mon_width_cm
+    yEye = eyepoint[1] * mon_height_cm
+
+    x = x - xEye
+    y = y - yEye
+
+    r = np.sqrt(np.square(x) + np.square(y) + np.square(distance))
+
+    azimuth = np.arctan(x / distance)
+    altitude = np.arcsin(y / r)
+
+    # calculate the texture coordinates
+    tx = distance * (1 + x / r) - distance
+    ty = distance * (1 + y / r) - distance
+
+    # prevent div0
+    azimuth[azimuth == 0] = np.finfo(np.float32).eps
+    altitude[altitude == 0] = np.finfo(np.float32).eps
+
+    # the texture coordinates (which are now lying on the sphere)
+    # need to be remapped back onto the plane of the display.
+    # This effectively stretches the coordinates away from the eyepoint.
+
+    centralAngle = np.arccos(np.cos(altitude) * np.cos(np.abs(azimuth)))
+    # distance from eyepoint to texture vertex
+    arcLength = centralAngle * distance
+    # remap the texture coordinate
+    theta = np.arctan2(ty, tx)
+    tx = arcLength * np.cos(theta)
+    ty = arcLength * np.sin(theta)
+
+    u_coords = tx / mon_width_cm
+    v_coords = ty / mon_height_cm
+
+    warpCoords = np.column_stack((u_coords, v_coords))
+
+    # back to pixels
+    warpCoords[:, 0] = warpCoords[:, 0] * hRes
+    warpCoords[:, 1] = warpCoords[:, 1] * vRes
+    warpCoords[:, 0] += vRes / 2
+    warpCoords[:, 1] += hRes / 2
+
+    return [
+        spndi.map_coordinates(frame, warpCoords.T).reshape(frame.shape)
+        for frame in texture
+    ]
