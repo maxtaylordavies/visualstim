@@ -19,7 +19,7 @@ class SparseNoise(Stimulus):
     ):
         super().__init__(window, frameRate, stimParams, screenParams)
 
-        self.texture = sparseNoise(self.frameRate, self.stimParams)
+        self.texture = sparseNoise(self.frameRate, self.stimParams, self.screenParams)
 
         self._stim = GratingStim(
             win=self.window,

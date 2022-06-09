@@ -114,7 +114,6 @@ def playExperiment(
     callback: Any = None,
     shouldTerminate: Any = checkForEsc,
 ):
-
     window.color = STIMULATION_BACKGROUND_COLOR
 
     # unroll the experiment if necessary - i.e. if experiment consists of a single stimulus

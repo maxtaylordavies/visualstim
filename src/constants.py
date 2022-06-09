@@ -1,5 +1,3 @@
-from math import degrees, atan2
-
 DEFAULT_SCREEN_PARAMS = {
     "width": 518,
     "height": 523,
@@ -15,7 +13,7 @@ DEFAULT_STIMULUS_PARAMS = {
     "stim duration": 10.0,
     "filename": "test.mp4",
     "fit screen": False,
-    "scale": 0.05,
+    "scale": 0.02,
     "sparseness": 0.7,
 }
 STIMULUS_PARAMETER_MAP = {

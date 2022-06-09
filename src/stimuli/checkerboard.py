@@ -19,7 +19,7 @@ class Checkerboard(Stimulus):
     ):
         super().__init__(window, frameRate, stimParams, screenParams)
 
-        self.texture = checkerboard(self.stimParams)
+        self.texture = checkerboard(self.stimParams, self.screenParams)
 
         self._stim = GratingStim(
             win=self.window,

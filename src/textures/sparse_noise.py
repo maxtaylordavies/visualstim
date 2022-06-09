@@ -31,7 +31,7 @@ def sparseNoise(
         )
         edges = np.array([-np.inf, -x, x, np.inf])
         return scaleUp(
-            normalise(np.digitize(rng.standard_normal((l, l)), edges)), int(n / l)
+            normalise(np.digitize(rng.standard_normal((l, l)), edges)), int((n / l) / 2)
         )
 
     texture = [randomMatrix() for _ in range(nFrames)]

@@ -13,7 +13,7 @@ class Stimulus:
         window: Window,
         frameRate: float,
         stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
-        screenParams: Dict[str, Any] = DEFAULT_SCREEN_PARAMS
+        screenParams: Dict[str, Any] = DEFAULT_SCREEN_PARAMS,
     ) -> None:
         self.window = window
         self.frameRate = frameRate

@@ -23,13 +23,14 @@ class HeaderBar(Component):
         self.onSaveClicked = onSaveClicked
         self.onSwitchScreenClicked = onSwitchScreenClicked
         self.onQuitClicked = onQuitClicked
+        self.fill = [252, 246, 227]
 
     def register(self):
         self.children = [
             Box(
                 self.window,
                 "headerbar-box",
-                color=LIGHTGREY,
+                color=self.fill,
                 pos=[0, 302],
                 size=[self.window.size[0], 48],
                 children=[
@@ -39,7 +40,7 @@ class HeaderBar(Component):
                         text="visualstim v0.1",
                         pos=[-420, 302],
                         color=PURPLE,
-                        fill=LIGHTGREY,
+                        fill=self.fill,
                     ),
                     ModeSelector(
                         self.window,
@@ -47,6 +48,7 @@ class HeaderBar(Component):
                         pos=[-257, 302],
                         mode=self.mode,
                         callback=self.onToggleModeClicked,
+                        fill=self.fill,
                     ),
                     PlayButton(
                         self.window, "play-button", 16, [150, 302], self.onStartClicked,

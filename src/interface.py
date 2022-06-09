@@ -175,6 +175,7 @@ class Interface(Component):
         self.afterParameterChange()
 
     def setScreenParameter(self, key: str, value: Any) -> None:
+        print(key, value)
         self.experiment.screenSettings[key] = value
         self.afterParameterChange()
 

@@ -3,6 +3,7 @@ from math import degrees, atan2
 from typing import Any, Dict, List
 import itertools
 
+from tqdm import tqdm
 import numpy as np
 import scipy.ndimage.interpolation as spndi
 from psychopy import visual, event
@@ -86,12 +87,8 @@ def getScreenResolution(screenNum: int) -> List[int]:
     return [screens[screenNum].width, screens[screenNum].height]
 
 
-def warpTexture(
-    texture: List, screenParams: Dict = DEFAULT_SCREEN_PARAMS
-) -> np.ndarray:
-    # compute (unwarped) display coordinates
-    # hRes, vRes = screenParams["h res"], screenParams["v res"]
-    vRes, hRes = texture[0].shape
+def computeWarpCoords(shape: tuple, screenParams: Dict) -> np.ndarray:
+    vRes, hRes = shape
     x = np.array(range(hRes)) - hRes / 2
     y = np.array(range(vRes)) - vRes / 2
     vertices = np.array(list(itertools.product(y, x)))
@@ -151,7 +148,22 @@ def warpTexture(
     warpCoords[:, 0] += vRes / 2
     warpCoords[:, 1] += hRes / 2
 
-    return [
-        spndi.map_coordinates(frame, warpCoords.T).reshape(frame.shape)
-        for frame in texture
-    ]
+    return warpCoords
+
+
+def warpTexture(
+    texture: List, screenParams: Dict = DEFAULT_SCREEN_PARAMS
+) -> np.ndarray:
+    log("computing warp coords...")
+    warpCoords = computeWarpCoords(texture[0].shape, screenParams)
+
+    log("warp coords computed!")
+    log("warping texture...")
+
+    warped = []
+    for frame in tqdm(texture):
+        warped.append(spndi.map_coordinates(frame, warpCoords.T).reshape(frame.shape))
+
+    log("finished warping texture!")
+
+    return warped
