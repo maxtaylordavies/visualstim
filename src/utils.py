@@ -45,8 +45,8 @@ def scaleUp(x: np.ndarray, factor: int) -> np.ndarray:
     return np.kron(x, np.ones((factor, factor)))
 
 
-def sinDeg(x: float) -> float:
-    return np.sin(x * np.pi / 180)
+def sinDeg(x):
+    return np.sin(np.radians(x))
 
 
 def roundToPowerOf2(x: float) -> int:
@@ -61,7 +61,7 @@ def paramLabelWithUnits(key: str) -> str:
     return f"{key} ({UNITS_MAP[key]})" if key in UNITS_MAP else key
 
 
-def pix2deg(pix, screenParams):
+def deg2pix(pix, screenParams):
     return (
         pix
         * degrees(atan2(screenParams["height"] / 2, screenParams["dist"]))
