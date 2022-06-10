@@ -10,18 +10,21 @@ from src.constants import (
 from src.utils import roundToPowerOf2, warpTexture, sinDeg, deg2pix
 
 
+COMPRESSION_FACTOR = 2
+
+
 def gratingFrame(n: int, sf: float, phase: float) -> np.ndarray:
-    return np.tile((sinDeg((360 * sf * np.arange(n)) + phase)), (n, 1))
+    return np.tile(sinDeg((360 * sf * np.arange(n)) + phase), (n, 1))
 
 
 def staticGrating(
     stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
     screenParams: Dict[str, Any] = DEFAULT_SCREEN_PARAMS,
 ):
-    # n = roundToPowerOf2(max(WINDOW_WIDTH, WINDOW_HEIGHT))
-    sf = deg2pix(stimParams["spat freq"], screenParams)
+    n = WINDOW_WIDTH // COMPRESSION_FACTOR
+    sf = deg2pix(stimParams["spat freq"], screenParams) * COMPRESSION_FACTOR
 
-    texture = [gratingFrame(WINDOW_WIDTH, sf, 0)]
+    texture = [gratingFrame(n, sf, 0)]
 
     return warpTexture(texture) if screenParams["warp"] else texture
 
@@ -31,8 +34,8 @@ def driftingGrating(
     stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
     screenParams: Dict[str, Any] = DEFAULT_SCREEN_PARAMS,
 ):
-    # n = roundToPowerOf2(min(WINDOW_WIDTH, WINDOW_HEIGHT))
-    sf = deg2pix(stimParams["spat freq"], screenParams)
+    n = WINDOW_WIDTH // COMPRESSION_FACTOR
+    sf = deg2pix(stimParams["spat freq"], screenParams) * COMPRESSION_FACTOR
 
     # we first need to figure out how many frames we need to generate
     # only need to generate enough frames for 1 cycle, since after that
@@ -49,5 +52,28 @@ def driftingGrating(
     phases = (360 * stimParams["temp freq"] / frameRate) * np.arange(nFrames)
 
     # then we map the array of phases to an array of frames
-    texture = [gratingFrame(WINDOW_WIDTH, sf, phase) for phase in phases]
+    texture = np.zeros((nFrames, n, n), dtype=np.float32)
+    for i in range(nFrames):
+        texture[i] = gratingFrame(n, sf, phases[i])
+
+    return warpTexture(texture) if screenParams["warp"] else texture
+
+
+def oscGrating(
+    frameRate: float,
+    stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
+    screenParams: Dict[str, Any] = DEFAULT_SCREEN_PARAMS,
+):
+    n = WINDOW_WIDTH // COMPRESSION_FACTOR
+    sf = deg2pix(stimParams["spat freq"], screenParams) * COMPRESSION_FACTOR
+    nFrames = round(frameRate / stimParams["temp freq"])
+
+    phases = 360 * sinDeg(
+        (360 * stimParams["temp freq"] / frameRate) * np.arange(nFrames)
+    )
+
+    texture = np.zeros((nFrames, n, n), dtype=np.float32)
+    for i in range(nFrames):
+        texture[i] = gratingFrame(n, sf, phases[i])
+
     return warpTexture(texture) if screenParams["warp"] else texture

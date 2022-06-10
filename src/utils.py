@@ -89,14 +89,13 @@ def getScreenResolution(screenNum: int) -> List[int]:
 
 def computeWarpCoords(shape: tuple, screenParams: Dict) -> np.ndarray:
     vRes, hRes = shape
-    x = np.array(range(hRes)) - hRes / 2
-    y = np.array(range(vRes)) - vRes / 2
-    vertices = np.array(list(itertools.product(y, x)))
+    x = np.array(range(hRes), dtype=np.float32) - hRes / 2
+    y = np.array(range(vRes), dtype=np.float32) - vRes / 2
+    vertices = np.array(list(itertools.product(y, x)), dtype=np.float32)
 
     mon_width_cm = float(screenParams["width"] / 10)
     mon_height_cm = float(screenParams["height"] / 10)
     distance = float(screenParams["dist"] / 10)
-    vertices = vertices.astype(np.float)
     eyepoint = (0.5, 0.5)
 
     # from pixels (-1920/2 -> 1920/2) to stimulus space (-0.5->0.5)
@@ -152,10 +151,11 @@ def computeWarpCoords(shape: tuple, screenParams: Dict) -> np.ndarray:
 
 
 def warpTexture(
-    texture: List, screenParams: Dict = DEFAULT_SCREEN_PARAMS
+    texture: np.ndarray, screenParams: Dict = DEFAULT_SCREEN_PARAMS
 ) -> np.ndarray:
     log("computing warp coords...")
     warpCoords = computeWarpCoords(texture[0].shape, screenParams)
+    log(f"warpCoords dtype = {warpCoords.dtype}")
 
     log("warp coords computed!")
     log("warping texture...")
@@ -166,4 +166,4 @@ def warpTexture(
 
     log("finished warping texture!")
 
-    return warped
+    return np.array(warped, dtype=np.float16)

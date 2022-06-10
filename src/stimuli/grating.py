@@ -5,7 +5,7 @@ from psychopy.visual.grating import GratingStim
 
 from src.constants import WINDOW_WIDTH, DEFAULT_STIMULUS_PARAMS, DEFAULT_SCREEN_PARAMS
 from src.utils import sinDeg, deg2pix
-from src.textures import staticGrating, driftingGrating
+from src.textures import staticGrating, driftingGrating, oscGrating
 from .stimulus import Stimulus
 
 
@@ -55,15 +55,26 @@ class DriftingGrating(StaticGrating):
         self.texture = driftingGrating(
             self.frameRate, self.stimParams, self.screenParams
         )
+        print(self.texture.dtype)
+
+    def updatePhase(self):
+        self._stim.tex = self.texture[self.frameIdx % len(self.texture)]
+        # self._stim.phase = (self.frameIdx / self.frameRate) * self.stimParams[
+        #     "temp freq"
+        # ]
+
+    # def drawFrame(self):
+    #     print("drawing frame")
+    #     self.frameIdx += 1
+    #     self._stim.tex = self.texture[self.frameIdx]
+    #     self._stim.draw()
+
+
+class OscillatingGrating(StaticGrating):
+    def loadTexture(self):
+        self.texture = oscGrating(self.frameRate, self.stimParams, self.screenParams)
         print(len(self.texture))
 
     def updatePhase(self):
         self._stim.tex = self.texture[self.frameIdx % len(self.texture)]
-
-
-class OscillatingGrating(StaticGrating):
-    def updatePhase(self):
-        self._stim.phase = sinDeg(
-            self.stimParams["temp freq"] * self.frameIdx * (360 / self.frameRate)
-        )
 
