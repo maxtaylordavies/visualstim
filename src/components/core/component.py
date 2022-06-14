@@ -3,7 +3,7 @@ from typing import Any, List
 from psychopy.visual import Window
 from psychopy.event import Mouse
 
-from src.utils import log
+# from src.utils.utils import log
 from src.constants import WHITE, BLACK
 
 
@@ -111,5 +111,5 @@ class Component:
     def onKeyPress(self, key: str) -> None:
         for c in self.children:
             if isinstance(c, Component) and c.listenForKeyPresses:
-                log(f"{c.id}: {key}")
+                # log(f"{c.id}: {key}")
                 c.onKeyPress(key)

@@ -1,5 +1,8 @@
 from typing import Any, Dict
+import time
+
 import numpy as np
+from psychopy.visual import Window
 
 from src.constants import (
     DEFAULT_SCREEN_PARAMS,
@@ -7,7 +10,7 @@ from src.constants import (
     WINDOW_HEIGHT,
     DEFAULT_STIMULUS_PARAMS,
 )
-from src.utils import roundToPowerOf2, warpTexture, sinDeg, deg2pix
+from src.utils import ReportProgress, warpTexture, sinDeg, deg2pix
 
 
 COMPRESSION_FACTOR = 2
@@ -18,6 +21,7 @@ def gratingFrame(n: int, sf: float, phase: float) -> np.ndarray:
 
 
 def staticGrating(
+    window: Window,
     stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
     screenParams: Dict[str, Any] = DEFAULT_SCREEN_PARAMS,
 ):
@@ -30,6 +34,7 @@ def staticGrating(
 
 
 def driftingGrating(
+    window: Window,
     frameRate: float,
     stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
     screenParams: Dict[str, Any] = DEFAULT_SCREEN_PARAMS,
@@ -53,13 +58,14 @@ def driftingGrating(
 
     # then we map the array of phases to an array of frames
     texture = np.zeros((nFrames, n, n), dtype=np.float32)
-    for i in range(nFrames):
+    for i in ReportProgress(range(nFrames), window, "generating frames"):
         texture[i] = gratingFrame(n, sf, phases[i])
 
-    return warpTexture(texture) if screenParams["warp"] else texture
+    return warpTexture(window, texture) if screenParams["warp"] else texture
 
 
 def oscGrating(
+    window: Window,
     frameRate: float,
     stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
     screenParams: Dict[str, Any] = DEFAULT_SCREEN_PARAMS,
@@ -73,7 +79,7 @@ def oscGrating(
     )
 
     texture = np.zeros((nFrames, n, n), dtype=np.float32)
-    for i in range(nFrames):
+    for i in ReportProgress(range(nFrames), window, "generating frames"):
         texture[i] = gratingFrame(n, sf, phases[i])
 
-    return warpTexture(texture) if screenParams["warp"] else texture
+    return warpTexture(window, texture) if screenParams["warp"] else texture

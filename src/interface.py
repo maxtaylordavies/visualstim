@@ -261,8 +261,8 @@ class Interface(Component):
         self.onKeyPress(keys)
 
     def draw(self) -> None:
-        for component in self.children:
-            component.draw()
+        # for component in self.children:
+        #     component.draw()
         self.controlWindow.flip()
         if self.screenNum:
             self.displayWindow.flip()
@@ -272,6 +272,7 @@ class Interface(Component):
 
     def run(self) -> None:
         self.quit = self.clickHandled = False
+        self.controlWindow._toDraw = self.children
         while not self.quit:
             # render interface
             self.draw()

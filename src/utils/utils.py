@@ -15,6 +15,7 @@ from src.constants import (
     UNITS_MAP,
     WHITE,
 )
+from .report_progress import ReportProgress
 
 
 def log(message: str) -> None:
@@ -151,19 +152,15 @@ def computeWarpCoords(shape: tuple, screenParams: Dict) -> np.ndarray:
 
 
 def warpTexture(
-    texture: np.ndarray, screenParams: Dict = DEFAULT_SCREEN_PARAMS
+    window: visual.Window,
+    texture: np.ndarray,
+    screenParams: Dict = DEFAULT_SCREEN_PARAMS,
 ) -> np.ndarray:
-    log("computing warp coords...")
-    warpCoords = computeWarpCoords(texture[0].shape, screenParams)
-    log(f"warpCoords dtype = {warpCoords.dtype}")
 
-    log("warp coords computed!")
-    log("warping texture...")
+    warpCoords = computeWarpCoords(texture[0].shape, screenParams)
 
     warped = []
-    for frame in tqdm(texture):
+    for frame in ReportProgress(texture, window, "applying spherical warp"):
         warped.append(spndi.map_coordinates(frame, warpCoords.T).reshape(frame.shape))
-
-    log("finished warping texture!")
 
     return np.array(warped, dtype=np.float16)

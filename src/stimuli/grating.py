@@ -53,27 +53,16 @@ class StaticGrating(Stimulus):
 class DriftingGrating(StaticGrating):
     def loadTexture(self):
         self.texture = driftingGrating(
-            self.frameRate, self.stimParams, self.screenParams
+            self.window, self.frameRate, self.stimParams, self.screenParams
         )
-        print(self.texture.dtype)
 
     def updatePhase(self):
         self._stim.tex = self.texture[self.frameIdx % len(self.texture)]
-        # self._stim.phase = (self.frameIdx / self.frameRate) * self.stimParams[
-        #     "temp freq"
-        # ]
-
-    # def drawFrame(self):
-    #     print("drawing frame")
-    #     self.frameIdx += 1
-    #     self._stim.tex = self.texture[self.frameIdx]
-    #     self._stim.draw()
 
 
 class OscillatingGrating(StaticGrating):
     def loadTexture(self):
-        self.texture = oscGrating(self.frameRate, self.stimParams, self.screenParams)
-        print(len(self.texture))
+        self.texture = oscGrating(self.window, self.frameRate, self.stimParams, self.screenParams)
 
     def updatePhase(self):
         self._stim.tex = self.texture[self.frameIdx % len(self.texture)]
