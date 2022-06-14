@@ -4,8 +4,7 @@ import json
 import pathlib
 from typing import Any, Dict, List, Optional
 
-from psychopy.visual import Window
-
+from src.window import Window
 from src.stimuli import (
     Stimulus,
     StaticGrating,

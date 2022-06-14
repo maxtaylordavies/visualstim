@@ -1,10 +1,8 @@
 import platform
 from typing import Iterable
 
-from psychopy.visual import Window
-
+from src.window import Window
 from src.components.core.textbox import Textbox
-
 from src.constants import BLACK
 
 

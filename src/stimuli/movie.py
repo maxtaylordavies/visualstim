@@ -1,9 +1,9 @@
 import pathlib
 from typing import Any, Dict
 
-from psychopy.visual import Window
 from psychopy.visual.movie3 import MovieStim3
 
+from src.window import Window
 from src.constants import (
     WINDOW_HEIGHT,
     WINDOW_WIDTH,

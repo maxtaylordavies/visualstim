@@ -1,9 +1,8 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
 
-import numpy as np
-from psychopy.visual import Window
 from psychopy.visual.grating import GratingStim
 
+from src.window import Window
 from src.constants import WINDOW_WIDTH, DEFAULT_STIMULUS_PARAMS, DEFAULT_SCREEN_PARAMS
 from src.textures import sparseNoise
 from .stimulus import Stimulus

@@ -1,8 +1,7 @@
 import math
 from typing import Any, Dict, List
 
-from psychopy.visual import Window
-
+from src.window import Window
 from src.components.core import Component, Panel, Switch
 from .expandable_input import ExpandableInput
 from .core.input import TextInput

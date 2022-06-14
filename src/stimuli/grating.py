@@ -1,10 +1,9 @@
-from typing import Any, Dict
+from typing import Dict
 
-from psychopy.visual import Window
 from psychopy.visual.grating import GratingStim
 
+from src.window import Window
 from src.constants import WINDOW_WIDTH, DEFAULT_STIMULUS_PARAMS, DEFAULT_SCREEN_PARAMS
-from src.utils import sinDeg, deg2pix
 from src.textures import staticGrating, driftingGrating, oscGrating
 from .stimulus import Stimulus
 
@@ -62,7 +61,9 @@ class DriftingGrating(StaticGrating):
 
 class OscillatingGrating(StaticGrating):
     def loadTexture(self):
-        self.texture = oscGrating(self.window, self.frameRate, self.stimParams, self.screenParams)
+        self.texture = oscGrating(
+            self.window, self.frameRate, self.stimParams, self.screenParams
+        )
 
     def updatePhase(self):
         self._stim.tex = self.texture[self.frameIdx % len(self.texture)]

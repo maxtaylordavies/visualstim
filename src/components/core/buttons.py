@@ -1,6 +1,8 @@
 from typing import List
-from psychopy.visual import Window, circle
 
+from psychopy.visual import circle
+
+from src.window import Window
 from src.components.core import Component
 from .textbox import Textbox
 from src.constants import GREEN, RED, WHITE

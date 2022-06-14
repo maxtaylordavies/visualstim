@@ -1,7 +1,6 @@
 from typing import Any, Dict, List, Optional
 
-from psychopy.visual import Window
-
+from src.window import Window
 from src.components import SyncSquares
 from src.constants import DEFAULT_SCREEN_PARAMS, DEFAULT_STIMULUS_PARAMS
 from src.utils import checkForEsc, log

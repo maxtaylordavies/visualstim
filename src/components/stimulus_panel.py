@@ -1,6 +1,5 @@
-from typing import Any, List
+from typing import Any
 
-from psychopy.visual import Window
 from psychopy.event import Mouse
 
 from src.constants import LIGHTGREY, MEDIUMGREY, GREEN, WHITE

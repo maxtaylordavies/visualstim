@@ -1,9 +1,8 @@
 from typing import Any, List
 
-from psychopy.visual import Window
 from psychopy.event import Mouse
 
-# from src.utils.utils import log
+from src.window import Window
 from src.constants import WHITE, BLACK
 
 

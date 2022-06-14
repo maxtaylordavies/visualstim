@@ -3,12 +3,12 @@ from math import degrees, atan2
 from typing import Any, Dict, List
 import itertools
 
-from tqdm import tqdm
 import numpy as np
 import scipy.ndimage.interpolation as spndi
-from psychopy import visual, event
+from psychopy import event
 from pyglet.canvas import get_display
 
+from src.window import Window
 from src.constants import (
     DEFAULT_SCREEN_PARAMS,
     DEFAULT_STIMULUS_PARAMS,
@@ -70,15 +70,15 @@ def deg2pix(pix, screenParams):
     )
 
 
-def createWindow(size=[1000, 650], screenNum=0, fullscreen=False):
-    return visual.Window(
-        size=size,
-        screen=screenNum,
-        fullscr=fullscreen,
-        units="pix",
-        color=WHITE,
-        colorSpace="rgb255",
-    )
+# def createWindow(size=[1000, 650], screenNum=0, fullscreen=False):
+#     return visual.Window(
+#         size=size,
+#         screen=screenNum,
+#         fullscr=fullscreen,
+#         units="pix",
+#         color=WHITE,
+#         colorSpace="rgb255",
+#     )
 
 
 def getScreenResolution(screenNum: int) -> List[int]:
@@ -152,9 +152,7 @@ def computeWarpCoords(shape: tuple, screenParams: Dict) -> np.ndarray:
 
 
 def warpTexture(
-    window: visual.Window,
-    texture: np.ndarray,
-    screenParams: Dict = DEFAULT_SCREEN_PARAMS,
+    window: Window, texture: np.ndarray, screenParams: Dict = DEFAULT_SCREEN_PARAMS,
 ) -> np.ndarray:
 
     warpCoords = computeWarpCoords(texture[0].shape, screenParams)

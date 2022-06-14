@@ -1,8 +1,7 @@
 import math
 from typing import Any, List
 
-from psychopy.visual import Window
-
+from src.window import Window
 from src.components.core import Component, Box, Label
 from src.constants import LIGHTGREY
 

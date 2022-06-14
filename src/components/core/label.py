@@ -1,6 +1,5 @@
 from typing import List
-from psychopy.visual import Window
-
+from src.window import Window
 from src.components.core import Component
 from .textbox import Textbox
 from src.constants import LIGHTGREY, DARKGREY

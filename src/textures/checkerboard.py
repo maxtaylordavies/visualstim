@@ -1,8 +1,7 @@
 from typing import Any, Dict
 
 import numpy as np
-from psychopy.visual import Window
-
+from src.window import Window
 from src.constants import (
     DEFAULT_SCREEN_PARAMS,
     WINDOW_WIDTH,

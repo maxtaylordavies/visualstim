@@ -1,8 +1,7 @@
 import platform
 from typing import List
 
-from psychopy.visual import Window
-
+from src.window import Window
 from src.constants import BLACK, WHITE
 from src.components.core import Component, Box
 from src.utils import log

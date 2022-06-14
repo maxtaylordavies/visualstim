@@ -3,6 +3,7 @@ from typing import Any
 
 from psychopy import event
 
+from src.window import Window
 from src.constants import STIMULUS_PARAMETER_MAP
 from src.components.core import Button, Component
 from src.components import (
@@ -14,7 +15,7 @@ from src.components import (
     ScriptSelector,
     HeaderBar,
 )
-from src.utils import checkForEsc, log, createWindow, getScreenResolution
+from src.utils import checkForEsc, log, getScreenResolution
 from src.experiments import (
     playExperiment,
     loadExperiment as _loadExperiment,
@@ -32,7 +33,7 @@ class Interface(Component):
         # create window
         self.screenNum = 0
         self.fullscreen = fullscreen
-        self.controlWindow = createWindow(fullscreen=self.fullscreen)
+        self.controlWindow = Window(fullscreen=self.fullscreen)
         self.displayWindow = self.controlWindow
         self.frameRate = self.displayWindow.getActualFrameRate() or 30
         self.children = []
@@ -107,6 +108,7 @@ class Interface(Component):
 
         # register children (assign them to the window)
         super().register()
+        self.controlWindow.assignComponents(self.children, activate=True)
 
     def setResolution(self) -> None:
         hor, ver = getScreenResolution(self.screenNum)
@@ -153,15 +155,12 @@ class Interface(Component):
         self.children = [c for c in self.children if c.id != "sync-squares"]
 
     def selectStimulusType(self, x):
-        log("setting stimulus type")
         # set stimulus type
         self.experiment.stimuli[0]["name"] = x
         # update the parameters shown in the params panel
         paramsPanel = self.getComponentById("stim-params-panel")
-        log(f"got paramsPanelIdx")
         if paramsPanel:
             paramsPanel.resetParams(self.filterStimulusParams())
-        log("finished resetting params")
         self.afterParameterChange()
 
     def setStimulusParameter(self, key: str, value: Any) -> None:
@@ -171,6 +170,7 @@ class Interface(Component):
     def setSyncParameter(self, key: str, value: Any) -> None:
         if key == "sync":
             self.createSyncSquares() if value else self.removeSyncSquares()
+            self.displayWindow.assignComponents(self.children, activate=True)
         self.experiment.syncSettings[key] = value
         self.afterParameterChange()
 
@@ -187,7 +187,7 @@ class Interface(Component):
     def onSwitchScreenClicked(self, mouse: event.Mouse, button: Button) -> None:
         self.screenNum = 1 - self.screenNum
         if self.screenNum:
-            self.displayWindow = createWindow(
+            self.displayWindow = Window(
                 screenNum=self.screenNum, fullscreen=self.fullscreen
             )
             self.frameRate = self.displayWindow.getActualFrameRate() or 30
@@ -272,11 +272,9 @@ class Interface(Component):
 
     def run(self) -> None:
         self.quit = self.clickHandled = False
-        self.controlWindow._toDraw = self.children
         while not self.quit:
             # render interface
             self.draw()
-
             # listen for + handle user input
             self.handleInput()
 

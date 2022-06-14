@@ -1,9 +1,10 @@
-from typing import Any, List
-from psychopy.visual import Window, rect
+from typing import Any
+
+from psychopy.visual import rect
 
 from src.components.core import Component, Textbox
-from src.constants import DARKGREY, GREEN, RED, WHITE
-from src.utils import noOp, log
+from src.constants import DARKGREY, GREEN, WHITE
+from src.utils import noOp
 
 
 class TextInput(Component):
