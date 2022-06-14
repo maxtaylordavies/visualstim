@@ -35,7 +35,6 @@ class Interface(Component):
         self.fullscreen = fullscreen
         self.controlWindow = Window(fullscreen=self.fullscreen)
         self.displayWindow = self.controlWindow
-        self.frameRate = self.displayWindow.getActualFrameRate() or 30
         self.children = []
         self.syncSquares = None
 
@@ -131,7 +130,7 @@ class Interface(Component):
         saveExperiment(self.experiment)
 
     def loadExperiment(self, filename):
-        self.experiment = _loadExperiment(self.displayWindow, self.frameRate, filename)
+        self.experiment = _loadExperiment(self.displayWindow, filename)
         if self.experiment.syncSettings["sync"]:
             self.createSyncSquares()
         elif self.syncSquares:
@@ -190,14 +189,12 @@ class Interface(Component):
             self.displayWindow = Window(
                 screenNum=self.screenNum, fullscreen=self.fullscreen
             )
-            self.frameRate = self.displayWindow.getActualFrameRate() or 30
             if self.experiment.syncSettings["sync"]:
                 self.createSyncSquares()
             self.draw()
         else:
             self.displayWindow.close()
             self.displayWindow = self.controlWindow
-            self.frameRate = self.displayWindow.getActualFrameRate()
 
     def onQuitClicked(self, mouse: event.Mouse, button: Button) -> None:
         self.quit = True
@@ -218,7 +215,6 @@ class Interface(Component):
             playExperiment(
                 self.displayWindow,
                 self.experiment,
-                self.frameRate,
                 self.syncSquares,
                 callback=self.handleInput,
                 shouldTerminate=self.shouldTerminateStimulation,

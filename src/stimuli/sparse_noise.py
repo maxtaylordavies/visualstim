@@ -17,19 +17,10 @@ class SparseNoise(Stimulus):
         screenParams: Dict = DEFAULT_SCREEN_PARAMS,
     ):
         super().__init__(window, frameRate, stimParams, screenParams)
-
-        self._stim = GratingStim(
-            win=self.window,
-            size=[WINDOW_WIDTH, WINDOW_WIDTH],
-            units="pix",
-            ori=self.stimParams["orientation"],
-        )
         self.drawInterval = int(1 / self.stimParams["temp freq"])
 
     def loadTexture(self) -> None:
-        self.texture = sparseNoise(
-            self.window, self.frameRate, self.stimParams
-        )
+        self.texture = sparseNoise(self.window, self.frameRate, self.stimParams)
 
     def drawFrame(self) -> None:
         if self.frameIdx % self.drawInterval == 0:

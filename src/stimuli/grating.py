@@ -18,18 +18,6 @@ class StaticGrating(Stimulus):
     ):
         super().__init__(window, frameRate, stimParams, screenParams)
 
-        self._stim = GratingStim(
-            win=self.window,
-            size=[WINDOW_WIDTH, WINDOW_WIDTH],
-            units="pix",
-            ori=self.stimParams["orientation"],
-            # tex="sin",
-            tex=self.texture[0],
-            mask=None,
-            # phase=0,
-            # sf=deg2pix(self.stimParams["spat freq"], screenParams),
-        )
-
     def loadTexture(self):
         self.texture = staticGrating(self.stimParams, self.screenParams)
 

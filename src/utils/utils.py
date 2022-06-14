@@ -13,7 +13,6 @@ from src.constants import (
     DEFAULT_SCREEN_PARAMS,
     DEFAULT_STIMULUS_PARAMS,
     UNITS_MAP,
-    WHITE,
 )
 from .report_progress import ReportProgress
 
@@ -68,17 +67,6 @@ def deg2pix(pix, screenParams):
         * degrees(atan2(screenParams["height"] / 2, screenParams["dist"]))
         / (screenParams["v res"] / 2)
     )
-
-
-# def createWindow(size=[1000, 650], screenNum=0, fullscreen=False):
-#     return visual.Window(
-#         size=size,
-#         screen=screenNum,
-#         fullscr=fullscreen,
-#         units="pix",
-#         color=WHITE,
-#         colorSpace="rgb255",
-#     )
 
 
 def getScreenResolution(screenNum: int) -> List[int]:
@@ -157,10 +145,6 @@ def warpTexture(
 
     shape = texture[0].shape
     warpCoords = computeWarpCoords(shape, screenParams)
-
-    print(type(warpCoords))
-    print(warpCoords.dtype)
-    print(warpCoords.shape)
 
     warped = np.zeros(texture.shape, dtype=np.float32)
     for i in ReportProgress(range(len(texture)), window, "applying spherical warp"):

@@ -1,6 +1,7 @@
 from typing import Any, Dict, List, Optional
 
 import numpy as np
+from psychopy.visual.grating import GratingStim
 
 from src.window import Window
 from src.components import SyncSquares
@@ -20,7 +21,6 @@ class Stimulus:
         self.frameRate = frameRate
         self.stimParams = stimParams
         self.screenParams = screenParams
-        self.texture = None
         self.duration = 0
         self.frameIdx = 0
 
@@ -28,18 +28,26 @@ class Stimulus:
         if self.screenParams["warp"]:
             self.applyWarp()
 
-    def loadTexture(self) -> None:
-        pass
+        self._stim = GratingStim(
+            win=self.window,
+            size=[self.screenParams["h res"], self.screenParams["h res"]],
+            units="pix",
+            ori=self.stimParams["orientation"],
+            tex=self.texture[0],
+        )
 
-    def drawFrame(self) -> None:
-        pass
+    def loadTexture(self) -> None:
+        self.texture = [None]
 
     def applyWarp(self) -> None:
-        if self.texture is None:
+        if self.texture == [None]:
             return
         self.texture = warpTexture(
             self.window, self.texture.astype(np.float32), self.screenParams
         ).astype(np.float16)
+
+    def drawFrame(self) -> None:
+        pass
 
 
 def playStimulus(

@@ -56,7 +56,7 @@ class Experiment:
         return {"sync settings": self.syncSettings, "stimuli": self.stimuli}
 
 
-def loadExperiment(window: Window, frameRate: float, filename: str) -> Experiment:
+def loadExperiment(window: Window, filename: str) -> Experiment:
     # TODO: check file exists / error handling
     with open(pathlib.Path().resolve().joinpath(f"experiments/{filename}")) as f:
         data = json.load(f)
@@ -108,7 +108,6 @@ def unrollExperiment(exp: Experiment) -> Experiment:
 def playExperiment(
     window: Window,
     experiment: Experiment,
-    frameRate: float,
     syncSquares: Optional[SyncSquares],
     callback: Any = None,
     shouldTerminate: Any = checkForEsc,
@@ -116,6 +115,9 @@ def playExperiment(
     # unroll the experiment if necessary - i.e. if experiment consists of a single stimulus
     # type but with multiple values for at least one parameter, we unroll into multiple stimuli
     experiment = unrollExperiment(experiment)
+
+    # measure frame rate
+    frameRate = window.getActualFrameRate()
 
     # create stimuli objects from descriptions
     stimuli = list(
@@ -144,7 +146,7 @@ def playExperiment(
     # trigger loop
     if syncSquares:
         syncSquares.toggle(1)  # turn on trigger square
-        for i in range(int(frameRate * experiment.syncSettings["trigger duration"])):
+        for i in range(int(*experiment.syncSettings["trigger duration"])):
             # check if we should terminate
             if shouldTerminate():
                 break
