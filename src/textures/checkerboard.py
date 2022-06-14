@@ -8,13 +8,11 @@ from src.constants import (
     WINDOW_HEIGHT,
     DEFAULT_STIMULUS_PARAMS,
 )
-from src.utils import roundToPowerOf2, scaleUp, warpTexture, ReportProgress
+from src.utils import roundToPowerOf2, scaleUp, ReportProgress
 
 
 def checkerboard(
-    window: Window,
-    stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
-    screenParams: Dict[str, Any] = DEFAULT_SCREEN_PARAMS,
+    window: Window, stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
 ):
     ReportProgress([None], window, "generating checkerboard")
 
@@ -22,9 +20,4 @@ def checkerboard(
     n = roundToPowerOf2(dim)
     l = roundToPowerOf2(dim * stimParams["scale"])
 
-    checkerboard = scaleUp(2 * (np.indices((l, l)).sum(axis=0) % 2) - 1, int(n / l))
-    return (
-        warpTexture(window, [checkerboard], screenParams=screenParams)[0]
-        if screenParams["warp"]
-        else checkerboard
-    )
+    return np.array([scaleUp(2 * (np.indices((l, l)).sum(axis=0) % 2) - 1, int(n / l))])

@@ -18,8 +18,6 @@ class StaticGrating(Stimulus):
     ):
         super().__init__(window, frameRate, stimParams, screenParams)
 
-        self.loadTexture()
-
         self._stim = GratingStim(
             win=self.window,
             size=[WINDOW_WIDTH, WINDOW_WIDTH],

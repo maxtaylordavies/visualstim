@@ -27,3 +27,6 @@ class Window(_Window):
 
     def clearComponents(self) -> None:
         self._toDraw = []
+
+    def setBackgroundColor(self, color: List[int]) -> None:
+        self.color = color

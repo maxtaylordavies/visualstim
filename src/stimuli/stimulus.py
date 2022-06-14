@@ -1,9 +1,11 @@
 from typing import Any, Dict, List, Optional
 
+import numpy as np
+
 from src.window import Window
 from src.components import SyncSquares
 from src.constants import DEFAULT_SCREEN_PARAMS, DEFAULT_STIMULUS_PARAMS
-from src.utils import checkForEsc, log
+from src.utils import checkForEsc, warpTexture
 
 
 class Stimulus:
@@ -18,11 +20,26 @@ class Stimulus:
         self.frameRate = frameRate
         self.stimParams = stimParams
         self.screenParams = screenParams
+        self.texture = None
         self.duration = 0
         self.frameIdx = 0
 
+        self.loadTexture()
+        if self.screenParams["warp"]:
+            self.applyWarp()
+
+    def loadTexture(self) -> None:
+        pass
+
     def drawFrame(self) -> None:
         pass
+
+    def applyWarp(self) -> None:
+        if self.texture is None:
+            return
+        self.texture = warpTexture(
+            self.window, self.texture.astype(np.float32), self.screenParams
+        ).astype(np.float16)
 
 
 def playStimulus(

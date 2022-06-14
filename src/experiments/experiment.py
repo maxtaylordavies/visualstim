@@ -113,8 +113,6 @@ def playExperiment(
     callback: Any = None,
     shouldTerminate: Any = checkForEsc,
 ):
-    window.color = STIMULATION_BACKGROUND_COLOR
-
     # unroll the experiment if necessary - i.e. if experiment consists of a single stimulus
     # type but with multiple values for at least one parameter, we unroll into multiple stimuli
     experiment = unrollExperiment(experiment)
@@ -137,6 +135,11 @@ def playExperiment(
         ):
             syncSquares.toggle(0)
         callback()
+
+    # clear the window for stimulus display
+    window.clearComponents()
+    window.setBackgroundColor(STIMULATION_BACKGROUND_COLOR)
+    window.flip()
 
     # trigger loop
     if syncSquares:
@@ -168,6 +171,7 @@ def playExperiment(
         if stop:
             break
 
-    # reset window colour
-    window.color = DEFAULT_BACKGROUND_COLOR
+    # reset window
+    window.setBackgroundColor(DEFAULT_BACKGROUND_COLOR)
+    window.activateComponents()
     window.flip()

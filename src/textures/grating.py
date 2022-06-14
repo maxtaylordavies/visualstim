@@ -6,13 +6,10 @@ from src.window import Window
 from src.constants import (
     DEFAULT_SCREEN_PARAMS,
     WINDOW_WIDTH,
-    WINDOW_HEIGHT,
+    COMPRESSION_FACTOR,
     DEFAULT_STIMULUS_PARAMS,
 )
 from src.utils import ReportProgress, warpTexture, sinDeg, deg2pix
-
-
-COMPRESSION_FACTOR = 2
 
 
 def gratingFrame(n: int, sf: float, phase: float) -> np.ndarray:
@@ -20,16 +17,13 @@ def gratingFrame(n: int, sf: float, phase: float) -> np.ndarray:
 
 
 def staticGrating(
-    window: Window,
     stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
     screenParams: Dict[str, Any] = DEFAULT_SCREEN_PARAMS,
 ):
     n = WINDOW_WIDTH // COMPRESSION_FACTOR
     sf = deg2pix(stimParams["spat freq"], screenParams) * COMPRESSION_FACTOR
 
-    texture = [gratingFrame(n, sf, 0)]
-
-    return warpTexture(texture) if screenParams["warp"] else texture
+    return np.array([gratingFrame(n, sf, 0)])
 
 
 def driftingGrating(
@@ -56,11 +50,11 @@ def driftingGrating(
     phases = (360 * stimParams["temp freq"] / frameRate) * np.arange(nFrames)
 
     # then we map the array of phases to an array of frames
-    texture = np.zeros((nFrames, n, n), dtype=np.float32)
+    texture = np.zeros((nFrames, n, n), dtype=np.float16)
     for i in ReportProgress(range(nFrames), window, "generating frames"):
         texture[i] = gratingFrame(n, sf, phases[i])
 
-    return warpTexture(window, texture) if screenParams["warp"] else texture
+    return texture
 
 
 def oscGrating(
@@ -77,8 +71,8 @@ def oscGrating(
         (360 * stimParams["temp freq"] / frameRate) * np.arange(nFrames)
     )
 
-    texture = np.zeros((nFrames, n, n), dtype=np.float32)
+    texture = np.zeros((nFrames, n, n), dtype=np.float16)
     for i in ReportProgress(range(nFrames), window, "generating frames"):
         texture[i] = gratingFrame(n, sf, phases[i])
 
-    return warpTexture(window, texture) if screenParams["warp"] else texture
+    return texture

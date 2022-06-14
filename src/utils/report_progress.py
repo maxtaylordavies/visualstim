@@ -59,7 +59,7 @@ class ReportProgress(object):
         width, height = self.textbox.size
         self.textbox.setPos(
             [
-                (self.window.size[0] / self.pos_factor) - (width / 2),
+                (self.window.size[0] / self.pos_factor) - (width / 2) + 20,
                 (-self.window.size[1] / self.pos_factor) + height / 2,
             ]
         )
