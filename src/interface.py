@@ -2,6 +2,7 @@ import copy
 from typing import Any
 
 from psychopy import event
+from zmq import has
 
 from src.window import Window
 from src.constants import STIMULUS_PARAMETER_MAP
@@ -229,9 +230,9 @@ class Interface(Component):
                 self.playing = not self.playing
 
     def onClick(self) -> None:
-        for component in self.children:
-            if component.contains(self.mouse) and hasattr(component, "onClick"):
-                component.onClick(self.mouse, component)
+        for c in self.children:
+            if c.contains(self.mouse) and hasattr(c, "onClick") and not c.hide:
+                c.onClick(self.mouse, c)
                 break
 
     def onKeyPress(self, keys) -> None:
@@ -257,8 +258,6 @@ class Interface(Component):
         self.onKeyPress(keys)
 
     def draw(self) -> None:
-        # for component in self.children:
-        #     component.draw()
         self.controlWindow.flip()
         if self.screenNum:
             self.displayWindow.flip()

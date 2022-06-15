@@ -39,6 +39,10 @@ class Component:
             for i in range(len(self.children)):
                 self.children[i].listenForKeyPresses = True
 
+        if self.hide:
+            for i in range(len(self.children)):
+                self.children[i].hide = True
+
     def register(self) -> None:
         for c in self.children:
             if hasattr(c, "register"):
@@ -48,8 +52,22 @@ class Component:
         self.hide = not self.hide
         if propagate:
             for c in self.children:
-                if hasattr(c, "toggleHidden"):
-                    c.toggleHidden(propagate=propagate)
+                if hasattr(c, "hide"):
+                    c.hide = self.hide
+
+    # def setHidden(self, propagate=False):
+    #     self.hide = True
+    #     if propagate:
+    #         for c in self.children:
+    #             if hasattr(c, "setHidden"):
+    #                 c.setHidden(propagate=True)
+
+    # def setVisible(self, propagate=False):
+    #     self.hide = False
+    #     if propagate:
+    #         for c in self.children:
+    #             if hasattr(c, "setVisible"):
+    #                 c.setVisible(propagate=True)
 
     def sortChildren(self) -> List:
         return sorted(
@@ -99,7 +117,10 @@ class Component:
         # child component has an onClick function, then pass
         # the event down a level and return
         for c in sc:
+            if hasattr(c, "hide") and c.hide:
+                continue
             if c.contains(mouse) and hasattr(c, "onClick") and c.clickable:
+                print(c.id)
                 c.onClick(mouse, c)
                 return
 
