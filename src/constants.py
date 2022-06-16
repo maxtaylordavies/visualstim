@@ -1,3 +1,22 @@
+COLORS = {
+    "transparent": [0, 0, 0, 0],
+    "black": [0, 0, 0],
+    "white": [255, 255, 255],
+    "grey": [127, 127, 127],
+    "lightgrey": [230, 230, 230],
+    "mediumgrey": [190, 190, 190],
+    "darkgrey": [119, 119, 119],
+    "green": [0, 199, 129],
+    "yellow": [255, 170, 21],
+    "red": [255, 64, 64],
+    "purple": [125, 76, 219],
+    "palegreen": [205, 255, 237],
+    "palered": [255, 207, 207],
+    "mediumgreen": [145, 248, 212],
+}
+
+COMPRESSION_FACTOR = 2
+
 DEFAULT_SCREEN_PARAMS = {
     "width": 518,
     "height": 523,
@@ -5,6 +24,8 @@ DEFAULT_SCREEN_PARAMS = {
     "v res": 900,
     "dist": 300,
     "warp": False,
+    "background": "grey",
+    "blank": True,
 }
 DEFAULT_STIMULUS_PARAMS = {
     "spat freq": 0.1,
@@ -39,37 +60,3 @@ UNITS_MAP = {
     "pulse length": "frames",
 }
 CYCLEABLE_PARAMETERS = {"spat freq", "temp freq", "orientation"}
-
-# colors
-TRANSPARENT = [0, 0, 0, 0]
-BLACK = [0, 0, 0]
-WHITE = [255, 255, 255]
-GREY = [127, 127, 127]
-LIGHTGREY = [230, 230, 230]
-MEDIUMGREY = [190, 190, 190]
-DARKGREY = [119, 119, 119]
-GREEN = [0, 199, 129]
-YELLOW = [255, 170, 21]
-RED = [255, 64, 64]
-PURPLE = [125, 76, 219]
-PALEGREEN = [205, 255, 237]
-PALERED = [255, 207, 207]
-MEDIUMGREEN = [145, 248, 212]
-
-# these two in pixels
-WINDOW_WIDTH = 1440
-WINDOW_HEIGHT = 900
-
-# these three in mm
-DISP_WIDTH = 518
-DISP_HEIGHT = 323
-DISP_DISTANCE = 300
-
-# DEG_PER_PIX = degrees(atan2(DISP_HEIGHT / 2, DISP_DISTANCE)) / (WINDOW_HEIGHT / 2)
-
-PIXEL_SIZE = DISP_WIDTH / WINDOW_WIDTH
-
-DEFAULT_BACKGROUND_COLOR = WHITE
-STIMULATION_BACKGROUND_COLOR = GREY
-
-COMPRESSION_FACTOR = 2

@@ -5,7 +5,7 @@ from psychopy.visual import circle
 from src.window import Window
 from src.components.core import Component
 from .textbox import Textbox
-from src.constants import GREEN, RED, WHITE
+from src.constants import COLORS
 from src.utils import noOp
 
 
@@ -63,13 +63,13 @@ class PlayButton(Component):
                 radius=self.radius,
                 units="pix",
                 colorSpace="rgb255",
-                fillColor=GREEN,
+                fillColor=COLORS["green"],
                 pos=self.pos,
             ),
             circle.Polygon(
                 self.window,
                 radius=self.radius / 1.7,
-                fillColor=WHITE,
+                fillColor=COLORS["white"],
                 units="pix",
                 pos=self.pos,
                 ori=90,
@@ -80,4 +80,6 @@ class PlayButton(Component):
         self.state = "stop" if self.state == "play" else "play"
         self.children[1].edges = 3 if self.state == "play" else 4
         self.children[1].ori = 90 if self.state == "play" else 45
-        self.children[0].fillColor = GREEN if self.state == "play" else RED
+        self.children[0].fillColor = (
+            COLORS["green"] if self.state == "play" else COLORS["red"]
+        )

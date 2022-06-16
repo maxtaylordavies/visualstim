@@ -3,7 +3,7 @@ from typing import Any, List
 from psychopy.event import Mouse
 
 from src.window import Window
-from src.constants import WHITE, BLACK
+from src.constants import COLORS
 
 
 class Component:
@@ -13,8 +13,8 @@ class Component:
         id: str,
         pos: List[int] = [0, 0],
         size: List[Any] = [None, None],
-        color: List[int] = BLACK,
-        fill: List[int] = WHITE,
+        color: List[int] = COLORS["black"],
+        fill: List[int] = COLORS["white"],
         zIndex: int = 0,
         children: List[Any] = [],
         onClick=None,

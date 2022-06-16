@@ -1,10 +1,9 @@
 from typing import Any, Dict
 
 import numpy as np
-from psychopy.visual.grating import GratingStim
 
 from src.window import Window
-from src.constants import WINDOW_WIDTH, DEFAULT_STIMULUS_PARAMS, DEFAULT_SCREEN_PARAMS
+from src.constants import DEFAULT_STIMULUS_PARAMS, DEFAULT_SCREEN_PARAMS
 from src.textures import checkerboard
 from .stimulus import Stimulus
 
@@ -21,7 +20,7 @@ class Checkerboard(Stimulus):
         self.drawInterval = int(1 / self.stimParams["temp freq"])
 
     def loadTexture(self) -> None:
-        self.texture = checkerboard(self.window, self.stimParams)
+        self.texture = checkerboard(self.window, self.stimParams, self.screenParams)
 
     def drawFrame(self) -> None:
         if self.frameIdx % self.drawInterval == 0:

@@ -3,7 +3,7 @@ from typing import Iterable
 
 from src.window import Window
 from src.components.core.textbox import Textbox
-from src.constants import BLACK
+from src.constants import COLORS
 
 
 class ReportProgress(object):
@@ -28,7 +28,7 @@ class ReportProgress(object):
             self.window,
             "progress-message",
             text=f"{self.description}: 100%",
-            color=BLACK,
+            color=COLORS["black"],
             fontSize=16,
             zIndex=100,
             padding=10,
@@ -53,7 +53,7 @@ class ReportProgress(object):
         self.textbox.setText(f"{self.description}: {msg}")
 
         self.textbox.draw()
-        self.window.flip(clearBuffer=False)
+        self.window.flip()
 
     def computePos(self):
         width, height = self.textbox.size

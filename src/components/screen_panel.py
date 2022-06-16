@@ -3,7 +3,7 @@ from typing import Any, Dict
 from src.components.core import Component, Panel, Switch
 from .core.input import TextInput
 from src.utils import paramLabelWithUnits
-from src.constants import LIGHTGREY
+from src.constants import COLORS
 
 
 class ScreenPanel(Component):
@@ -52,7 +52,7 @@ class ScreenPanel(Component):
                 ],
                 rows=2,
                 listenForKeyPresses=self.listenForKeyPresses,
-                fill=LIGHTGREY,
+                fill=COLORS["lightgrey"],
             )
         ]
 

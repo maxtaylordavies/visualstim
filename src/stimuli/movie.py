@@ -5,8 +5,6 @@ from psychopy.visual.movie3 import MovieStim3
 
 from src.window import Window
 from src.constants import (
-    WINDOW_HEIGHT,
-    WINDOW_WIDTH,
     DEFAULT_STIMULUS_PARAMS,
     DEFAULT_SCREEN_PARAMS,
 )
@@ -27,7 +25,7 @@ class Movie(Stimulus):
             self.window,
             pathlib.Path().resolve().joinpath(f"movies/{self.stimParams['filename']}"),
             noAudio=True,
-            size=[WINDOW_WIDTH, WINDOW_HEIGHT]
+            size=[screenParams["h res"], screenParams["v res"]]
             if self.stimParams["fit screen"]
             else None,
         )

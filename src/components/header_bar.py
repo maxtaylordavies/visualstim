@@ -1,7 +1,7 @@
 from src.components.core import Component, Button, PlayButton, Box
 from src.components import ModeSelector, SaveButton
 
-from src.constants import WHITE, YELLOW, PURPLE, RED, LIGHTGREY
+from src.constants import COLORS
 
 
 class HeaderBar(Component):
@@ -39,7 +39,7 @@ class HeaderBar(Component):
                         "logo-button",
                         text="visualstim v0.1",
                         pos=[-420, 302],
-                        color=PURPLE,
+                        color=COLORS["purple"],
                         fill=self.fill,
                     ),
                     ModeSelector(
@@ -57,8 +57,8 @@ class HeaderBar(Component):
                         self.window,
                         "switch-screen-button",
                         text="switch screen",
-                        color=WHITE,
-                        fill=YELLOW,
+                        color=COLORS["white"],
+                        fill=COLORS["yellow"],
                         pos=[315, 302],
                         onClick=self.onSwitchScreenClicked,
                     ),
@@ -66,8 +66,8 @@ class HeaderBar(Component):
                         self.window,
                         "quit-button",
                         text="quit (esc)",
-                        color=WHITE,
-                        fill=RED,
+                        color=COLORS["white"],
+                        fill=COLORS["red"],
                         pos=[440, 302],
                         onClick=self.onQuitClicked,
                     ),

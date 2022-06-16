@@ -3,7 +3,7 @@ import os
 from typing import Any
 
 from src.components.core import Button, Component, Panel
-from src.constants import LIGHTGREY, WHITE, GREEN, MEDIUMGREY
+from src.constants import COLORS
 
 
 class ScriptSelector(Component):
@@ -40,15 +40,17 @@ class ScriptSelector(Component):
                         self.window,
                         f"{self.id}-button-{i}",
                         text=filename.replace(".json", ""),
-                        color=WHITE,
-                        fill=GREEN if self.selected == filename else MEDIUMGREY,
+                        color=COLORS["white"],
+                        fill=COLORS["green"]
+                        if self.selected == filename
+                        else COLORS["mediumgrey"],
                         pos=self.pos,
                         padding=5,
                         onClick=self.makeFunc(filename),
                     )
                     for i, filename in enumerate(self.filenames)
                 ],
-                fill=LIGHTGREY,
+                fill=COLORS["lightgrey"],
             )
         ]
         super().register()

@@ -3,7 +3,7 @@ from typing import Any
 from psychopy.visual import rect
 
 from src.components.core import Component, Textbox
-from src.constants import DARKGREY, GREEN, WHITE
+from src.constants import COLORS
 from src.utils import noOp
 
 
@@ -31,7 +31,9 @@ class TextInput(Component):
             pos=self.pos,
             text=text if text != "$" else str(self.value),
             fill=self.fill,
-            borderColor=GREEN if (self.active and self.highlight) else WHITE,
+            borderColor=COLORS["green"]
+            if (self.active and self.highlight)
+            else COLORS["white"],
             borderWidth=3,
             bold=True,
             editable=self.active,
@@ -42,9 +44,11 @@ class TextInput(Component):
             f"{self.id}-label",
             pos=self.pos,
             text=self.labelText,
-            color=DARKGREY,
+            color=COLORS["darkgrey"],
             fill=self.fill,
-            borderColor=GREEN if (self.active and self.highlight) else WHITE,
+            borderColor=COLORS["green"]
+            if (self.active and self.highlight)
+            else COLORS["white"],
             borderWidth=3,
         )
 

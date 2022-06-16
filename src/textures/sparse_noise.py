@@ -5,23 +5,22 @@ from src.window import Window
 from src.constants import (
     COMPRESSION_FACTOR,
     DEFAULT_SCREEN_PARAMS,
-    WINDOW_WIDTH,
-    WINDOW_HEIGHT,
     DEFAULT_STIMULUS_PARAMS,
 )
-from src.utils import normalise, roundToPowerOf2, scaleUp, warpTexture, ReportProgress
+from src.utils import normalise, roundToPowerOf2, scaleUp, ReportProgress
 
 
 def sparseNoise(
     window: Window,
     frameRate: float,
     stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
+    screenParams: Dict[str, Any] = DEFAULT_SCREEN_PARAMS,
 ):
     rng = np.random.default_rng()
 
     nFrames = round(frameRate * stimParams["stim duration"] * stimParams["temp freq"])
 
-    dim = max(WINDOW_WIDTH, WINDOW_HEIGHT)
+    dim = max(screenParams["h res"], screenParams["v res"])
     n = roundToPowerOf2(dim) // COMPRESSION_FACTOR
     l = roundToPowerOf2(dim * stimParams["scale"])
 
@@ -37,7 +36,9 @@ def sparseNoise(
         )
 
     texture = np.zeros((nFrames, n, n), dtype=np.float16)
-    for i in ReportProgress(range(nFrames), window, f"{stimParams['label']}: generating frames"):
+    for i in ReportProgress(
+        range(nFrames), window, f"{stimParams['label']}: generating frames"
+    ):
         texture[i] = randomMatrix()
 
     return texture

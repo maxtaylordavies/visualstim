@@ -1,9 +1,7 @@
 from typing import Dict
 
-from psychopy.visual.grating import GratingStim
-
 from src.window import Window
-from src.constants import WINDOW_WIDTH, DEFAULT_STIMULUS_PARAMS, DEFAULT_SCREEN_PARAMS
+from src.constants import DEFAULT_STIMULUS_PARAMS, DEFAULT_SCREEN_PARAMS
 from src.textures import staticGrating, driftingGrating, oscGrating
 from .stimulus import Stimulus
 

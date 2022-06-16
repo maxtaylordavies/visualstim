@@ -92,7 +92,7 @@ class Interface(Component):
             ScreenPanel(
                 self.controlWindow,
                 "screen-params-panel",
-                pos=[-110, -170],
+                pos=[-5, -170],
                 callback=self.setScreenParameter,
                 initialParams=copy.deepcopy(self.experiment.screenSettings),
             ),

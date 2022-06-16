@@ -1,11 +1,10 @@
 from typing import Any, Dict
-import time
 
 import numpy as np
+
 from src.window import Window
 from src.constants import (
     DEFAULT_SCREEN_PARAMS,
-    WINDOW_WIDTH,
     COMPRESSION_FACTOR,
     DEFAULT_STIMULUS_PARAMS,
 )
@@ -20,7 +19,7 @@ def staticGrating(
     stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
     screenParams: Dict[str, Any] = DEFAULT_SCREEN_PARAMS,
 ):
-    n = WINDOW_WIDTH // COMPRESSION_FACTOR
+    n = screenParams["h res"] // COMPRESSION_FACTOR
     sf = deg2pix(stimParams["spat freq"], screenParams) * COMPRESSION_FACTOR
 
     return np.array([gratingFrame(n, sf, 0)])
@@ -32,7 +31,7 @@ def driftingGrating(
     stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
     screenParams: Dict[str, Any] = DEFAULT_SCREEN_PARAMS,
 ):
-    n = WINDOW_WIDTH // COMPRESSION_FACTOR
+    n = screenParams["h res"] // COMPRESSION_FACTOR
     sf = deg2pix(stimParams["spat freq"], screenParams) * COMPRESSION_FACTOR
 
     # we first need to figure out how many frames we need to generate
@@ -51,7 +50,9 @@ def driftingGrating(
 
     # then we map the array of phases to an array of frames
     texture = np.zeros((nFrames, n, n), dtype=np.float16)
-    for i in ReportProgress(range(nFrames), window, f"{stimParams['label']}: generating frames"):
+    for i in ReportProgress(
+        range(nFrames), window, f"{stimParams['label']}: generating frames"
+    ):
         texture[i] = gratingFrame(n, sf, phases[i])
 
     return texture
@@ -63,7 +64,7 @@ def oscGrating(
     stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
     screenParams: Dict[str, Any] = DEFAULT_SCREEN_PARAMS,
 ):
-    n = WINDOW_WIDTH // COMPRESSION_FACTOR
+    n = screenParams["h res"] // COMPRESSION_FACTOR
     sf = deg2pix(stimParams["spat freq"], screenParams) * COMPRESSION_FACTOR
     nFrames = round(frameRate / stimParams["temp freq"])
 
@@ -72,7 +73,9 @@ def oscGrating(
     )
 
     texture = np.zeros((nFrames, n, n), dtype=np.float16)
-    for i in ReportProgress(range(nFrames), window, f"{stimParams['label']}: generating frames"):
+    for i in ReportProgress(
+        range(nFrames), window, f"{stimParams['label']}: generating frames"
+    ):
         texture[i] = gratingFrame(n, sf, phases[i])
 
     return texture

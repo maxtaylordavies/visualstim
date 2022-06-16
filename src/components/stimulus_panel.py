@@ -2,7 +2,7 @@ from typing import Any
 
 from psychopy.event import Mouse
 
-from src.constants import LIGHTGREY, MEDIUMGREY, GREEN, WHITE
+from src.constants import COLORS
 from src.components.core import Component, Panel, Button
 
 
@@ -12,10 +12,10 @@ class StimulusPanel(Component):
 
         def onClick(mouse: Mouse, button: Button):
             for i, c in enumerate(self.panel.children):
-                if isinstance(c, Button) and list(c.fill) == GREEN:
-                    self.panel.children[i].changeFill(MEDIUMGREY)
+                if isinstance(c, Button) and list(c.fill) == COLORS["green"]:
+                    self.panel.children[i].changeFill(COLORS["mediumgrey"])
                 self.panel.children[i].draw()
-            button.changeFill(GREEN)
+            button.changeFill(COLORS["green"])
             button.draw()
             callback(button.text.strip())
 
@@ -29,8 +29,8 @@ class StimulusPanel(Component):
                     self.window,
                     "stimtype-static-grating",
                     text="  static grating",
-                    color=WHITE,
-                    fill=MEDIUMGREY,
+                    color=COLORS["white"],
+                    fill=COLORS["mediumgrey"],
                     pos=self.pos,
                     padding=4,
                     onClick=onClick,
@@ -39,8 +39,8 @@ class StimulusPanel(Component):
                     self.window,
                     "stimtype-drift-grating",
                     text="   drift grating",
-                    color=WHITE,
-                    fill=GREEN,
+                    color=COLORS["white"],
+                    fill=COLORS["green"],
                     pos=self.pos,
                     padding=4,
                     onClick=onClick,
@@ -49,8 +49,8 @@ class StimulusPanel(Component):
                     self.window,
                     "stimtype-osc-grating",
                     text="    osc grating",
-                    color=WHITE,
-                    fill=MEDIUMGREY,
+                    color=COLORS["white"],
+                    fill=COLORS["mediumgrey"],
                     pos=self.pos,
                     padding=4,
                     onClick=onClick,
@@ -59,8 +59,8 @@ class StimulusPanel(Component):
                     self.window,
                     "stimtype-movie",
                     text="       movie",
-                    color=WHITE,
-                    fill=MEDIUMGREY,
+                    color=COLORS["white"],
+                    fill=COLORS["mediumgrey"],
                     pos=self.pos,
                     padding=4,
                     onClick=onClick,
@@ -69,8 +69,8 @@ class StimulusPanel(Component):
                     self.window,
                     "stimtype-sparse-noise",
                     text="  sparse noise",
-                    color=WHITE,
-                    fill=MEDIUMGREY,
+                    color=COLORS["white"],
+                    fill=COLORS["mediumgrey"],
                     pos=self.pos,
                     padding=4,
                     onClick=onClick,
@@ -79,8 +79,8 @@ class StimulusPanel(Component):
                     self.window,
                     "stimtype-checkerboard",
                     text=" checkerboard",
-                    color=WHITE,
-                    fill=MEDIUMGREY,
+                    color=COLORS["white"],
+                    fill=COLORS["mediumgrey"],
                     pos=self.pos,
                     padding=4,
                     onClick=onClick,
@@ -88,6 +88,6 @@ class StimulusPanel(Component):
             ],
             rows=2,
             padding=10,
-            fill=LIGHTGREY,
+            fill=COLORS["lightgrey"],
         )
         self.children = [self.panel]

@@ -2,7 +2,7 @@ import numpy as np
 
 from src.components.core import Box, Button, Component, Panel, Textbox
 from .core.input import TextInput
-from src.constants import DARKGREY, GREEN, LIGHTGREY, WHITE, TRANSPARENT
+from src.constants import COLORS
 from src.utils import noOp
 
 
@@ -39,7 +39,7 @@ class ExpandableInput(Component):
             f"{self.id}-label",
             pos=self.pos,
             text=self.labelText,
-            color=DARKGREY,
+            color=COLORS["darkgrey"],
         )
 
         labelSize, inputSize = self.label.size, self.input.size
@@ -72,7 +72,7 @@ class ExpandableInput(Component):
                 f"{self.id}-box",
                 pos=[self.pos[0], self.pos[1] + 1],
                 size=[right - left + 2, self.input.size[1] + 2],
-                color=WHITE,
+                color=COLORS["white"],
                 children=[self.label, self.input],
                 onClick=lambda a, b: self.toggle(),
             )
@@ -92,7 +92,7 @@ class ExpandableInput(Component):
             labelText="start",
             pos=labelPos,
             zIndex=20,
-            fill=LIGHTGREY,
+            fill=COLORS["lightgrey"],
             highlight=False,
             onChange=self.onStartChange,
         )
@@ -103,7 +103,7 @@ class ExpandableInput(Component):
             labelText="stop",
             pos=labelPos,
             zIndex=20,
-            fill=LIGHTGREY,
+            fill=COLORS["lightgrey"],
             highlight=False,
             onChange=self.onStopChange,
         )
@@ -114,7 +114,7 @@ class ExpandableInput(Component):
             labelText="steps",
             pos=labelPos,
             zIndex=20,
-            fill=LIGHTGREY,
+            fill=COLORS["lightgrey"],
             highlight=False,
             onChange=self.onStepsChange,
         )
@@ -122,8 +122,8 @@ class ExpandableInput(Component):
             self.window,
             f"{self.id}-randomise-button",
             text=" random",
-            color=WHITE,
-            fill=GREEN if self.random else LIGHTGREY,
+            color=COLORS["white"],
+            fill=COLORS["green"] if self.random else COLORS["lightgrey"],
             pos=labelPos,
             size=[None, 32],
             onClick=lambda a, b: self.toggleRandom(),
@@ -135,8 +135,8 @@ class ExpandableInput(Component):
                 f"{self.id}-box",
                 pos=boxPos,
                 size=[right - left + 2, self.input.size[1] + boxHeightDiff],
-                color=WHITE,
-                borderColor=GREEN,
+                color=COLORS["white"],
+                borderColor=COLORS["green"],
                 borderWidth=3,
                 children=[
                     self.label,
@@ -153,7 +153,7 @@ class ExpandableInput(Component):
                         ],
                         rows=2,
                         padding=5,
-                        fill=TRANSPARENT,
+                        fill=COLORS["transparent"],
                         listenForKeyPresses=True,
                     ),
                 ],

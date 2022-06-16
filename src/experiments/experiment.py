@@ -16,11 +16,8 @@ from src.stimuli import (
     playStimulus,
 )
 from src.components import SyncSquares
-from src.constants import (
-    DEFAULT_BACKGROUND_COLOR,
-    STIMULATION_BACKGROUND_COLOR,
-)
 from src.utils import checkForEsc, parseParams
+from src.constants import COLORS
 
 
 def str2Stim(s: str) -> Stimulus:
@@ -142,7 +139,7 @@ def playExperiment(
 
     # clear the window for stimulus display
     window.clearComponents()
-    window.setBackgroundColor(STIMULATION_BACKGROUND_COLOR)
+    window.setBackgroundColor(COLORS[experiment.screenSettings["background"]])
     window.flip()
 
     # trigger loop
@@ -176,6 +173,6 @@ def playExperiment(
             break
 
     # reset window
-    window.setBackgroundColor(DEFAULT_BACKGROUND_COLOR)
+    window.setBackgroundColor(COLORS["white"])
     window.activateComponents()
     window.flip()

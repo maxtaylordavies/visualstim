@@ -5,7 +5,9 @@
     "h res": 1400,
     "v res": 900,
     "dist": 300,
-    "warp": false
+    "background": "grey",
+    "warp": false,
+    "blank": true
   },
   "sync settings": {
     "sync": true,

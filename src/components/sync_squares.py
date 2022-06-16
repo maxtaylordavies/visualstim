@@ -1,8 +1,6 @@
 import platform
-from typing import List
 
-from src.window import Window
-from src.constants import BLACK, WHITE
+from src.constants import COLORS
 from src.components.core import Component, Box
 from src.utils import log
 
@@ -27,7 +25,7 @@ class SyncSquares(Component):
                     (-self.window.size[1] / factor) + (size * (3 / 2)),
                 ],
                 size=[size, size],
-                color=BLACK,
+                color=COLORS["black"],
             ),
             Box(
                 self.window,
@@ -37,7 +35,7 @@ class SyncSquares(Component):
                     (-self.window.size[1] / factor) + size / 2,
                 ],
                 size=[size, size],
-                color=BLACK,
+                color=COLORS["black"],
             ),
         ]
 
@@ -46,10 +44,12 @@ class SyncSquares(Component):
         if i >= len(self.children):
             return
         self.children[i].changeColor(
-            WHITE if self.children[i].color == BLACK else BLACK
+            COLORS["white"]
+            if self.children[i].color == COLORS["black"]
+            else COLORS["black"]
         )
 
     def turn_off(self, i):
         if i >= len(self.children):
             return
-        self.children[i].changeColor(BLACK)
+        self.children[i].changeColor(COLORS["black"])

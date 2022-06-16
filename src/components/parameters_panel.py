@@ -1,11 +1,10 @@
 import math
-from typing import Any, Dict, List
+from typing import Any, Dict
 
-from src.window import Window
 from src.components.core import Component, Panel, Switch
 from .expandable_input import ExpandableInput
 from .core.input import TextInput
-from src.constants import CYCLEABLE_PARAMETERS, LIGHTGREY
+from src.constants import CYCLEABLE_PARAMETERS, COLORS
 from src.utils import paramLabelWithUnits
 
 
@@ -56,7 +55,7 @@ class ParametersPanel(Component):
                 ],
                 rows=math.ceil(l / 2),
                 listenForKeyPresses=self.listenForKeyPresses,
-                fill=LIGHTGREY,
+                fill=COLORS["lightgrey"],
             )
         ]
         for c in self.children:

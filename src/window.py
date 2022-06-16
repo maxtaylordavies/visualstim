@@ -2,7 +2,7 @@ from typing import List
 
 from psychopy.visual import Window as _Window
 
-from src.constants import WHITE
+from src.constants import COLORS
 
 
 class Window(_Window):
@@ -12,7 +12,7 @@ class Window(_Window):
             screen=screenNum,
             fullscr=fullscreen,
             units="pix",
-            color=WHITE,
+            color=COLORS["white"],
             colorSpace="rgb255",
         )
         self.components = []
