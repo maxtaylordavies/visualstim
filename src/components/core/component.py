@@ -120,7 +120,6 @@ class Component:
             if hasattr(c, "hide") and c.hide:
                 continue
             if c.contains(mouse) and hasattr(c, "onClick") and c.clickable:
-                print(c.id)
                 c.onClick(mouse, c)
                 return
 

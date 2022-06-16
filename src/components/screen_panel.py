@@ -15,7 +15,7 @@ class ScreenPanel(Component):
     def helper(self, k, x):
         if k not in self.params:
             return None
-        if not x:
+        if x == "" or x is None:
             return self.params[k]
         return x
 

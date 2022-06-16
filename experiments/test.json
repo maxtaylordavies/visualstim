@@ -1,6 +1,14 @@
 {
+  "screen settings": {
+    "width": 518,
+    "height": 523,
+    "h res": 1400,
+    "v res": 900,
+    "dist": 300,
+    "warp": true
+  },
   "sync settings": {
-    "sync": true,
+    "sync": false,
     "trigger duration": 5.0,
     "sync interval": 60,
     "pulse length": 3
@@ -10,25 +18,18 @@
       "name": "drift grating",
       "params": {
         "spat freq": 0.1,
-        "temp freq": 0.4,
+        "temp freq": 0.2,
         "orientation": 0.0,
-        "stim duration": 5.0
+        "stim duration": 10.0
       }
     },
     {
-      "name": "static grating",
+      "name": "osc grating",
       "params": {
         "spat freq": 0.2,
+        "temp freq": 1.0,
         "orientation": 45.0,
-        "stim duration": 5.0
-      }
-    },
-    {
-      "name": "movie",
-      "params": {
-        "stim duration": 10.0,
-        "filename": "test.mp4",
-        "fit screen": false
+        "stim duration": 10.0
       }
     }
   ]

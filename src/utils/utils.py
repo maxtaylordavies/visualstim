@@ -140,14 +140,21 @@ def computeWarpCoords(shape: tuple, screenParams: Dict) -> np.ndarray:
 
 
 def warpTexture(
-    window: Window, texture: np.ndarray, screenParams: Dict = DEFAULT_SCREEN_PARAMS,
+    window: Window,
+    texture: np.ndarray,
+    screenParams: Dict = DEFAULT_SCREEN_PARAMS,
+    label: str = "",
 ) -> np.ndarray:
 
     shape = texture[0].shape
     warpCoords = computeWarpCoords(shape, screenParams)
 
+    desc = "applying spherical warp"
+    if label:
+        desc = f"{label}: {desc}"
+
     warped = np.zeros(texture.shape, dtype=np.float32)
-    for i in ReportProgress(range(len(texture)), window, "applying spherical warp"):
+    for i in ReportProgress(range(len(texture)), window, desc):
         warped[i] = spndi.map_coordinates(texture[i], warpCoords.T).reshape(shape)
 
     return warped

@@ -120,12 +120,14 @@ def playExperiment(
     frameRate = window.getActualFrameRate()
 
     # create stimuli objects from descriptions
-    stimuli = list(
-        map(
-            lambda s: createStim(s, window, frameRate, experiment.screenSettings),
-            experiment.stimuli,
+    stimuli, l = [], len(experiment.stimuli)
+    for i in range(l):
+        experiment.stimuli[i]["params"]["label"] = f"stimulus {i+1}/{l}"
+        stimuli.append(
+            createStim(
+                experiment.stimuli[i], window, frameRate, experiment.screenSettings
+            )
         )
-    )
 
     def _callback(frameIdx: int):
         # send a sync pulse if needed

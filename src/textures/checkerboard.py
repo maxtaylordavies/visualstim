@@ -14,7 +14,7 @@ from src.utils import roundToPowerOf2, scaleUp, ReportProgress
 def checkerboard(
     window: Window, stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
 ):
-    ReportProgress([None], window, "generating checkerboard")
+    ReportProgress([None], window, f"{stimParams['label']}: generating frames")
 
     dim = max(WINDOW_WIDTH, WINDOW_HEIGHT)
     n = roundToPowerOf2(dim)

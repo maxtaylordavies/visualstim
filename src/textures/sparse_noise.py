@@ -37,7 +37,7 @@ def sparseNoise(
         )
 
     texture = np.zeros((nFrames, n, n), dtype=np.float16)
-    for i in ReportProgress(range(nFrames), window, "generating frames"):
+    for i in ReportProgress(range(nFrames), window, f"{stimParams['label']}: generating frames"):
         texture[i] = randomMatrix()
 
     return texture

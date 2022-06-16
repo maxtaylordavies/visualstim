@@ -8,8 +8,8 @@ from src.utils import log
 
 
 class SyncSquares(Component):
-    def __init__(self, *args, size=30) -> None:
-        super().__init__(*args)
+    def __init__(self, *args, size=30, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
 
         # not sure why, but (in my experience) on Mac the left edge
         # of the PsychoPy window is at -window_width/4; on Windows

@@ -2,7 +2,6 @@ import copy
 from typing import Any
 
 from psychopy import event
-from zmq import has
 
 from src.window import Window
 from src.constants import STIMULUS_PARAMETER_MAP
@@ -16,11 +15,11 @@ from src.components import (
     ScriptSelector,
     HeaderBar,
 )
-from src.utils import checkForEsc, log, getScreenResolution
+from src.utils import checkForEsc, getScreenResolution
 from src.experiments import (
     playExperiment,
     loadExperiment as _loadExperiment,
-    saveExperiment as saveExperiment,
+    saveExperiment,
 )
 
 
@@ -104,10 +103,20 @@ class Interface(Component):
                 callback=self.loadExperiment,
                 hide=True,
             ),
+            SyncSquares(
+                self.displayWindow,
+                "sync-squares",
+                hide=not self.experiment.syncSettings["sync"],
+            ),
         ]
 
-        # register children (assign them to the window)
         super().register()
+
+        # if self.experiment.syncSettings["sync"]:
+        #     self.createSyncSquares()
+
+        # assign children to window so they will be drawn automatically
+        # every time we call flip()
         self.controlWindow.assignComponents(self.children, activate=True)
 
     def setResolution(self) -> None:
@@ -124,7 +133,7 @@ class Interface(Component):
 
         # update UI
         for i, c in enumerate(self.children):
-            if c.id != "headerbar":
+            if c.id not in ("headerbar", "sync-squares"):
                 self.children[i].toggleHidden()
 
     def saveParameters(self):
@@ -132,10 +141,11 @@ class Interface(Component):
 
     def loadExperiment(self, filename):
         self.experiment = _loadExperiment(self.displayWindow, filename)
-        if self.experiment.syncSettings["sync"]:
-            self.createSyncSquares()
-        elif self.syncSquares:
-            self.removeSyncSquares()
+        if not self.children:
+            return
+        self.getComponentById("sync-squares").hide = not self.experiment.syncSettings[
+            "sync"
+        ]
 
     def filterStimulusParams(self):
         return {
@@ -143,16 +153,6 @@ class Interface(Component):
             for k, v in self.experiment.stimuli[0]["params"].items()
             if k in STIMULUS_PARAMETER_MAP[self.experiment.stimuli[0]["name"]]
         }
-
-    def createSyncSquares(self):
-        self.syncSquares = SyncSquares(self.displayWindow, "sync-squares")
-        self.children = [c for c in self.children if c.id != "sync-squares"]
-        self.children.append(self.syncSquares)
-        self.children[-1].register()
-
-    def removeSyncSquares(self):
-        self.syncSquares = None
-        self.children = [c for c in self.children if c.id != "sync-squares"]
 
     def selectStimulusType(self, x):
         # set stimulus type
@@ -169,13 +169,13 @@ class Interface(Component):
 
     def setSyncParameter(self, key: str, value: Any) -> None:
         if key == "sync":
-            self.createSyncSquares() if value else self.removeSyncSquares()
-            self.displayWindow.assignComponents(self.children, activate=True)
+            # self.createSyncSquares() if value else self.removeSyncSquares()
+            self.getComponentById("sync-squares").hide = not value
+            # self.displayWindow.assignComponents(self.children, activate=True)
         self.experiment.syncSettings[key] = value
         self.afterParameterChange()
 
     def setScreenParameter(self, key: str, value: Any) -> None:
-        print(key, value)
         self.experiment.screenSettings[key] = value
         self.afterParameterChange()
 
@@ -190,8 +190,8 @@ class Interface(Component):
             self.displayWindow = Window(
                 screenNum=self.screenNum, fullscreen=self.fullscreen
             )
-            if self.experiment.syncSettings["sync"]:
-                self.createSyncSquares()
+            # if self.experiment.syncSettings["sync"]:
+            #     self.createSyncSquares()
             self.draw()
         else:
             self.displayWindow.close()

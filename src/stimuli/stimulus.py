@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 import numpy as np
 from psychopy.visual.grating import GratingStim
@@ -24,6 +24,10 @@ class Stimulus:
         self.duration = 0
         self.frameIdx = 0
 
+        # for logging purposes
+        if "label" not in self.stimParams:
+            self.stimParams["label"] = "stimulus 1/1"
+
         self.loadTexture()
         if self.screenParams["warp"]:
             self.applyWarp()
@@ -40,10 +44,13 @@ class Stimulus:
         self.texture = [None]
 
     def applyWarp(self) -> None:
-        if self.texture == [None]:
+        if type(self.texture) != np.ndarray:
             return
         self.texture = warpTexture(
-            self.window, self.texture.astype(np.float32), self.screenParams
+            self.window,
+            self.texture.astype(np.float32),
+            self.screenParams,
+            self.stimParams["label"],
         ).astype(np.float16)
 
     def drawFrame(self) -> None:
