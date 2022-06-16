@@ -1,3 +1,13 @@
+import json
+import pathlib
+
+with open(pathlib.Path().resolve().joinpath("experiments/default.json")) as f:
+    data = json.load(f)
+    DEFAULT_SCREEN_PARAMS = data["screen settings"]
+    DEFAULT_SYNC_PARAMS = data["sync settings"]
+    DEFAULT_STIMULUS_PARAMS = data["stimuli"][0]["params"]
+
+
 COLORS = {
     "transparent": [0, 0, 0, 0],
     "black": [0, 0, 0],
@@ -17,26 +27,6 @@ COLORS = {
 
 COMPRESSION_FACTOR = 2
 
-DEFAULT_SCREEN_PARAMS = {
-    "width": 518,
-    "height": 523,
-    "h res": 1400,
-    "v res": 900,
-    "dist": 300,
-    "warp": False,
-    "background": "grey",
-    "blank": True,
-}
-DEFAULT_STIMULUS_PARAMS = {
-    "spat freq": 0.1,
-    "temp freq": 0.2,
-    "orientation": 0.0,
-    "stim duration": 10.0,
-    "filename": "test.mp4",
-    "fit screen": False,
-    "scale": 0.02,
-    "sparseness": 0.7,
-}
 STIMULUS_PARAMETER_MAP = {
     "static grating": {"spat freq", "orientation", "stim duration"},
     "drift grating": {"spat freq", "temp freq", "orientation", "stim duration",},
