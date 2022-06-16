@@ -48,5 +48,6 @@ UNITS_MAP = {
     "trigger duration": "s",
     "sync interval": "frames",
     "pulse length": "frames",
+    "blank": "s",
 }
 CYCLEABLE_PARAMETERS = {"spat freq", "temp freq", "orientation"}

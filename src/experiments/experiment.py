@@ -1,6 +1,7 @@
 from datetime import datetime
 import itertools
 import json
+from os import sync
 import pathlib
 from typing import Any, Dict, List, Optional
 
@@ -134,8 +135,14 @@ def playExperiment(
             and frameIdx % experiment.syncSettings["sync interval"]
             in {0, experiment.syncSettings["pulse length"]}
         ):
+            print(frameIdx)
             syncSquares.toggle(0)
         callback()
+
+    def _draw():
+        if syncSquares:
+            syncSquares.draw()
+        window.flip()
 
     # clear the window for stimulus display
     window.clearComponents()
@@ -145,7 +152,7 @@ def playExperiment(
     # trigger loop
     if syncSquares:
         syncSquares.toggle(1)  # turn on trigger square
-        for i in range(int(*experiment.syncSettings["trigger duration"])):
+        for i in range(int(frameRate * experiment.syncSettings["trigger duration"])):
             # check if we should terminate
             if shouldTerminate():
                 break
@@ -157,18 +164,35 @@ def playExperiment(
             if i == experiment.syncSettings["pulse length"]:
                 syncSquares.toggle(1)  # turn off trigger square
 
-            syncSquares.draw()
-            window.flip()
+            _draw()
 
     # cycle through + display stimuli
-    stop = False
+    stop, experimentFrameIdx = False, 0
+    blankFrames = int(frameRate * experiment.screenSettings["blank"])
     for stimulus in stimuli:
-        stop = playStimulus(
-            window, stimulus, frameRate, syncSquares, _callback, shouldTerminate,
+        # display the stimulus
+        stop, experimentFrameIdx = playStimulus(
+            window,
+            stimulus,
+            frameRate,
+            syncSquares,
+            _callback,
+            shouldTerminate,
+            experimentFrameIdx=experimentFrameIdx,
         )
+
+        # interstimulus blank
+        for i in range(experimentFrameIdx, experimentFrameIdx + blankFrames):
+            _callback(i)
+            _draw()
+        experimentFrameIdx += blankFrames
+
+        # make sure we don't leave the sync square on
         if syncSquares:
             syncSquares.turn_off(0)
             window.flip()
+
+        # if user wants to stop experiment, break out of loop
         if stop:
             break
 

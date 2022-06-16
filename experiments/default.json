@@ -7,7 +7,7 @@
     "dist": 300,
     "background": "grey",
     "warp": false,
-    "blank": true
+    "blank": 0
   },
   "sync settings": {
     "sync": true,

@@ -43,7 +43,7 @@ class ScreenPanel(Component):
                     else TextInput(
                         self.window,
                         f"{'-'.join(k.split(' '))}-input",
-                        value=str(v),
+                        value=v,
                         labelText=paramLabelWithUnits(k),
                         pos=self.pos,
                         onChange=self.makeFunc(k),

@@ -2,7 +2,6 @@ import platform
 
 from src.constants import COLORS
 from src.components.core import Component, Box
-from src.utils import log
 
 
 class SyncSquares(Component):
@@ -40,7 +39,6 @@ class SyncSquares(Component):
         ]
 
     def toggle(self, i):
-        log("toggling")
         if i >= len(self.children):
             return
         self.children[i].changeColor(

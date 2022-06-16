@@ -36,7 +36,6 @@ class Interface(Component):
         self.controlWindow = Window(fullscreen=self.fullscreen)
         self.displayWindow = self.controlWindow
         self.children = []
-        self.syncSquares = None
 
         # create mouse object to listen for click events
         self.mouse = event.Mouse(visible=True, win=self.controlWindow)
@@ -168,6 +167,7 @@ class Interface(Component):
         self.afterParameterChange()
 
     def setSyncParameter(self, key: str, value: Any) -> None:
+        print(type(value))
         if key == "sync":
             # self.createSyncSquares() if value else self.removeSyncSquares()
             self.getComponentById("sync-squares").hide = not value
@@ -216,7 +216,7 @@ class Interface(Component):
             playExperiment(
                 self.displayWindow,
                 self.experiment,
-                self.syncSquares,
+                self.getComponentById("sync-squares"),
                 callback=self.handleInput,
                 shouldTerminate=self.shouldTerminateStimulation,
             )
