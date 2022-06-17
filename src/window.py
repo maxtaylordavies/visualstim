@@ -16,6 +16,7 @@ class Window(_Window):
             colorSpace="rgb255",
         )
         self.components = []
+        self.frameRate = self.getActualFrameRate()
 
     def assignComponents(self, components: List, activate=False) -> None:
         self.components = components

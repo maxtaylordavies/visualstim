@@ -15,11 +15,10 @@ class Movie(Stimulus):
     def __init__(
         self,
         window: Window,
-        frameRate: float,
         stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
         screenParams: Dict = DEFAULT_SCREEN_PARAMS,
     ) -> None:
-        super().__init__(window, frameRate, stimParams, screenParams)
+        super().__init__(window, stimParams, screenParams)
 
         self._movie = MovieStim3(
             self.window,

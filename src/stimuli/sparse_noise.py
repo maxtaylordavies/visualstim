@@ -10,17 +10,14 @@ class SparseNoise(Stimulus):
     def __init__(
         self,
         window: Window,
-        frameRate: float,
         stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
         screenParams: Dict = DEFAULT_SCREEN_PARAMS,
     ):
-        super().__init__(window, frameRate, stimParams, screenParams)
+        super().__init__(window, stimParams, screenParams)
         self.drawInterval = int(1 / self.stimParams["temp freq"])
 
     def loadTexture(self) -> None:
-        self.texture = sparseNoise(
-            self.window, self.frameRate, self.stimParams, self.screenParams
-        )
+        self.texture = sparseNoise(self.window, self.stimParams, self.screenParams)
 
     def drawFrame(self) -> None:
         if self.frameIdx % self.drawInterval == 0:

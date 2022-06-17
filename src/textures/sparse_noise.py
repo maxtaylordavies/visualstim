@@ -12,13 +12,14 @@ from src.utils import normalise, roundToPowerOf2, scaleUp, ReportProgress
 
 def sparseNoise(
     window: Window,
-    frameRate: float,
     stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
     screenParams: Dict[str, Any] = DEFAULT_SCREEN_PARAMS,
 ):
     rng = np.random.default_rng()
 
-    nFrames = round(frameRate * stimParams["stim duration"] * stimParams["temp freq"])
+    nFrames = round(
+        window.frameRate * stimParams["stim duration"] * stimParams["temp freq"]
+    )
 
     dim = max(screenParams["h res"], screenParams["v res"])
     n = roundToPowerOf2(dim) // COMPRESSION_FACTOR

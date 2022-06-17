@@ -13,12 +13,10 @@ class Stimulus:
     def __init__(
         self,
         window: Window,
-        frameRate: float,
         stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
         screenParams: Dict[str, Any] = DEFAULT_SCREEN_PARAMS,
     ) -> None:
         self.window = window
-        self.frameRate = frameRate
         self.stimParams = stimParams
         self.screenParams = screenParams
         self.duration = 0
@@ -60,7 +58,6 @@ class Stimulus:
 def playStimulus(
     window: Window,
     stimulus: Dict,
-    frameRate: float,
     syncSquares: Optional[SyncSquares],
     callback: Any = None,
     shouldTerminate: Any = checkForEsc,
@@ -68,7 +65,7 @@ def playStimulus(
 ) -> bool:
     duration = stimulus["params"]["stim duration"] or stimulus.duration
     for frameIdx in range(
-        experimentFrameIdx, experimentFrameIdx + int(frameRate * duration)
+        experimentFrameIdx, experimentFrameIdx + int(window.frameRate * duration)
     ):
         # check if we should terminate
         if shouldTerminate():

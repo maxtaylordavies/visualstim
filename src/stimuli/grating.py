@@ -10,11 +10,10 @@ class StaticGrating(Stimulus):
     def __init__(
         self,
         window: Window,
-        frameRate: float,
         stimParams: Dict = DEFAULT_STIMULUS_PARAMS,
         screenParams: Dict = DEFAULT_SCREEN_PARAMS,
     ):
-        super().__init__(window, frameRate, stimParams, screenParams)
+        super().__init__(window, stimParams, screenParams)
 
     def loadTexture(self):
         self.texture = staticGrating(self.stimParams, self.screenParams)
@@ -35,9 +34,7 @@ class StaticGrating(Stimulus):
 
 class DriftingGrating(StaticGrating):
     def loadTexture(self):
-        self.texture = driftingGrating(
-            self.window, self.frameRate, self.stimParams, self.screenParams
-        )
+        self.texture = driftingGrating(self.window, self.stimParams, self.screenParams)
 
     def updatePhase(self):
         self._stim.tex = self.texture[self.frameIdx % len(self.texture)]
@@ -45,9 +42,7 @@ class DriftingGrating(StaticGrating):
 
 class OscillatingGrating(StaticGrating):
     def loadTexture(self):
-        self.texture = oscGrating(
-            self.window, self.frameRate, self.stimParams, self.screenParams
-        )
+        self.texture = oscGrating(self.window, self.stimParams, self.screenParams)
 
     def updatePhase(self):
         self._stim.tex = self.texture[self.frameIdx % len(self.texture)]

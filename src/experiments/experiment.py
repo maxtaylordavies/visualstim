@@ -32,10 +32,10 @@ def str2Stim(s: str) -> Stimulus:
     }[s]
 
 
-def createStim(x: Dict, window: Window, frameRate: float, screenSettings: Dict) -> Dict:
+def createStim(x: Dict, window: Window, screenSettings: Dict) -> Dict:
     return {
         "stimulus": str2Stim(x["name"])(
-            window, frameRate, stimParams=x["params"], screenParams=screenSettings
+            window, stimParams=x["params"], screenParams=screenSettings
         ),
         "params": x["params"],
     }
@@ -114,17 +114,12 @@ def playExperiment(
     # type but with multiple values for at least one parameter, we unroll into multiple stimuli
     experiment = unrollExperiment(experiment)
 
-    # measure frame rate
-    frameRate = window.getActualFrameRate()
-
     # create stimuli objects from descriptions
     stimuli, l = [], len(experiment.stimuli)
     for i in range(l):
         experiment.stimuli[i]["params"]["label"] = f"stimulus {i+1}/{l}"
         stimuli.append(
-            createStim(
-                experiment.stimuli[i], window, frameRate, experiment.screenSettings
-            )
+            createStim(experiment.stimuli[i], window, experiment.screenSettings)
         )
 
     def _callback(frameIdx: int):
@@ -152,7 +147,9 @@ def playExperiment(
     # trigger loop
     if syncSquares:
         syncSquares.toggle(1)  # turn on trigger square
-        for i in range(int(frameRate * experiment.syncSettings["trigger duration"])):
+        for i in range(
+            int(window.frameRate * experiment.syncSettings["trigger duration"])
+        ):
             # check if we should terminate
             if shouldTerminate():
                 break
@@ -168,13 +165,12 @@ def playExperiment(
 
     # cycle through + display stimuli
     stop, experimentFrameIdx = False, 0
-    blankFrames = int(frameRate * experiment.screenSettings["blank"])
+    blankFrames = int(window.frameRate * experiment.screenSettings["blank"])
     for stimulus in stimuli:
         # display the stimulus
         stop, experimentFrameIdx = playStimulus(
             window,
             stimulus,
-            frameRate,
             syncSquares,
             _callback,
             shouldTerminate,
