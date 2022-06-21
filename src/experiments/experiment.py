@@ -3,7 +3,7 @@ import itertools
 import json
 from os import sync
 import pathlib
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from src.window import Window
 from src.stimuli import (
@@ -16,7 +16,7 @@ from src.stimuli import (
     Checkerboard,
     playStimulus,
 )
-from src.components import SyncSquares
+
 from src.utils import checkForEsc, parseParams
 from src.constants import COLORS
 
@@ -106,7 +106,6 @@ def unrollExperiment(exp: Experiment) -> Experiment:
 def playExperiment(
     window: Window,
     experiment: Experiment,
-    syncSquares: Optional[SyncSquares],
     callback: Any = None,
     shouldTerminate: Any = checkForEsc,
 ):
@@ -125,18 +124,15 @@ def playExperiment(
     def _callback(frameIdx: int):
         # send a sync pulse if needed
         if (
-            syncSquares
+            experiment.syncSettings["sync"]
             and experiment.syncSettings["pulse length"]
             and frameIdx % experiment.syncSettings["sync interval"]
             in {0, experiment.syncSettings["pulse length"]}
         ):
-            print(frameIdx)
-            syncSquares.toggle(0)
+            window.toggleSyncSquare(0)
         callback()
 
     def _draw():
-        if syncSquares:
-            syncSquares.draw()
         window.flip()
 
     # clear the window for stimulus display
@@ -145,8 +141,8 @@ def playExperiment(
     window.flip()
 
     # trigger loop
-    if syncSquares:
-        syncSquares.toggle(1)  # turn on trigger square
+    if experiment.syncSettings["sync"]:
+        window.toggleSyncSquare(1)  # turn on trigger square
         for i in range(
             int(window.frameRate * experiment.syncSettings["trigger duration"])
         ):
@@ -159,7 +155,7 @@ def playExperiment(
                 callback()
 
             if i == experiment.syncSettings["pulse length"]:
-                syncSquares.toggle(1)  # turn off trigger square
+                window.toggleSyncSquare(1)  # turn off trigger square
 
             _draw()
 
@@ -171,22 +167,21 @@ def playExperiment(
         stop, experimentFrameIdx = playStimulus(
             window,
             stimulus,
-            syncSquares,
             _callback,
-            shouldTerminate,
+            shouldTerminate=shouldTerminate,
             experimentFrameIdx=experimentFrameIdx,
         )
 
         # interstimulus blank
-        for i in range(experimentFrameIdx, experimentFrameIdx + blankFrames):
-            _callback(i)
-            _draw()
-        experimentFrameIdx += blankFrames
+        if not stop:
+            for i in range(experimentFrameIdx, experimentFrameIdx + blankFrames):
+                _callback(i)
+                _draw()
+            experimentFrameIdx += blankFrames
 
         # make sure we don't leave the sync square on
-        if syncSquares:
-            syncSquares.turn_off(0)
-            window.flip()
+        window.turnOffSyncSquare(0)
+        window.flip()
 
         # if user wants to stop experiment, break out of loop
         if stop:

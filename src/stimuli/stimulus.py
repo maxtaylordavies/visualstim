@@ -1,10 +1,9 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 import numpy as np
 from psychopy.visual.grating import GratingStim
 
 from src.window import Window
-from src.components import SyncSquares
 from src.constants import DEFAULT_SCREEN_PARAMS, DEFAULT_STIMULUS_PARAMS
 from src.utils import checkForEsc, warpTexture
 
@@ -58,7 +57,6 @@ class Stimulus:
 def playStimulus(
     window: Window,
     stimulus: Dict,
-    syncSquares: Optional[SyncSquares],
     callback: Any = None,
     shouldTerminate: Any = checkForEsc,
     experimentFrameIdx: int = 0,
@@ -69,17 +67,14 @@ def playStimulus(
     ):
         # check if we should terminate
         if shouldTerminate():
-            return True
+            return True, frameIdx + 1
 
         # execute per-frame callback
         if callback:
             callback(frameIdx)
 
-        # draw stimulus (+ sync squares)
+        # draw stimulus
         stimulus["stimulus"].drawFrame()
-        if syncSquares:
-            syncSquares.draw()
-
         window.flip()
 
     return False, frameIdx + 1

@@ -2,14 +2,13 @@ from typing import Any, List
 
 from psychopy.event import Mouse
 
-from src.window import Window
 from src.constants import COLORS
 
 
 class Component:
     def __init__(
         self,
-        window: Window,
+        window: Any,
         id: str,
         pos: List[int] = [0, 0],
         size: List[Any] = [None, None],
@@ -48,26 +47,15 @@ class Component:
             if hasattr(c, "register"):
                 c.register()
 
-    def toggleHidden(self, propagate=False) -> None:
-        self.hide = not self.hide
+    def setHidden(self, hide, propagate=False) -> None:
+        self.hide = hide
         if propagate:
             for c in self.children:
                 if hasattr(c, "hide"):
                     c.hide = self.hide
 
-    # def setHidden(self, propagate=False):
-    #     self.hide = True
-    #     if propagate:
-    #         for c in self.children:
-    #             if hasattr(c, "setHidden"):
-    #                 c.setHidden(propagate=True)
-
-    # def setVisible(self, propagate=False):
-    #     self.hide = False
-    #     if propagate:
-    #         for c in self.children:
-    #             if hasattr(c, "setVisible"):
-    #                 c.setVisible(propagate=True)
+    def toggleHidden(self, propagate=False) -> None:
+        self.setHide(not self.hide, propagate=propagate)
 
     def sortChildren(self) -> List:
         return sorted(

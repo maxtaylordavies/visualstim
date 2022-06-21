@@ -1,5 +1,6 @@
 import json
 import pathlib
+import platform
 
 with open(pathlib.Path().resolve().joinpath("experiments/default.json")) as f:
     data = json.load(f)
@@ -25,6 +26,10 @@ COLORS = {
     "mediumgreen": [145, 248, 212],
 }
 
+# not sure why, but (in my experience) on Mac the left edge
+# of the PsychoPy window is at -window_width/4; on Windows
+# it's at -window_width/2. Similar for bottom edge
+PIXEL_FACTOR = 2 if platform.system() == "Windows" else 4
 COMPRESSION_FACTOR = 2
 
 STIMULUS_PARAMETER_MAP = {

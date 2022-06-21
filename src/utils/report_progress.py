@@ -1,14 +1,14 @@
 import platform
-from typing import Iterable
+from typing import Any, Iterable
 
-from src.window import Window
+# from src.window import Window
 from src.components.core.textbox import Textbox
 from src.constants import COLORS
 
 
 class ReportProgress(object):
     def __init__(
-        self, iterable: Iterable, window: Window, description: str, interval=10
+        self, iterable: Iterable, window: Any, description: str, interval=10
     ) -> None:
         self.iterable = iterable
         self.window = window

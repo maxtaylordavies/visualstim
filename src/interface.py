@@ -11,11 +11,10 @@ from src.components import (
     ParametersPanel,
     SyncPanel,
     ScreenPanel,
-    SyncSquares,
     ScriptSelector,
     HeaderBar,
 )
-from src.utils import checkForEsc, getScreenResolution
+from src.utils import checkForEsc, log, getScreenResolution
 from src.experiments import (
     playExperiment,
     loadExperiment as _loadExperiment,
@@ -49,6 +48,7 @@ class Interface(Component):
 
         # load default experiment
         self.loadExperiment("default.json")
+        self.displayWindow.setShowSyncSquares(self.experiment.syncSettings["sync"])
 
         # get screen resolution and update screen params if necessary
         self.setResolution()
@@ -102,20 +102,8 @@ class Interface(Component):
                 callback=self.loadExperiment,
                 hide=True,
             ),
-            SyncSquares(
-                self.displayWindow,
-                "sync-squares",
-                hide=not self.experiment.syncSettings["sync"],
-            ),
         ]
-
         super().register()
-
-        # if self.experiment.syncSettings["sync"]:
-        #     self.createSyncSquares()
-
-        # assign children to window so they will be drawn automatically
-        # every time we call flip()
         self.controlWindow.assignComponents(self.children, activate=True)
 
     def setResolution(self) -> None:
@@ -169,9 +157,7 @@ class Interface(Component):
     def setSyncParameter(self, key: str, value: Any) -> None:
         print(type(value))
         if key == "sync":
-            # self.createSyncSquares() if value else self.removeSyncSquares()
-            self.getComponentById("sync-squares").hide = not value
-            # self.displayWindow.assignComponents(self.children, activate=True)
+            self.displayWindow.setShowSyncSquares(value)
         self.experiment.syncSettings[key] = value
         self.afterParameterChange()
 
@@ -187,15 +173,17 @@ class Interface(Component):
     def onSwitchScreenClicked(self, mouse: event.Mouse, button: Button) -> None:
         self.screenNum = 1 - self.screenNum
         if self.screenNum:
+            self.controlWindow.setShowSyncSquares(False)
             self.displayWindow = Window(
-                screenNum=self.screenNum, fullscreen=self.fullscreen
+                screenNum=self.screenNum,
+                fullscreen=False,
+                sync=self.experiment.syncSettings["sync"],
             )
-            # if self.experiment.syncSettings["sync"]:
-            #     self.createSyncSquares()
             self.draw()
         else:
             self.displayWindow.close()
             self.displayWindow = self.controlWindow
+            self.displayWindow.setShowSyncSquares(self.experiment.syncSettings["sync"])
 
     def onQuitClicked(self, mouse: event.Mouse, button: Button) -> None:
         self.quit = True
@@ -216,7 +204,6 @@ class Interface(Component):
             playExperiment(
                 self.displayWindow,
                 self.experiment,
-                self.getComponentById("sync-squares"),
                 callback=self.handleInput,
                 shouldTerminate=self.shouldTerminateStimulation,
             )

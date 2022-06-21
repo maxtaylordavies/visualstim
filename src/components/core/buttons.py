@@ -1,8 +1,7 @@
-from typing import List
+from typing import Any, List
 
 from psychopy.visual import circle
 
-from src.window import Window
 from src.components.core import Component
 from .textbox import Textbox
 from src.constants import COLORS
@@ -50,7 +49,7 @@ class Button(Component):
 
 class PlayButton(Component):
     def __init__(
-        self, window: Window, id: str, radius: int, pos: List[int], onClick=noOp,
+        self, window: Any, id: str, radius: int, pos: List[int], onClick=noOp,
     ) -> None:
         super().__init__(window, id, pos, onClick=onClick)
         self.radius = radius

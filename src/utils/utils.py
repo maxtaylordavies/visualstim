@@ -8,7 +8,7 @@ import scipy.ndimage.interpolation as spndi
 from psychopy import event
 from pyglet.canvas import get_display
 
-from src.window import Window
+# from src.window import Window
 from src.constants import (
     DEFAULT_SCREEN_PARAMS,
     DEFAULT_STIMULUS_PARAMS,
@@ -140,7 +140,7 @@ def computeWarpCoords(shape: tuple, screenParams: Dict) -> np.ndarray:
 
 
 def warpTexture(
-    window: Window,
+    window: Any,
     texture: np.ndarray,
     screenParams: Dict = DEFAULT_SCREEN_PARAMS,
     label: str = "",
