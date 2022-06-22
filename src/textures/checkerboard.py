@@ -6,15 +6,18 @@ from src.constants import (
     DEFAULT_SCREEN_PARAMS,
     DEFAULT_STIMULUS_PARAMS,
 )
-from src.utils import roundToPowerOf2, scaleUp, ReportProgress
+from src.utils import roundToPowerOf2, scaleUp
 
 
 def checkerboard(
     window: Window,
     stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
     screenParams: Dict[str, Any] = DEFAULT_SCREEN_PARAMS,
+    logGenerator=None,
 ):
-    ReportProgress([None], window, f"{stimParams['label']}: generating frames")
+    if not logGenerator:
+        logGenerator = window.reportProgress
+    logGenerator([None], f"{stimParams['label']}: generating frames")
 
     dim = max(screenParams["v res"], screenParams["h res"])
     n = roundToPowerOf2(dim)

@@ -4,7 +4,7 @@ from typing import Any
 from psychopy import event
 
 from src.window import Window
-from src.constants import STIMULUS_PARAMETER_MAP
+from src.constants import STIMULUS_PARAMETER_MAP, COLORS
 from src.components.core import Button, Component
 from src.components import (
     StimulusPanel,
@@ -14,7 +14,7 @@ from src.components import (
     ScriptSelector,
     HeaderBar,
 )
-from src.utils import checkForEsc, log, getScreenResolution
+from src.utils import checkForEsc, getScreenResolution
 from src.experiments import (
     playExperiment,
     loadExperiment as _loadExperiment,
@@ -32,7 +32,7 @@ class Interface(Component):
         # create window
         self.screenNum = 0
         self.fullscreen = fullscreen
-        self.controlWindow = Window(fullscreen=self.fullscreen)
+        self.controlWindow = Window(fullscreen=self.fullscreen, size=[1000, 650])
         self.displayWindow = self.controlWindow
         self.children = []
 
@@ -180,6 +180,7 @@ class Interface(Component):
                 screenNum=self.screenNum,
                 fullscreen=True,
                 sync=self.experiment.syncSettings["sync"],
+                color=COLORS["grey"],
             )
             self.draw()
         else:
@@ -209,6 +210,7 @@ class Interface(Component):
                 self.experiment,
                 callback=self.handleInput,
                 shouldTerminate=self.shouldTerminateStimulation,
+                logGenerator=self.controlWindow.reportProgress,
             )
 
             # if the stimulation hasn't been stopped prematurely by the user,

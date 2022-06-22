@@ -14,7 +14,6 @@ from src.constants import (
     DEFAULT_STIMULUS_PARAMS,
     UNITS_MAP,
 )
-from .report_progress import ReportProgress
 
 
 def log(message: str) -> None:
@@ -144,6 +143,7 @@ def warpTexture(
     texture: np.ndarray,
     screenParams: Dict = DEFAULT_SCREEN_PARAMS,
     label: str = "",
+    logGenerator=None,
 ) -> np.ndarray:
 
     shape = texture[0].shape
@@ -153,8 +153,11 @@ def warpTexture(
     if label:
         desc = f"{label}: {desc}"
 
+    if not logGenerator:
+        logGenerator = window.reportProgress
+
     warped = np.zeros(texture.shape, dtype=np.float32)
-    for i in ReportProgress(range(len(texture)), window, desc):
+    for i in logGenerator(range(len(texture)), desc):
         warped[i] = spndi.map_coordinates(texture[i], warpCoords.T).reshape(shape)
 
     return warped

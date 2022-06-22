@@ -32,10 +32,10 @@ def str2Stim(s: str) -> Stimulus:
     }[s]
 
 
-def createStim(x: Dict, window: Window, screenSettings: Dict) -> Dict:
+def createStim(x: Dict, window: Window, screenSettings: Dict, **kwargs) -> Dict:
     return {
         "stimulus": str2Stim(x["name"])(
-            window, stimParams=x["params"], screenParams=screenSettings
+            window, stimParams=x["params"], screenParams=screenSettings, **kwargs
         ),
         "params": x["params"],
     }
@@ -108,6 +108,7 @@ def playExperiment(
     experiment: Experiment,
     callback: Any = None,
     shouldTerminate: Any = checkForEsc,
+    logGenerator=None,
 ):
     # unroll the experiment if necessary - i.e. if experiment consists of a single stimulus
     # type but with multiple values for at least one parameter, we unroll into multiple stimuli
@@ -118,7 +119,12 @@ def playExperiment(
     for i in range(l):
         experiment.stimuli[i]["params"]["label"] = f"stimulus {i+1}/{l}"
         stimuli.append(
-            createStim(experiment.stimuli[i], window, experiment.screenSettings)
+            createStim(
+                experiment.stimuli[i],
+                window,
+                experiment.screenSettings,
+                logGenerator=logGenerator,
+            )
         )
 
     def _callback(frameIdx: int):
