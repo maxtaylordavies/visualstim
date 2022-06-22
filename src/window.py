@@ -21,8 +21,6 @@ class Window(_Window):
             **kwargs,
         )
 
-        print(f"self.color: {self.color}")
-
         self.fullscreen = fullscreen
         self.sync = sync
         self.components = []
@@ -30,8 +28,10 @@ class Window(_Window):
 
         self.scaleFactor = (
             self.size[0] / self.clientSize[0]
-        ) * self.getContentScaleFactor()
+        ) * 2
         self.compressionFactor = 2
+
+        print(f"self.scaleFactor: {self.scaleFactor}")
 
         # create sync squares
         self.createSyncSquares()
