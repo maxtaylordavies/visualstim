@@ -110,6 +110,9 @@ class Interface(Component):
         hor, ver = getScreenResolution(self.screenNum)
         self.setScreenParameter("h res", hor)
         self.setScreenParameter("v res", ver)
+        screenPanel = self.getComponentById("screen-params-panel")
+        if screenPanel:
+            screenPanel.setParams(self.experiment.screenSettings)
 
     def toggleMode(self) -> None:
         # set self.mode
@@ -155,7 +158,6 @@ class Interface(Component):
         self.afterParameterChange()
 
     def setSyncParameter(self, key: str, value: Any) -> None:
-        print(type(value))
         if key == "sync":
             self.displayWindow.setShowSyncSquares(value)
         self.experiment.syncSettings[key] = value
@@ -176,7 +178,7 @@ class Interface(Component):
             self.controlWindow.setShowSyncSquares(False)
             self.displayWindow = Window(
                 screenNum=self.screenNum,
-                fullscreen=False,
+                fullscreen=True,
                 sync=self.experiment.syncSettings["sync"],
             )
             self.draw()
@@ -184,6 +186,7 @@ class Interface(Component):
             self.displayWindow.close()
             self.displayWindow = self.controlWindow
             self.displayWindow.setShowSyncSquares(self.experiment.syncSettings["sync"])
+        self.setResolution()
 
     def onQuitClicked(self, mouse: event.Mouse, button: Button) -> None:
         self.quit = True

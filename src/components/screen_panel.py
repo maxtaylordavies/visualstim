@@ -57,3 +57,7 @@ class ScreenPanel(Component):
         ]
 
         self.children[0].register()
+
+    def setParams(self, newParams: Dict):
+        self.params = newParams
+        self.register()
