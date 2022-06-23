@@ -1,7 +1,9 @@
 import pathlib
 from typing import Any, Dict
 
+import numpy as np
 from psychopy.visual.movie3 import MovieStim3
+from moviepy.video.io.ffmpeg_reader import FFMPEG_VideoReader
 
 from src.window import Window
 from src.constants import (
@@ -9,6 +11,7 @@ from src.constants import (
     DEFAULT_SCREEN_PARAMS,
 )
 from .stimulus import Stimulus
+from src.utils import rgb2grey, normalise
 
 
 class Movie(Stimulus):
@@ -17,6 +20,7 @@ class Movie(Stimulus):
         window: Window,
         stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
         screenParams: Dict = DEFAULT_SCREEN_PARAMS,
+        logGenerator=None,
     ) -> None:
         super().__init__(window, stimParams, screenParams)
 
@@ -33,3 +37,38 @@ class Movie(Stimulus):
 
     def drawFrame(self) -> None:
         self._movie.draw()
+
+
+class Movie2(Stimulus):
+    def __init__(
+        self,
+        window: Window,
+        stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
+        screenParams: Dict = DEFAULT_SCREEN_PARAMS,
+        logGenerator=None,
+    ) -> None:
+        self.reader = FFMPEG_VideoReader(
+            str(pathlib.Path().resolve().joinpath(f"movies/{stimParams['filename']}")),
+            target_resolution=None,
+        )
+        self.duration = self.reader.duration
+        self.nframes = self.reader.nframes
+        self.logGenerator = logGenerator if logGenerator else window.reportProgress
+        super().__init__(window, stimParams, screenParams)
+
+    def loadTexture(self) -> None:
+        self.texture = np.array(
+            [
+                normalise(rgb2grey(self.reader.read_frame()))[::-1]
+                for _ in self.logGenerator(
+                    range(self.nframes),
+                    f"{self.stimParams['label']}: generating frames",
+                )
+            ]
+        )
+        print(np.max(self.texture), np.min(self.texture))
+
+    def drawFrame(self) -> None:
+        self._stim.draw()
+        self.frameIdx += 1
+        self._stim.tex = self.texture[self.frameIdx]

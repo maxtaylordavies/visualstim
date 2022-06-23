@@ -8,6 +8,8 @@ import scipy.ndimage.interpolation as spndi
 from psychopy import event
 from pyglet.canvas import get_display
 
+
+
 # from src.window import Window
 from src.constants import (
     DEFAULT_SCREEN_PARAMS,
@@ -161,3 +163,7 @@ def warpTexture(
         warped[i] = spndi.map_coordinates(texture[i], warpCoords.T).reshape(shape)
 
     return warped
+
+
+def rgb2grey(x):
+    return np.dot(x[...,:3], [0.2989, 0.5870, 0.1140])
