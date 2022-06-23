@@ -14,15 +14,11 @@ class StaticGrating(Stimulus):
         screenParams: Dict = DEFAULT_SCREEN_PARAMS,
         logGenerator=None,
     ):
-        self.logGenerator = logGenerator
-        super().__init__(window, stimParams, screenParams)
+        super().__init__(window, stimParams, screenParams, logGenerator)
 
     def loadTexture(self):
         self.texture = staticGrating(
-            self.window,
-            self.stimParams,
-            self.screenParams,
-            logGenerator=self.logGenerator,
+            self.window, self.stimParams, self.screenParams, self.logGenerator,
         )
 
     def updatePhase(self):

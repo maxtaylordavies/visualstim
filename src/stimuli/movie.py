@@ -22,7 +22,7 @@ class Movie(Stimulus):
         screenParams: Dict = DEFAULT_SCREEN_PARAMS,
         logGenerator=None,
     ) -> None:
-        super().__init__(window, stimParams, screenParams)
+        super().__init__(window, stimParams, screenParams, logGenerator)
 
         self._movie = MovieStim3(
             self.window,
@@ -53,8 +53,7 @@ class Movie2(Stimulus):
         )
         self.duration = self.reader.duration
         self.nframes = self.reader.nframes
-        self.logGenerator = logGenerator if logGenerator else window.reportProgress
-        super().__init__(window, stimParams, screenParams)
+        super().__init__(window, stimParams, screenParams, logGenerator)
 
     def loadTexture(self) -> None:
         self.texture = np.array(
@@ -66,7 +65,6 @@ class Movie2(Stimulus):
                 )
             ]
         )
-        print(np.max(self.texture), np.min(self.texture))
 
     def drawFrame(self) -> None:
         self._stim.draw()

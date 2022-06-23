@@ -14,10 +14,12 @@ class Stimulus:
         window: Window,
         stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
         screenParams: Dict[str, Any] = DEFAULT_SCREEN_PARAMS,
+        logGenerator=None,
     ) -> None:
         self.window = window
         self.stimParams = stimParams
         self.screenParams = screenParams
+        self.logGenerator = logGenerator or window.reportProgress
         self.duration = 0
         self.frameIdx = 0
 
@@ -48,6 +50,7 @@ class Stimulus:
             self.texture.astype(np.float32),
             self.screenParams,
             self.stimParams["label"],
+            self.logGenerator,
         ).astype(np.float16)
 
     def drawFrame(self) -> None:
