@@ -1,10 +1,7 @@
-from typing import Any, List
+from typing import Any
 
-from psychopy.visual import Window
-from psychopy.event import Mouse
-
-from src.components.core import Button, Component
-from src.constants import GREEN, PALEGREEN, MEDIUMGREEN, WHITE
+from src.components.core import Button
+from src.constants import COLORS
 
 
 class SaveButton(Button):
@@ -15,8 +12,8 @@ class SaveButton(Button):
             *args,
             "save-button",
             text=" save ",
-            color=GREEN,
-            fill=PALEGREEN,
+            color=COLORS["green"],
+            fill=COLORS["palegreen"],
             onClick=self.onClick,
             **kwargs
         )
@@ -28,8 +25,8 @@ class SaveButton(Button):
     def toggle(self):
         self.saved = not self.saved
         self.text = "saved" if self.saved else " save "
-        self.color = MEDIUMGREEN if self.saved else GREEN
-        self.fill = WHITE if self.saved else PALEGREEN
+        self.color = COLORS["mediumgreen"] if self.saved else COLORS["green"]
+        self.fill = COLORS["white"] if self.saved else COLORS["palegreen"]
         self.register()
         self.draw()
 

@@ -1,28 +1,28 @@
-from typing import Any, Dict
+from typing import Dict
 
-from psychopy.visual import Window
-from psychopy.visual.grating import GratingStim
-
-from src.constants import WINDOW_WIDTH, DEFAULT_PARAMS, DEG_PER_PIX
-from src.utils import sinDeg
+from src.window import Window
+from src.constants import DEFAULT_STIMULUS_PARAMS, DEFAULT_SCREEN_PARAMS
+from src.textures import staticGrating, driftingGrating, oscGrating
 from .stimulus import Stimulus
 
 
 class StaticGrating(Stimulus):
     def __init__(
-        self, window: Window, frameRate: float, params: Dict[str, Any] = DEFAULT_PARAMS
+        self,
+        window: Window,
+        stimParams: Dict = DEFAULT_STIMULUS_PARAMS,
+        screenParams: Dict = DEFAULT_SCREEN_PARAMS,
+        logGenerator=None,
     ):
-        super().__init__(window, frameRate, params)
+        self.logGenerator = logGenerator
+        super().__init__(window, stimParams, screenParams)
 
-        self._stim = GratingStim(
-            win=self.window,
-            size=[WINDOW_WIDTH, WINDOW_WIDTH],
-            units="pix",
-            ori=self.params["orientation"],
-            tex="sin",
-            mask=None,
-            phase=0,
-            sf=self.params["spat freq"] * DEG_PER_PIX,
+    def loadTexture(self):
+        self.texture = staticGrating(
+            self.window,
+            self.stimParams,
+            self.screenParams,
+            logGenerator=self.logGenerator,
         )
 
     def updatePhase(self):
@@ -32,21 +32,35 @@ class StaticGrating(Stimulus):
         # draw the grating to the screen
         self._stim.draw()
 
-        # update the phase of the grating in order to drift it
-        self.updatePhase()
-
         # increment frame counter
         self.frameIdx += 1
 
+        # update the phase of the grating in order to drift it
+        self.updatePhase()
+
 
 class DriftingGrating(StaticGrating):
+    def loadTexture(self):
+        self.texture = driftingGrating(
+            self.window,
+            self.stimParams,
+            self.screenParams,
+            logGenerator=self.logGenerator,
+        )
+
     def updatePhase(self):
-        self._stim.phase = (self.frameIdx / self.frameRate) * self.params["temp freq"]
+        self._stim.tex = self.texture[self.frameIdx % len(self.texture)]
 
 
 class OscillatingGrating(StaticGrating):
-    def updatePhase(self):
-        self._stim.phase = sinDeg(
-            self.params["temp freq"] * self.frameIdx * (360 / self.frameRate)
+    def loadTexture(self):
+        self.texture = oscGrating(
+            self.window,
+            self.stimParams,
+            self.screenParams,
+            logGenerator=self.logGenerator,
         )
+
+    def updatePhase(self):
+        self._stim.tex = self.texture[self.frameIdx % len(self.texture)]
 

@@ -3,13 +3,16 @@ from typing import List
 from psychopy.visual import TextBox2
 
 from src.components.core import Component
-from src.constants import WHITE
-from src.utils import log
+from src.constants import COLORS
 
 
 class Box(Component):
     def __init__(
-        self, *args, borderColor: List[int] = WHITE, borderWidth: int = 0, **kwargs,
+        self,
+        *args,
+        borderColor: List[int] = COLORS["white"],
+        borderWidth: int = 0,
+        **kwargs,
     ) -> None:
         super().__init__(*args, **kwargs)
         self.borderColor = borderColor

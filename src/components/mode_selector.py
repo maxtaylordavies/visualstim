@@ -1,9 +1,7 @@
-from typing import Any, List
-
-from psychopy.visual import Window
+from typing import Any
 
 from src.components.core import Component, Box, Textbox
-from src.constants import DARKGREY, GREY
+from src.constants import COLORS
 
 
 class ModeSelector(Component):
@@ -24,7 +22,8 @@ class ModeSelector(Component):
                 f"{self.id}-interactive",
                 pos=[self.pos[0] - 50, self.pos[1]],
                 text="interactive",
-                color=(GREY, DARKGREY)[self.mode == "interactive"],
+                color=(COLORS["grey"], COLORS["darkgrey"])[self.mode == "interactive"],
+                fill=self.fill,
                 bold=self.mode == "interactive",
                 padding=2,
                 fontSize=16,
@@ -34,7 +33,8 @@ class ModeSelector(Component):
                 f"{self.id}-scripting",
                 pos=[self.pos[0] + 28, self.pos[1]],
                 text="scripting",
-                color=(GREY, DARKGREY)[self.mode == "scripting"],
+                color=(COLORS["grey"], COLORS["darkgrey"])[self.mode == "scripting"],
+                fill=self.fill,
                 bold=self.mode == "scripting",
                 padding=2,
                 fontSize=16,
@@ -47,7 +47,7 @@ class ModeSelector(Component):
                     self.pos[1] - 11,
                 ],
                 size=[80 if self.mode == "interactive" else 65, 2],
-                color=DARKGREY,
+                color=COLORS["darkgrey"],
             ),
         ]
         super().register()

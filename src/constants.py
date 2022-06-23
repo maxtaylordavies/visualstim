@@ -1,15 +1,31 @@
-from math import degrees, atan2
+import json
+import pathlib
+import platform
 
-DEFAULT_PARAMS = {
-    "spat freq": 0.1,
-    "temp freq": 0.2,
-    "orientation": 0.0,
-    "stim duration": 10.0,
-    "filename": "test.mp4",
-    "fit screen": False,
-    "scale": 0.05,
-    "sparseness": 0.7,
+with open(pathlib.Path().resolve().joinpath("experiments/default.json")) as f:
+    data = json.load(f)
+    DEFAULT_SCREEN_PARAMS = data["screen settings"]
+    DEFAULT_SYNC_PARAMS = data["sync settings"]
+    DEFAULT_STIMULUS_PARAMS = data["stimuli"][0]["params"]
+
+
+COLORS = {
+    "transparent": [0, 0, 0, 0],
+    "black": [0, 0, 0],
+    "white": [255, 255, 255],
+    "grey": [127, 127, 127],
+    "lightgrey": [230, 230, 230],
+    "mediumgrey": [190, 190, 190],
+    "darkgrey": [119, 119, 119],
+    "green": [0, 199, 129],
+    "yellow": [255, 170, 21],
+    "red": [255, 64, 64],
+    "purple": [125, 76, 219],
+    "palegreen": [205, 255, 237],
+    "palered": [255, 207, 207],
+    "mediumgreen": [145, 248, 212],
 }
+
 STIMULUS_PARAMETER_MAP = {
     "static grating": {"spat freq", "orientation", "stim duration"},
     "drift grating": {"spat freq", "temp freq", "orientation", "stim duration",},
@@ -19,6 +35,11 @@ STIMULUS_PARAMETER_MAP = {
     "movie": {"filename", "fit screen", "stim duration"},
 }
 UNITS_MAP = {
+    "width": "mm",
+    "height": "mm",
+    "h res": "pix",
+    "v res": "pix",
+    "dist": "mm",
     "spat freq": "cyc/deg",
     "temp freq": "Hz",
     "orientation": "deg",
@@ -26,36 +47,6 @@ UNITS_MAP = {
     "trigger duration": "s",
     "sync interval": "frames",
     "pulse length": "frames",
+    "blank": "s",
 }
 CYCLEABLE_PARAMETERS = {"spat freq", "temp freq", "orientation"}
-
-TRANSPARENT = [0, 0, 0, 0]
-BLACK = [0, 0, 0]
-WHITE = [255, 255, 255]
-GREY = [127, 127, 127]
-LIGHTGREY = [230, 230, 230]
-MEDIUMGREY = [190, 190, 190]
-DARKGREY = [119, 119, 119]
-GREEN = [0, 199, 129]
-YELLOW = [255, 170, 21]
-RED = [255, 64, 64]
-PURPLE = [125, 76, 219]
-PALEGREEN = [205, 255, 237]
-PALERED = [255, 207, 207]
-MEDIUMGREEN = [145, 248, 212]
-
-# these two in pixels
-WINDOW_WIDTH = 1440
-WINDOW_HEIGHT = 900
-
-# these three in mm
-DISP_WIDTH = 518
-DISP_HEIGHT = 323
-DISP_DISTANCE = 300
-
-DEG_PER_PIX = degrees(atan2(DISP_HEIGHT / 2, DISP_DISTANCE)) / (WINDOW_HEIGHT / 2)
-
-PIXEL_SIZE = DISP_WIDTH / WINDOW_WIDTH
-
-DEFAULT_BACKGROUND_COLOR = WHITE
-STIMULATION_BACKGROUND_COLOR = GREY

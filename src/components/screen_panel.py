@@ -1,14 +1,12 @@
-import math
 from typing import Any, Dict
 
 from src.components.core import Component, Panel, Switch
-from .expandable_input import ExpandableInput
 from .core.input import TextInput
-from src.constants import CYCLEABLE_PARAMETERS, COLORS
 from src.utils import paramLabelWithUnits
+from src.constants import COLORS
 
 
-class ParametersPanel(Component):
+class ScreenPanel(Component):
     def __init__(self, *args, callback: Any, initialParams: Dict, **kwargs,) -> None:
         super().__init__(*args, listenForKeyPresses=True, **kwargs)
         self.callback = callback
@@ -17,7 +15,7 @@ class ParametersPanel(Component):
     def helper(self, k, x):
         if k not in self.params:
             return None
-        if x == "":
+        if x == "" or x is None:
             return self.params[k]
         return x
 
@@ -25,12 +23,11 @@ class ParametersPanel(Component):
         return lambda x: self.callback(k, self.helper(k, x))
 
     def register(self):
-        l = len(self.params.keys())
         self.children = [
             Panel(
                 self.window,
                 self.id,
-                labelText="stimulus parameters",
+                labelText="screen parameters",
                 pos=self.pos,
                 children=[
                     Switch(
@@ -40,27 +37,27 @@ class ParametersPanel(Component):
                         value=v,
                         pos=self.pos,
                         callback=self.makeFunc(k),
+                        leftSpaces=4,
                     )
                     if type(v) == bool
-                    else (ExpandableInput if k in CYCLEABLE_PARAMETERS else TextInput)(
+                    else TextInput(
                         self.window,
                         f"{'-'.join(k.split(' '))}-input",
                         value=v,
                         labelText=paramLabelWithUnits(k),
                         pos=self.pos,
                         onChange=self.makeFunc(k),
-                        zIndex=l - i,
                     )
-                    for i, (k, v) in enumerate(self.params.items())
+                    for k, v in list(self.params.items())
                 ],
-                rows=math.ceil(l / 2),
+                rows=2,
                 listenForKeyPresses=self.listenForKeyPresses,
                 fill=COLORS["lightgrey"],
             )
         ]
-        for c in self.children:
-            c.register()
 
-    def resetParams(self, params: Dict) -> None:
-        self.params = params
+        self.children[0].register()
+
+    def setParams(self, newParams: Dict):
+        self.params = newParams
         self.register()

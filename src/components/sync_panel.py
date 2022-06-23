@@ -1,11 +1,9 @@
-from typing import Any, Dict, List
-
-from psychopy.visual import Window
+from typing import Any, Dict
 
 from src.components.core import Component, Panel, Switch
 from .core.input import TextInput
 from src.utils import paramLabelWithUnits
-from src.constants import LIGHTGREY
+from src.constants import COLORS
 
 
 class SyncPanel(Component):
@@ -17,7 +15,7 @@ class SyncPanel(Component):
     def helper(self, k, x):
         if k not in self.params:
             return None
-        if not x:
+        if x == "" or x is None:
             return self.params[k]
         return x
 
@@ -45,7 +43,7 @@ class SyncPanel(Component):
                     else TextInput(
                         self.window,
                         f"{'-'.join(k.split(' '))}-input",
-                        value=str(v),
+                        value=v,
                         labelText=paramLabelWithUnits(k),
                         pos=self.pos,
                         onChange=self.makeFunc(k),
@@ -54,7 +52,7 @@ class SyncPanel(Component):
                 ],
                 rows=4,
                 listenForKeyPresses=self.listenForKeyPresses,
-                fill=LIGHTGREY,
+                fill=COLORS["lightgrey"],
             )
         ]
 

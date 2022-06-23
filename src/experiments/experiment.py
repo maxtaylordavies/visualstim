@@ -1,11 +1,11 @@
 from datetime import datetime
 import itertools
 import json
+from os import sync
 import pathlib
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
-from psychopy.visual import Window
-
+from src.window import Window
 from src.stimuli import (
     Stimulus,
     StaticGrating,
@@ -16,12 +16,9 @@ from src.stimuli import (
     Checkerboard,
     playStimulus,
 )
-from src.components import SyncSquares
-from src.constants import (
-    DEFAULT_BACKGROUND_COLOR,
-    STIMULATION_BACKGROUND_COLOR,
-)
+
 from src.utils import checkForEsc, parseParams
+from src.constants import COLORS
 
 
 def str2Stim(s: str) -> Stimulus:
@@ -35,16 +32,21 @@ def str2Stim(s: str) -> Stimulus:
     }[s]
 
 
-def createStim(x: Dict, window: Window, frameRate: float) -> Dict:
+def createStim(x: Dict, window: Window, screenSettings: Dict, **kwargs) -> Dict:
     return {
-        "stimulus": str2Stim(x["name"])(window, frameRate, params=x["params"]),
+        "stimulus": str2Stim(x["name"])(
+            window, stimParams=x["params"], screenParams=screenSettings, **kwargs
+        ),
         "params": x["params"],
     }
 
 
 class Experiment:
-    def __init__(self, name: str, syncSettings: Dict, stimuli: List[Dict]) -> None:
+    def __init__(
+        self, name: str, screenSettings: Dict, syncSettings: Dict, stimuli: List[Dict]
+    ) -> None:
         self.name = name
+        self.screenSettings = screenSettings
         self.syncSettings = syncSettings
         self.stimuli = stimuli
 
@@ -52,13 +54,14 @@ class Experiment:
         return {"sync settings": self.syncSettings, "stimuli": self.stimuli}
 
 
-def loadExperiment(window: Window, frameRate: float, filename: str) -> Experiment:
+def loadExperiment(window: Window, filename: str) -> Experiment:
     # TODO: check file exists / error handling
     with open(pathlib.Path().resolve().joinpath(f"experiments/{filename}")) as f:
         data = json.load(f)
 
     return Experiment(
         filename,
+        data["screen settings"],
         data["sync settings"],
         list(
             map(
@@ -97,42 +100,58 @@ def unrollExperiment(exp: Experiment) -> Experiment:
             }
         )
 
-    return Experiment(exp.name, exp.syncSettings, stimuli)
+    return Experiment(exp.name, exp.screenSettings, exp.syncSettings, stimuli)
 
 
 def playExperiment(
     window: Window,
     experiment: Experiment,
-    frameRate: float,
-    syncSquares: Optional[SyncSquares],
     callback: Any = None,
     shouldTerminate: Any = checkForEsc,
+    logGenerator=None,
 ):
-
-    window.color = STIMULATION_BACKGROUND_COLOR
-
     # unroll the experiment if necessary - i.e. if experiment consists of a single stimulus
     # type but with multiple values for at least one parameter, we unroll into multiple stimuli
     experiment = unrollExperiment(experiment)
 
     # create stimuli objects from descriptions
-    stimuli = list(map(lambda s: createStim(s, window, frameRate), experiment.stimuli))
+    stimuli, l = [], len(experiment.stimuli)
+    for i in range(l):
+        experiment.stimuli[i]["params"]["label"] = f"stimulus {i+1}/{l}"
+        stimuli.append(
+            createStim(
+                experiment.stimuli[i],
+                window,
+                experiment.screenSettings,
+                logGenerator=logGenerator,
+            )
+        )
 
     def _callback(frameIdx: int):
         # send a sync pulse if needed
         if (
-            syncSquares
+            experiment.syncSettings["sync"]
             and experiment.syncSettings["pulse length"]
             and frameIdx % experiment.syncSettings["sync interval"]
             in {0, experiment.syncSettings["pulse length"]}
         ):
-            syncSquares.toggle(0)
+            window.toggleSyncSquare(0)
         callback()
 
+    def _draw():
+        window.flip()
+
+    # clear the window for stimulus display
+    window.clearComponents()
+    window.setBackgroundColor(COLORS[experiment.screenSettings["background"]])
+    window.flip()
+
     # trigger loop
-    if syncSquares:
-        syncSquares.toggle(1)  # turn on trigger square
-        for i in range(int(frameRate * experiment.syncSettings["trigger duration"])):
+    if experiment.syncSettings["sync"]:
+        window.toggleSyncSquare(1)  # turn on trigger square
+        for i in range(
+            int(window.frameRate * experiment.syncSettings["trigger duration"])
+        ):
             # check if we should terminate
             if shouldTerminate():
                 break
@@ -142,23 +161,39 @@ def playExperiment(
                 callback()
 
             if i == experiment.syncSettings["pulse length"]:
-                syncSquares.toggle(1)  # turn off trigger square
+                window.toggleSyncSquare(1)  # turn off trigger square
 
-            syncSquares.draw()
-            window.flip()
+            _draw()
 
     # cycle through + display stimuli
-    stop = False
+    stop, experimentFrameIdx = False, 0
+    blankFrames = int(window.frameRate * experiment.screenSettings["blank"])
     for stimulus in stimuli:
-        stop = playStimulus(
-            window, stimulus, frameRate, syncSquares, _callback, shouldTerminate,
+        # display the stimulus
+        stop, experimentFrameIdx = playStimulus(
+            window,
+            stimulus,
+            _callback,
+            shouldTerminate=shouldTerminate,
+            experimentFrameIdx=experimentFrameIdx,
         )
-        if syncSquares:
-            syncSquares.turn_off(0)
-            window.flip()
+
+        # interstimulus blank
+        if not stop:
+            for i in range(experimentFrameIdx, experimentFrameIdx + blankFrames):
+                _callback(i)
+                _draw()
+            experimentFrameIdx += blankFrames
+
+        # make sure we don't leave the sync square on
+        window.turnOffSyncSquare(0)
+        window.flip()
+
+        # if user wants to stop experiment, break out of loop
         if stop:
             break
 
-    # reset window colour
-    window.color = DEFAULT_BACKGROUND_COLOR
+    # reset window
+    window.setBackgroundColor(COLORS["white"])
+    window.activateComponents()
     window.flip()

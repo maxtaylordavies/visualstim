@@ -1,21 +1,12 @@
-from typing import Any, List
+from typing import Any
 
-from src.constants import RED, GREEN, PALERED, PALEGREEN
+from src.constants import COLORS
 from src.components.core import Component, Button
-
-from psychopy.visual import Window
-from psychopy.event import Mouse
 
 
 class Switch(Component):
     def __init__(
-        self,
-        *args,
-        text: str,
-        value: bool,
-        callback: Any,
-        leftSpaces=5,
-        **kwargs,
+        self, *args, text: str, value: bool, callback: Any, leftSpaces=5, **kwargs,
     ):
         super().__init__(*args, **kwargs)
         self.text = text
@@ -35,8 +26,8 @@ class Switch(Component):
                 self.window,
                 self.id,
                 text=f"{' ' * self.leftSpaces}{self.text}: {('FALSE','TRUE')[int(self.value)]}",
-                color=(RED, GREEN)[int(self.value)],
-                fill=(PALERED, PALEGREEN)[int(self.value)],
+                color=(COLORS["red"], COLORS["green"])[int(self.value)],
+                fill=(COLORS["palered"], COLORS["palegreen"])[int(self.value)],
                 pos=self.pos,
                 bold=True,
                 onClick=self.onClick,

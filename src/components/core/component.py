@@ -1,21 +1,19 @@
 from typing import Any, List
 
-from psychopy.visual import Window
 from psychopy.event import Mouse
 
-from src.utils import log
-from src.constants import WHITE, BLACK
+from src.constants import COLORS
 
 
 class Component:
     def __init__(
         self,
-        window: Window,
+        window: Any,
         id: str,
         pos: List[int] = [0, 0],
         size: List[Any] = [None, None],
-        color: List[int] = BLACK,
-        fill: List[int] = WHITE,
+        color: List[int] = COLORS["black"],
+        fill: List[int] = COLORS["white"],
         zIndex: int = 0,
         children: List[Any] = [],
         onClick=None,
@@ -40,22 +38,40 @@ class Component:
             for i in range(len(self.children)):
                 self.children[i].listenForKeyPresses = True
 
+        if self.hide:
+            for i in range(len(self.children)):
+                self.children[i].hide = True
+
     def register(self) -> None:
         for c in self.children:
             if hasattr(c, "register"):
                 c.register()
 
-    def toggleHidden(self, propagate=False) -> None:
-        self.hide = not self.hide
+    def setHidden(self, hide, propagate=False) -> None:
+        self.hide = hide
         if propagate:
             for c in self.children:
-                if hasattr(c, "toggleHidden"):
-                    c.toggleHidden(propagate=propagate)
+                if hasattr(c, "hide"):
+                    c.hide = self.hide
+
+    def toggleHidden(self, propagate=False) -> None:
+        self.setHide(not self.hide, propagate=propagate)
 
     def sortChildren(self) -> List:
         return sorted(
             self.children, key=lambda x: x.zIndex if hasattr(x, "zIndex") else 0
         )
+
+    def getComponentById(self, id: str) -> Any:
+        if self.id == id:
+            return self
+        for c in self.children:
+            if not hasattr(c, "getComponentById"):
+                continue
+            component = c.getComponentById(id)
+            if component:
+                return component
+        return None
 
     def draw(self) -> None:
         if self.hide:
@@ -89,6 +105,8 @@ class Component:
         # child component has an onClick function, then pass
         # the event down a level and return
         for c in sc:
+            if hasattr(c, "hide") and c.hide:
+                continue
             if c.contains(mouse) and hasattr(c, "onClick") and c.clickable:
                 c.onClick(mouse, c)
                 return
@@ -100,5 +118,5 @@ class Component:
     def onKeyPress(self, key: str) -> None:
         for c in self.children:
             if isinstance(c, Component) and c.listenForKeyPresses:
-                log(f"{c.id}: {key}")
+                # log(f"{c.id}: {key}")
                 c.onKeyPress(key)

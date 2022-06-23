@@ -1,9 +1,6 @@
-from typing import Any, List
+from psychopy.visual import TextBox2
 
-from psychopy.visual import Window, TextBox2
-
-from src.components.core import Component
-from src.constants import BLACK, WHITE
+from .component import Component
 
 
 class Textbox(Component):

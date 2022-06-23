@@ -1,52 +1,40 @@
 import copy
-from typing import Any, List
+from typing import Any
 
-from psychopy import visual, event
+from psychopy import event
 
-from src.constants import (
-    STIMULUS_PARAMETER_MAP,
-    WHITE,
-    PURPLE,
-    YELLOW,
-    RED,
-)
-from src.components.core import Button, Component, PlayButton
+from src.window import Window
+from src.constants import STIMULUS_PARAMETER_MAP, COLORS
+from src.components.core import Button, Component
 from src.components import (
-    ModeSelector,
     StimulusPanel,
     ParametersPanel,
     SyncPanel,
-    SyncSquares,
+    ScreenPanel,
     ScriptSelector,
-    SaveButton,
+    HeaderBar,
 )
-from src.utils import checkForEsc, log
+from src.utils import checkForEsc, getScreenResolution
 from src.experiments import (
     playExperiment,
     loadExperiment as _loadExperiment,
-    saveExperiment as saveExperiment,
+    saveExperiment,
 )
 
 
-class Interface:
+class Interface(Component):
     def __init__(self, fullscreen=False):
+        self.id = "root"
+
         # start in interactive mode by default
         self.mode = "interactive"
 
         # create window
         self.screenNum = 0
         self.fullscreen = fullscreen
-        self.controlWindow = visual.Window(
-            size=[900, 600],
-            screen=self.screenNum,
-            fullscr=self.fullscreen,
-            units="pix",
-            color=WHITE,
-            colorSpace="rgb255",
-        )
+        self.controlWindow = Window(fullscreen=self.fullscreen, size=[1000, 650])
         self.displayWindow = self.controlWindow
-        self.frameRate = self.displayWindow.getActualFrameRate() or 30
-        self.syncSquares = None
+        self.children = []
 
         # create mouse object to listen for click events
         self.mouse = event.Mouse(visible=True, win=self.controlWindow)
@@ -60,74 +48,53 @@ class Interface:
 
         # load default experiment
         self.loadExperiment("default.json")
+        self.displayWindow.setShowSyncSquares(self.experiment.syncSettings["sync"])
+
+        # get screen resolution and update screen params if necessary
+        self.setResolution()
 
         # create + register children
         self.register()
 
     def register(self) -> None:
         self.children = [
-            # common components (rendered in both modes)
-            Button(
+            HeaderBar(
                 self.controlWindow,
-                "logo-button",
-                text="visualstim v0.1",
-                pos=[-370, 273],
-                color=PURPLE,
-                fill=WHITE,
-            ),
-            ModeSelector(
-                self.controlWindow,
-                "mode-selector",
-                pos=[-207, 275],
+                "headerbar",
                 mode=self.mode,
-                callback=self.toggleMode,
-            ),
-            PlayButton(
-                self.controlWindow, "play-button", 16, [100, 270], self.onStartClicked,
-            ),
-            Button(
-                self.controlWindow,
-                "switch-screen-button",
-                text="switch screen",
-                color=WHITE,
-                fill=YELLOW,
-                pos=[265, 270],
-                onClick=self.onSwitchScreenClicked,
-            ),
-            Button(
-                self.controlWindow,
-                "quit-button",
-                text="quit (esc)",
-                color=WHITE,
-                fill=RED,
-                pos=[390, 270],
-                onClick=self.onQuitClicked,
-            ),
-            # interactive mode components
-            SaveButton(
-                self.controlWindow, pos=[156, 270], callback=self.saveParameters
+                toggleModeCallback=self.toggleMode,
+                onStartClicked=self.onStartClicked,
+                onSaveClicked=self.saveParameters,
+                onSwitchScreenClicked=self.onSwitchScreenClicked,
+                onQuitClicked=self.onQuitClicked,
             ),
             StimulusPanel(
                 self.controlWindow,
                 "stimulus-panel",
-                pos=[-145, 75],
+                pos=[-145, 120],
                 callback=self.selectStimulusType,
             ),
             ParametersPanel(
                 self.controlWindow,
                 "stim-params-panel",
-                pos=[-135, -67],
+                pos=[-155, -20],
                 callback=self.setStimulusParameter,
                 initialParams=self.filterStimulusParams(),
             ),
             SyncPanel(
                 self.controlWindow,
                 "sync-params-panel",
-                pos=[256, -15],
+                pos=[256, 60],
                 callback=self.setSyncParameter,
                 initialParams=copy.deepcopy(self.experiment.syncSettings),
             ),
-            # scripting mode components
+            ScreenPanel(
+                self.controlWindow,
+                "screen-params-panel",
+                pos=[-5, -170],
+                callback=self.setScreenParameter,
+                initialParams=copy.deepcopy(self.experiment.screenSettings),
+            ),
             ScriptSelector(
                 self.controlWindow,
                 "script-selector",
@@ -136,10 +103,16 @@ class Interface:
                 hide=True,
             ),
         ]
+        super().register()
+        self.controlWindow.assignComponents(self.children, activate=True)
 
-        # register children (assign them to the window)
-        for i in range(len(self.children)):
-            self.children[i].register()
+    def setResolution(self) -> None:
+        hor, ver = getScreenResolution(self.screenNum)
+        self.setScreenParameter("h res", hor)
+        self.setScreenParameter("v res", ver)
+        screenPanel = self.getComponentById("screen-params-panel")
+        if screenPanel:
+            screenPanel.setParams(self.experiment.screenSettings)
 
     def toggleMode(self) -> None:
         # set self.mode
@@ -150,28 +123,19 @@ class Interface:
 
         # update UI
         for i, c in enumerate(self.children):
-            if c.id not in {
-                "logo-button",
-                "mode-selector",
-                "play-button",
-                "switch-screen-button",
-                "quit-button",
-            }:
+            if c.id not in ("headerbar", "sync-squares"):
                 self.children[i].toggleHidden()
-            elif c.id == "play-button":
-                self.children[i].setPos(
-                    [100, 270] if self.mode == "interactive" else [175, 270]
-                )
 
     def saveParameters(self):
         saveExperiment(self.experiment)
 
     def loadExperiment(self, filename):
-        self.experiment = _loadExperiment(self.displayWindow, self.frameRate, filename)
-        if self.experiment.syncSettings["sync"]:
-            self.createSyncSquares()
-        elif self.syncSquares:
-            self.removeSyncSquares()
+        self.experiment = _loadExperiment(self.displayWindow, filename)
+        if not self.children:
+            return
+        self.getComponentById("sync-squares").hide = not self.experiment.syncSettings[
+            "sync"
+        ]
 
     def filterStimulusParams(self):
         return {
@@ -180,26 +144,13 @@ class Interface:
             if k in STIMULUS_PARAMETER_MAP[self.experiment.stimuli[0]["name"]]
         }
 
-    def createSyncSquares(self):
-        self.syncSquares = SyncSquares(self.displayWindow, "sync-squares")
-        self.children = [c for c in self.children if c.id != "sync-squares"]
-        self.children.append(self.syncSquares)
-        self.children[-1].register()
-
-    def removeSyncSquares(self):
-        self.syncSquares = None
-        self.children = [c for c in self.children if c.id != "sync-squares"]
-
     def selectStimulusType(self, x):
-        log("setting stimulus type")
         # set stimulus type
         self.experiment.stimuli[0]["name"] = x
         # update the parameters shown in the params panel
-        paramsPanelIdx = self.getComponentIndexById("stim-params-panel")
-        log(f"got paramsPanelIdx")
-        if paramsPanelIdx != -1:
-            self.children[paramsPanelIdx].resetParams(self.filterStimulusParams())
-        log("finished resetting params")
+        paramsPanel = self.getComponentById("stim-params-panel")
+        if paramsPanel:
+            paramsPanel.resetParams(self.filterStimulusParams())
         self.afterParameterChange()
 
     def setStimulusParameter(self, key: str, value: Any) -> None:
@@ -208,51 +159,48 @@ class Interface:
 
     def setSyncParameter(self, key: str, value: Any) -> None:
         if key == "sync":
-            self.createSyncSquares() if value else self.removeSyncSquares()
+            self.displayWindow.setShowSyncSquares(value)
         self.experiment.syncSettings[key] = value
         self.afterParameterChange()
 
-    def afterParameterChange(self):
-        saveButtonId = self.getComponentIndexById("save-button")
-        if saveButtonId != -1:
-            self.children[saveButtonId].setUnsaved()
+    def setScreenParameter(self, key: str, value: Any) -> None:
+        self.experiment.screenSettings[key] = value
+        self.afterParameterChange()
 
-    def getComponentIndexById(self, id: str) -> int:
-        for i, c in enumerate(self.children):
-            if c.id == id:
-                return i
-        return -1
+    def afterParameterChange(self):
+        saveButton = self.getComponentById("save-button")
+        if saveButton:
+            saveButton.setUnsaved()
 
     def onSwitchScreenClicked(self, mouse: event.Mouse, button: Button) -> None:
         self.screenNum = 1 - self.screenNum
         if self.screenNum:
-            self.displayWindow = visual.Window(
-                screen=self.screenNum,
-                fullscr=self.fullscreen,
-                units="pix",
-                color=[255, 255, 255],
-                colorSpace="rgb255",
+            self.controlWindow.setShowSyncSquares(False)
+            self.displayWindow = Window(
+                screenNum=self.screenNum,
+                fullscreen=True,
+                sync=self.experiment.syncSettings["sync"],
+                color=COLORS["grey"],
             )
-            self.frameRate = self.displayWindow.getActualFrameRate() or 30
-            if self.experiment.syncSettings["sync"]:
-                self.createSyncSquares()
             self.draw()
         else:
             self.displayWindow.close()
             self.displayWindow = self.controlWindow
-            self.frameRate = self.displayWindow.getActualFrameRate()
+            self.displayWindow.setShowSyncSquares(self.experiment.syncSettings["sync"])
+        self.setResolution()
 
     def onQuitClicked(self, mouse: event.Mouse, button: Button) -> None:
         self.quit = True
 
     def onStartClicked(self, mouse: event.Mouse, button: Button) -> None:
-        playButtonIdx = self.getComponentIndexById("play-button")
-        if playButtonIdx == -1:
+        playButton = self.getComponentById("play-button")
+        if not playButton:
             return
 
         # toggle play button
         self.playing = not self.playing
-        self.children[playButtonIdx].toggle()
+        # self.children[playButtonIdx].toggle()
+        playButton.toggle()
         self.draw()
 
         # if now in "playing" state, run the selected stimulus
@@ -260,23 +208,23 @@ class Interface:
             playExperiment(
                 self.displayWindow,
                 self.experiment,
-                self.frameRate,
-                self.syncSquares,
                 callback=self.handleInput,
                 shouldTerminate=self.shouldTerminateStimulation,
+                logGenerator=self.controlWindow.reportProgress,
             )
 
             # if the stimulation hasn't been stopped prematurely by the user,
             # then we need to toggle the playing state + button
             if self.playing:
-                self.children[playButtonIdx].toggle()
+                # self.children[playButtonIdx].toggle()
+                playButton.toggle()
                 self.draw()
                 self.playing = not self.playing
 
     def onClick(self) -> None:
-        for component in self.children:
-            if component.contains(self.mouse) and hasattr(component, "onClick"):
-                component.onClick(self.mouse, component)
+        for c in self.children:
+            if c.contains(self.mouse) and hasattr(c, "onClick") and not c.hide:
+                c.onClick(self.mouse, c)
                 break
 
     def onKeyPress(self, keys) -> None:
@@ -302,8 +250,6 @@ class Interface:
         self.onKeyPress(keys)
 
     def draw(self) -> None:
-        for component in self.children:
-            component.draw()
         self.controlWindow.flip()
         if self.screenNum:
             self.displayWindow.flip()
@@ -316,7 +262,6 @@ class Interface:
         while not self.quit:
             # render interface
             self.draw()
-
             # listen for + handle user input
             self.handleInput()
 

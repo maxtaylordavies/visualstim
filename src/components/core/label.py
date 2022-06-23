@@ -1,9 +1,6 @@
-from typing import List
-from psychopy.visual import Window
-
 from src.components.core import Component
 from .textbox import Textbox
-from src.constants import LIGHTGREY, DARKGREY
+from src.constants import COLORS
 
 
 class Label(Component):
@@ -19,8 +16,8 @@ class Label(Component):
                 pos=self.pos,
                 text=f"  {self.text} ",
                 fontSize=14,
-                color=DARKGREY,
-                fill=LIGHTGREY,
+                color=COLORS["darkgrey"],
+                fill=COLORS["lightgrey"],
                 bold=True,
                 padding=2,
             )
