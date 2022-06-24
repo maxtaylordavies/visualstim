@@ -76,21 +76,21 @@ class Interface(Component):
             ParametersPanel(
                 self.controlWindow,
                 "stim-params-panel",
-                pos=[-155, -20],
+                pos=[-167, -20],
                 callback=self.setStimulusParameter,
                 initialParams=self.filterStimulusParams(),
             ),
             SyncPanel(
                 self.controlWindow,
                 "sync-params-panel",
-                pos=[256, 60],
+                pos=[268, 60],
                 callback=self.setSyncParameter,
                 initialParams=copy.deepcopy(self.experiment.syncSettings),
             ),
             ScreenPanel(
                 self.controlWindow,
                 "screen-params-panel",
-                pos=[-5, -170],
+                pos=[-15, -170],
                 callback=self.setScreenParameter,
                 initialParams=copy.deepcopy(self.experiment.screenSettings),
             ),
@@ -160,6 +160,18 @@ class Interface(Component):
 
     def setScreenParameter(self, key: str, value: Any) -> None:
         self.experiment.screenSettings[key] = value
+        if key in ("width", "height"):
+            aspectRatio = (
+                self.experiment.screenSettings["h res"]
+                / self.experiment.screenSettings["v res"]
+            )
+            if key == "width":
+                self.experiment.screenSettings["height"] = round(value / aspectRatio)
+            else:
+                self.experiment.screenSettings["width"] = round(value * aspectRatio)
+            screenPanel = self.getComponentById("screen-params-panel")
+            if screenPanel:
+                screenPanel.setParams(self.experiment.screenSettings)
         self.afterParameterChange()
 
     def afterParameterChange(self):

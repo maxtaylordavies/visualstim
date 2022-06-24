@@ -5,8 +5,7 @@ from psychopy.visual import Window as _Window
 from src.constants import COLORS
 from src.components.core import Box, Component, Textbox
 
-SYNC_SQUARE_SIZE = 30
-
+SYNC_SQUARE_SIZE = 80
 
 class Window(_Window):
     def __init__(
@@ -46,8 +45,7 @@ class Window(_Window):
                     "sync-squares-0",
                     pos=[
                         (-self.size[0] / self.scaleFactor) + SYNC_SQUARE_SIZE / 2,
-                        (-self.size[1] / self.scaleFactor)
-                        + (SYNC_SQUARE_SIZE * (3 / 2)),
+                        (-self.size[1] / self.scaleFactor) + SYNC_SQUARE_SIZE / 2,
                     ],
                     size=[SYNC_SQUARE_SIZE, SYNC_SQUARE_SIZE],
                     color=COLORS["black"],
@@ -56,7 +54,7 @@ class Window(_Window):
                     self,
                     "sync-squares-1",
                     pos=[
-                        (-self.size[0] / self.scaleFactor) + SYNC_SQUARE_SIZE / 2,
+                        (self.size[0] / self.scaleFactor) - SYNC_SQUARE_SIZE / 2,
                         (-self.size[1] / self.scaleFactor) + SYNC_SQUARE_SIZE / 2,
                     ],
                     size=[SYNC_SQUARE_SIZE, SYNC_SQUARE_SIZE],
@@ -86,9 +84,11 @@ class Window(_Window):
         self.color = color
 
     def setShowSyncSquares(self, show: bool) -> None:
-        self.syncSquares.setHidden(not show, propagate=True)
+        self.sync = show
+        self.syncSquares.setHidden(not self.sync, propagate=True)
 
     def toggleSyncSquare(self, i: int) -> None:
+        print(f"toggling sync square {i}")
         if i >= len(self.syncSquares.children):
             return
         self.syncSquares.children[i].changeColor(
@@ -98,6 +98,7 @@ class Window(_Window):
         )
 
     def turnOffSyncSquare(self, i: int) -> None:
+        print(f"turning off sync square {i}")
         if i >= len(self.syncSquares.children):
             return
         self.syncSquares.children[i].changeColor(COLORS["black"])
@@ -154,7 +155,7 @@ class ReportProgress(object):
         width, height = self.textbox.size
         self.textbox.setPos(
             [
-                (self.window.size[0] / self.window.scaleFactor) - (width / 2) + 20,
+                (self.window.size[0] / self.window.scaleFactor) - (width / 2) + 20 - (SYNC_SQUARE_SIZE if self.window.sync else 0),
                 (-self.window.size[1] / self.window.scaleFactor) + height / 2,
             ]
         )

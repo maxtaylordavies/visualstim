@@ -134,7 +134,7 @@ def playExperiment(
             and frameIdx % experiment.syncSettings["sync interval"]
             in {0, experiment.syncSettings["pulse length"]}
         ):
-            window.toggleSyncSquare(0)
+            window.toggleSyncSquare(1)
         callback()
 
     def _draw():
@@ -147,7 +147,7 @@ def playExperiment(
 
     # trigger loop
     if experiment.syncSettings["sync"]:
-        window.toggleSyncSquare(1)  # turn on trigger square
+        window.toggleSyncSquare(0)  # turn on trigger square
         for i in range(
             int(window.frameRate * experiment.syncSettings["trigger duration"])
         ):
@@ -160,7 +160,7 @@ def playExperiment(
                 callback()
 
             if i == experiment.syncSettings["pulse length"]:
-                window.toggleSyncSquare(1)  # turn off trigger square
+                window.toggleSyncSquare(0)  # turn off trigger square
 
             _draw()
 
@@ -178,7 +178,7 @@ def playExperiment(
         )
 
         # make sure we don't leave the sync square on
-        window.turnOffSyncSquare(0)
+        window.turnOffSyncSquare(1)
         window.flip()
 
         # interstimulus blank
@@ -189,7 +189,7 @@ def playExperiment(
             experimentFrameIdx += blankFrames
 
         # make sure we don't leave the sync square on
-        window.turnOffSyncSquare(0)
+        window.turnOffSyncSquare(1)
         window.flip()
 
         # if user wants to stop experiment, break out of loop

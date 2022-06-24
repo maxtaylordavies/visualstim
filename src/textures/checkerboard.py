@@ -20,6 +20,7 @@ def checkerboard(
     logGenerator([None], f"{stimParams['label']}: generating frames")
 
     dim = max(screenParams["v res"], screenParams["h res"])
+
     n = roundToPowerOf2(dim)
     l = roundToPowerOf2(dim * stimParams["scale"])
 

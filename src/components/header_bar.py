@@ -24,6 +24,10 @@ class HeaderBar(Component):
         self.onSwitchScreenClicked = onSwitchScreenClicked
         self.onQuitClicked = onQuitClicked
         self.fill = [252, 246, 227]
+        self.size = [self.window.size[0], 48]
+        self.pos = [0, (self.window.size[1] / 2) - (self.size[1] / 2)]
+        self.left = -self.size[0] / 2
+        self.right = self.size[0] / 2
 
     def register(self):
         self.children = [
@@ -31,27 +35,27 @@ class HeaderBar(Component):
                 self.window,
                 "headerbar-box",
                 color=self.fill,
-                pos=[0, 302],
-                size=[self.window.size[0], 48],
+                pos=self.pos,
+                size=self.size,
                 children=[
                     Button(
                         self.window,
                         "logo-button",
                         text="visualstim v0.1",
-                        pos=[-420, 302],
+                        pos=[self.left + 80, self.pos[1]],
                         color=COLORS["purple"],
                         fill=self.fill,
                     ),
                     ModeSelector(
                         self.window,
                         "mode-selector",
-                        pos=[-257, 302],
+                        pos=[self.left + 250, self.pos[1]],
                         mode=self.mode,
                         callback=self.onToggleModeClicked,
                         fill=self.fill,
                     ),
                     PlayButton(
-                        self.window, "play-button", 16, [150, 302], self.onStartClicked,
+                        self.window, "play-button", 16, [self.right - 360, self.pos[1]], self.onStartClicked,
                     ),
                     Button(
                         self.window,
@@ -59,7 +63,7 @@ class HeaderBar(Component):
                         text="switch screen",
                         color=COLORS["white"],
                         fill=COLORS["yellow"],
-                        pos=[315, 302],
+                        pos=[self.right - 190, self.pos[1]],
                         onClick=self.onSwitchScreenClicked,
                     ),
                     Button(
@@ -68,12 +72,12 @@ class HeaderBar(Component):
                         text="quit (esc)",
                         color=COLORS["white"],
                         fill=COLORS["red"],
-                        pos=[440, 302],
+                        pos=[self.right - 60, self.pos[1]],
                         onClick=self.onQuitClicked,
                     ),
                     # interactive mode components
                     SaveButton(
-                        self.window, pos=[206, 302], callback=self.onSaveClicked
+                        self.window, pos=[self.right - 302, self.pos[1]], callback=self.onSaveClicked
                     ),
                 ],
             )
@@ -85,7 +89,7 @@ class HeaderBar(Component):
         self.mode = ("interactive", "scripting")[self.mode == "interactive"]
         self.getComponentById("save-button").toggleHidden()
         self.getComponentById("play-button").setPos(
-            [150, 302] if self.mode == "interactive" else [225, 302]
+            [self.right - 360, self.pos[1]] if self.mode == "interactive" else [self.right - 282, self.pos[1]]
         )
         self.toggleModeCallback()
 
