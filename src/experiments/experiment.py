@@ -1,7 +1,6 @@
 from datetime import datetime
 import itertools
 import json
-from os import sync
 import pathlib
 from typing import Any, Dict, List
 
@@ -177,6 +176,10 @@ def playExperiment(
             shouldTerminate=shouldTerminate,
             experimentFrameIdx=experimentFrameIdx,
         )
+
+        # make sure we don't leave the sync square on
+        window.turnOffSyncSquare(0)
+        window.flip()
 
         # interstimulus blank
         if not stop:

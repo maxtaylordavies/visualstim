@@ -48,7 +48,6 @@ class Interface(Component):
 
         # load default experiment
         self.loadExperiment("default.json")
-        self.displayWindow.setShowSyncSquares(self.experiment.syncSettings["sync"])
 
         # get screen resolution and update screen params if necessary
         self.setResolution()
@@ -131,11 +130,7 @@ class Interface(Component):
 
     def loadExperiment(self, filename):
         self.experiment = _loadExperiment(self.displayWindow, filename)
-        if not self.children:
-            return
-        self.getComponentById("sync-squares").hide = not self.experiment.syncSettings[
-            "sync"
-        ]
+        self.displayWindow.setShowSyncSquares(self.experiment.syncSettings["sync"])
 
     def filterStimulusParams(self):
         return {

@@ -55,7 +55,7 @@ class Component:
                     c.hide = self.hide
 
     def toggleHidden(self, propagate=False) -> None:
-        self.setHide(not self.hide, propagate=propagate)
+        self.setHidden(not self.hide, propagate=propagate)
 
     def sortChildren(self) -> List:
         return sorted(
