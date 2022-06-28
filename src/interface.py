@@ -160,18 +160,19 @@ class Interface(Component):
 
     def setScreenParameter(self, key: str, value: Any) -> None:
         self.experiment.screenSettings[key] = value
-        if key in ("width", "height"):
+        if key in ("width", "height", "h res", "v res"):
             aspectRatio = (
                 self.experiment.screenSettings["h res"]
                 / self.experiment.screenSettings["v res"]
             )
             if key == "width":
                 self.experiment.screenSettings["height"] = round(value / aspectRatio)
-            else:
+            elif key == "height":
                 self.experiment.screenSettings["width"] = round(value * aspectRatio)
             screenPanel = self.getComponentById("screen-params-panel")
             if screenPanel:
                 screenPanel.setParams(self.experiment.screenSettings)
+            self.displayWindow.setScreenParams(self.experiment.screenSettings)
         self.afterParameterChange()
 
     def afterParameterChange(self):

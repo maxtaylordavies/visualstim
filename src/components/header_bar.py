@@ -25,9 +25,12 @@ class HeaderBar(Component):
         self.onQuitClicked = onQuitClicked
         self.fill = [252, 246, 227]
         self.size = [self.window.size[0], 48]
-        self.pos = [0, (self.window.size[1] / 2) - (self.size[1] / 2)]
-        self.left = -self.size[0] / 2
-        self.right = self.size[0] / 2
+        self.pos = [
+            0,
+            (self.window.size[1] / self.window.scaleFactor) - (self.size[1] / 2),
+        ]
+        self.left = -self.size[0] / self.window.scaleFactor
+        self.right = self.size[0] / self.window.scaleFactor
 
     def register(self):
         self.children = [
@@ -55,7 +58,11 @@ class HeaderBar(Component):
                         fill=self.fill,
                     ),
                     PlayButton(
-                        self.window, "play-button", 16, [self.right - 360, self.pos[1]], self.onStartClicked,
+                        self.window,
+                        "play-button",
+                        16,
+                        [self.right - 360, self.pos[1]],
+                        self.onStartClicked,
                     ),
                     Button(
                         self.window,
@@ -77,7 +84,9 @@ class HeaderBar(Component):
                     ),
                     # interactive mode components
                     SaveButton(
-                        self.window, pos=[self.right - 302, self.pos[1]], callback=self.onSaveClicked
+                        self.window,
+                        pos=[self.right - 302, self.pos[1]],
+                        callback=self.onSaveClicked,
                     ),
                 ],
             )
@@ -89,7 +98,9 @@ class HeaderBar(Component):
         self.mode = ("interactive", "scripting")[self.mode == "interactive"]
         self.getComponentById("save-button").toggleHidden()
         self.getComponentById("play-button").setPos(
-            [self.right - 360, self.pos[1]] if self.mode == "interactive" else [self.right - 282, self.pos[1]]
+            [self.right - 360, self.pos[1]]
+            if self.mode == "interactive"
+            else [self.right - 282, self.pos[1]]
         )
         self.toggleModeCallback()
 

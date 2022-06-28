@@ -2,8 +2,7 @@ from src.interface import Interface
 
 
 def main():
-    interface = Interface(fullscreen=True)
-    # interface.loadExperiment("test.json")
+    interface = Interface(fullscreen=False)
     interface.start()
 
 

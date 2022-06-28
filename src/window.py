@@ -5,12 +5,16 @@ from psychopy.visual import Window as _Window
 from src.constants import COLORS
 from src.components.core import Box, Component, Textbox
 
-SYNC_SQUARE_SIZE = 80
+
+SYNC_SQUARE_SIZE_MM = 10
+
 
 class Window(_Window):
     def __init__(
         self, screenNum=0, fullscreen=False, color=COLORS["white"], sync=False, **kwargs
     ) -> None:
+        self.syncSquares = None
+
         super().__init__(
             screen=screenNum,
             fullscr=fullscreen,
@@ -22,20 +26,22 @@ class Window(_Window):
 
         self.fullscreen = fullscreen
         self.sync = sync
+        self.syncSquareSize = 0
         self.components = []
         self.frameRate = self.getActualFrameRate() or 30
 
-        self.scaleFactor = (
-            self.size[0] / self.clientSize[0]
-        ) * 2
+        self.scaleFactor = (self.size[0] / self.clientSize[0]) * 2
         self.compressionFactor = 2
+        self.screenParams = None
 
-        print(f"self.scaleFactor: {self.scaleFactor}")
-
-        # create sync squares
+    def setScreenParams(self, screenParams):
+        self.screenParams = screenParams
+        self.syncSquareSize = (
+            self.screenParams["h res"] / self.screenParams["width"]
+        ) * SYNC_SQUARE_SIZE_MM
         self.createSyncSquares()
 
-    def createSyncSquares(self):
+    def createSyncSquares(self):        
         self.syncSquares = Component(
             self,
             "sync-squares",
@@ -44,20 +50,20 @@ class Window(_Window):
                     self,
                     "sync-squares-0",
                     pos=[
-                        (-self.size[0] / self.scaleFactor) + SYNC_SQUARE_SIZE / 2,
-                        (-self.size[1] / self.scaleFactor) + SYNC_SQUARE_SIZE / 2,
+                        (-self.size[0] / self.scaleFactor) + self.syncSquareSize / 2,
+                        (-self.size[1] / self.scaleFactor) + self.syncSquareSize / 2,
                     ],
-                    size=[SYNC_SQUARE_SIZE, SYNC_SQUARE_SIZE],
+                    size=[self.syncSquareSize, self.syncSquareSize],
                     color=COLORS["black"],
                 ),
                 Box(
                     self,
                     "sync-squares-1",
                     pos=[
-                        (self.size[0] / self.scaleFactor) - SYNC_SQUARE_SIZE / 2,
-                        (-self.size[1] / self.scaleFactor) + SYNC_SQUARE_SIZE / 2,
+                        (self.size[0] / self.scaleFactor) - self.syncSquareSize / 2,
+                        (-self.size[1] / self.scaleFactor) + self.syncSquareSize / 2,
                     ],
-                    size=[SYNC_SQUARE_SIZE, SYNC_SQUARE_SIZE],
+                    size=[self.syncSquareSize, self.syncSquareSize],
                     color=COLORS["black"],
                 ),
             ],
@@ -85,11 +91,11 @@ class Window(_Window):
 
     def setShowSyncSquares(self, show: bool) -> None:
         self.sync = show
-        self.syncSquares.setHidden(not self.sync, propagate=True)
+        if self.syncSquares:
+            self.syncSquares.setHidden(not self.sync, propagate=True)
 
     def toggleSyncSquare(self, i: int) -> None:
-        print(f"toggling sync square {i}")
-        if i >= len(self.syncSquares.children):
+        if (not self.syncSquares) or i >= len(self.syncSquares.children):
             return
         self.syncSquares.children[i].changeColor(
             COLORS["white"]
@@ -98,13 +104,12 @@ class Window(_Window):
         )
 
     def turnOffSyncSquare(self, i: int) -> None:
-        print(f"turning off sync square {i}")
-        if i >= len(self.syncSquares.children):
+        if (not self.syncSquares) or i >= len(self.syncSquares.children):
             return
         self.syncSquares.children[i].changeColor(COLORS["black"])
 
     def flip(self):
-        if hasattr(self, "syncSquares"):
+        if self.syncSquares:
             self.syncSquares.draw()
         super().flip()
 
@@ -155,7 +160,10 @@ class ReportProgress(object):
         width, height = self.textbox.size
         self.textbox.setPos(
             [
-                (self.window.size[0] / self.window.scaleFactor) - (width / 2) + 20 - (SYNC_SQUARE_SIZE if self.window.sync else 0),
+                (self.window.size[0] / self.window.scaleFactor)
+                - (width / 2)
+                + 20
+                - (self.syncSquareSize if self.window.sync else 0),
                 (-self.window.size[1] / self.window.scaleFactor) + height / 2,
             ]
         )
