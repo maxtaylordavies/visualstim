@@ -11,7 +11,7 @@ from src.constants import (
     DEFAULT_SCREEN_PARAMS,
 )
 from .stimulus import Stimulus
-from src.utils import rgb2grey, normalise
+from src.utils import rgb2grey, normalise, padWithGrey
 
 
 class Movie(Stimulus):
@@ -55,15 +55,21 @@ class Movie2(Stimulus):
         super().__init__(
             window, stimParams, screenParams, logGenerator, self.reader.duration
         )
-        self.setUpdateInterval(round(
-            (self.duration * self.window.frameRate) / self.nframes
-        ))
+        self.setUpdateInterval(
+            round((self.duration * self.window.frameRate) / self.nframes)
+        )
         print(f"self.updateInterval = {self.updateInterval}")
 
     def loadTexture(self) -> None:
+        maybePad = (
+            padWithGrey if not self.stimParams["fit screen"] else lambda x, shape: x
+        )
         self.texture = np.array(
             [
-                normalise(rgb2grey(self.reader.read_frame()))[::-1]
+                maybePad(
+                    normalise(rgb2grey(self.reader.read_frame()))[::-1],
+                    (self.screenParams["h res"], self.screenParams["v res"]),
+                )
                 for _ in self.logGenerator(
                     range(self.nframes),
                     f"{self.stimParams['label']}: generating frames",

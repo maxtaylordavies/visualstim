@@ -31,7 +31,7 @@ class Window(_Window):
         self.frameRate = self.getActualFrameRate() or 30
 
         self.scaleFactor = (self.size[0] / self.clientSize[0]) * 2
-        self.compressionFactor = 2
+        self.compressionFactor = 1
         self.screenParams = None
 
     def setScreenParams(self, screenParams):

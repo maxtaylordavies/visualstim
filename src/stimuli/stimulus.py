@@ -31,6 +31,7 @@ class Stimulus:
             self.stimParams["label"] = "stimulus 1/1"
 
         self.loadTexture()
+        print(f"TEXTURE SHAPE = {self.texture.shape}")
         if self.screenParams["warp"]:
             self.applyWarp()
 
