@@ -18,6 +18,7 @@ def staticGrating(
     window: Window,
     stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
     screenParams: Dict[str, Any] = DEFAULT_SCREEN_PARAMS,
+    logGenerator=None,
 ):
     n = screenParams["h res"] // window.compressionFactor
     sf = deg2pix(stimParams["spat freq"], screenParams) * window.compressionFactor

@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Any, Dict
 
 import numpy as np
@@ -15,13 +16,15 @@ class Stimulus:
         stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
         screenParams: Dict[str, Any] = DEFAULT_SCREEN_PARAMS,
         logGenerator=None,
+        duration=0,
     ) -> None:
         self.window = window
         self.stimParams = stimParams
         self.screenParams = screenParams
         self.logGenerator = logGenerator or window.reportProgress
-        self.duration = 0
+        self.duration = duration
         self.frameIdx = 0
+        self.updateInterval = 1
 
         # for logging purposes
         if "label" not in self.stimParams:
@@ -53,8 +56,15 @@ class Stimulus:
             self.logGenerator,
         ).astype(np.float16)
 
+    def setUpdateInterval(self, updateInterval) -> None:
+        self.updateInterval = updateInterval
+
     def drawFrame(self) -> None:
-        pass
+        self._stim.draw()
+
+    def updateFrame(self) -> None:
+        idx = int(self.frameIdx / self.updateInterval)
+        self._stim.tex = self.texture[idx % len(self.texture)]
 
 
 def playStimulus(
@@ -64,20 +74,33 @@ def playStimulus(
     shouldTerminate: Any = checkForEsc,
     experimentFrameIdx: int = 0,
 ) -> bool:
-    duration = stimulus["params"]["stim duration"] or stimulus.duration
-    for frameIdx in range(
-        experimentFrameIdx, experimentFrameIdx + int(window.frameRate * duration)
+    duration = stimulus["stimulus"].duration or stimulus["params"]["stim duration"]
+    print(f"duration = {duration}")
+
+    stimulus["stimulus"].frameIdx = experimentFrameIdx
+
+    startTime = datetime.now()
+
+    while stimulus["stimulus"].frameIdx < experimentFrameIdx + int(
+        window.frameRate * duration
     ):
         # check if we should terminate
         if shouldTerminate():
-            return True, frameIdx + 1
+            return True, stimulus["stimulus"].frameIdx + 1
 
         # execute per-frame callback
         if callback:
-            callback(frameIdx)
+            callback(stimulus["stimulus"].frameIdx)
 
         # draw stimulus
         stimulus["stimulus"].drawFrame()
         window.flip()
 
-    return False, frameIdx + 1
+        # update frame
+        stimulus["stimulus"].frameIdx += 1
+        if stimulus["stimulus"].frameIdx % stimulus["stimulus"].updateInterval == 0:
+            stimulus["stimulus"].updateFrame()
+
+    print(f"FINISHED AFTER {datetime.now() - startTime}")
+
+    return False, stimulus["stimulus"].frameIdx + 1

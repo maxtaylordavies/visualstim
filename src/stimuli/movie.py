@@ -51,9 +51,14 @@ class Movie2(Stimulus):
             str(pathlib.Path().resolve().joinpath(f"movies/{stimParams['filename']}")),
             target_resolution=None,
         )
-        self.duration = self.reader.duration
         self.nframes = self.reader.nframes
-        super().__init__(window, stimParams, screenParams, logGenerator)
+        super().__init__(
+            window, stimParams, screenParams, logGenerator, self.reader.duration
+        )
+        self.setUpdateInterval(round(
+            (self.duration * self.window.frameRate) / self.nframes
+        ))
+        print(f"self.updateInterval = {self.updateInterval}")
 
     def loadTexture(self) -> None:
         self.texture = np.array(
@@ -65,8 +70,3 @@ class Movie2(Stimulus):
                 )
             ]
         )
-
-    def drawFrame(self) -> None:
-        self._stim.draw()
-        self.frameIdx += 1
-        self._stim.tex = self.texture[self.frameIdx]
