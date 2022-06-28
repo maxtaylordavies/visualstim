@@ -163,7 +163,7 @@ class ReportProgress(object):
                 (self.window.size[0] / self.window.scaleFactor)
                 - (width / 2)
                 + 20
-                - (self.syncSquareSize if self.window.sync else 0),
+                - (self.window.syncSquareSize if self.window.sync else 0),
                 (-self.window.size[1] / self.window.scaleFactor) + height / 2,
             ]
         )
