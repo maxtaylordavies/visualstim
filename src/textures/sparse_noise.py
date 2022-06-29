@@ -6,7 +6,7 @@ from src.constants import (
     DEFAULT_SCREEN_PARAMS,
     DEFAULT_STIMULUS_PARAMS,
 )
-from src.utils import normalise, roundToPowerOf2, scaleUp
+from src.utils import scaleUp
 
 
 def sparseNoise(
@@ -21,9 +21,8 @@ def sparseNoise(
         window.frameRate * stimParams["stim duration"] * stimParams["temp freq"]
     )
 
-    r, c = window.getFrameShape()
-    r, c = int(r * stimParams["scale"]), int(c * stimParams["scale"])
-    print(f"r, c = {r}, {c}")
+    (r, c), blockSize = window.getFrameShape(), int(1 / stimParams["scale"])
+    r, c = r // blockSize, c // blockSize
 
     def randomMatrix():
         x = (
@@ -32,9 +31,9 @@ def sparseNoise(
             else (1 / (1 - stimParams["sparseness"])) - 1
         )
         edges = np.array([-np.inf, -x, x, np.inf])
-        return np.digitize(rng.standard_normal((r, c)), edges)
+        return scaleUp(np.digitize(rng.standard_normal((r, c)), edges), blockSize)
 
-    texture = np.zeros((nFrames, r, c), dtype=np.float16)
+    texture = np.zeros((nFrames, r * blockSize, c * blockSize), dtype=np.float16)
     if not logGenerator:
         logGenerator = window.reportProgress
     for i in logGenerator(range(nFrames), f"{stimParams['label']}: generating frames"):
