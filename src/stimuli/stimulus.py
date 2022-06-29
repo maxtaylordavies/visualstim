@@ -32,12 +32,14 @@ class Stimulus:
 
         self.loadTexture()
         print(f"TEXTURE SHAPE = {self.texture.shape}")
+        print(f"TEXTURE RANGE = [{np.min(self.texture)}, {np.max(self.texture)}]")
         if self.screenParams["warp"]:
             self.applyWarp()
 
         self._stim = GratingStim(
             win=self.window,
-            size=[self.screenParams["h res"], self.screenParams["h res"]],
+            # size=[self.screenParams["h res"], self.screenParams["h res"]],
+            size=self.window.clientSize,
             units="pix",
             ori=self.stimParams["orientation"],
             tex=self.texture[0],
