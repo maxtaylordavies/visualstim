@@ -21,10 +21,6 @@ def sparseNoise(
         window.frameRate * stimParams["stim duration"] * stimParams["temp freq"]
     )
 
-    # dim = max(screenParams["h res"], screenParams["v res"])
-    # n = roundToPowerOf2(dim) // window.compressionFactor
-    # l = roundToPowerOf2(dim * stimParams["scale"])
-
     r, c = window.getFrameShape()
     r, c = int(r * stimParams["scale"]), int(c * stimParams["scale"])
     print(f"r, c = {r}, {c}")
@@ -36,7 +32,7 @@ def sparseNoise(
             else (1 / (1 - stimParams["sparseness"])) - 1
         )
         edges = np.array([-np.inf, -x, x, np.inf])
-        return normalise(np.digitize(rng.standard_normal((r, c)), edges))
+        return np.digitize(rng.standard_normal((r, c)), edges)
 
     texture = np.zeros((nFrames, r, c), dtype=np.float16)
     if not logGenerator:

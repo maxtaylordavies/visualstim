@@ -61,14 +61,9 @@ class Movie2(Stimulus):
         print(f"self.updateInterval = {self.updateInterval}")
 
     def loadTexture(self) -> None:
-        maybePad = (
-            (lambda x: x)
-            if self.stimParams["fit screen"]
-            else (lambda x: padWithGrey(x, self.window.getFrameShape()))
-        )
         self.texture = np.array(
             [
-                maybePad(normalise(rgb2grey(self.reader.read_frame()))[::-1])
+                rgb2grey(self.reader.read_frame())[::-1]
                 for _ in self.logGenerator(
                     range(self.nframes),
                     f"{self.stimParams['label']}: generating frames",

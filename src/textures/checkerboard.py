@@ -21,4 +21,4 @@ def checkerboard(
 
     r, c = window.getFrameShape()
     r, c = int(r * stimParams["scale"]), int(c * stimParams["scale"])
-    return np.array([2 * (np.indices((r, c)).sum(axis=0) % 2) - 1])
+    return np.array([np.indices((r, c)).sum(axis=0) % 2])

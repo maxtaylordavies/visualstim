@@ -6,7 +6,7 @@ from psychopy.visual.grating import GratingStim
 
 from src.window import Window
 from src.constants import DEFAULT_SCREEN_PARAMS, DEFAULT_STIMULUS_PARAMS
-from src.utils import checkForEsc, warpTexture
+from src.utils import normalise, checkForEsc, warpTexture, padWithGrey
 
 
 class Stimulus:
@@ -31,10 +31,9 @@ class Stimulus:
             self.stimParams["label"] = "stimulus 1/1"
 
         self.loadTexture()
+        self.processTexture()
         print(f"TEXTURE SHAPE = {self.texture.shape}")
         print(f"TEXTURE RANGE = [{np.min(self.texture)}, {np.max(self.texture)}]")
-        if self.screenParams["warp"]:
-            self.applyWarp()
 
         self._stim = GratingStim(
             win=self.window,
@@ -47,6 +46,25 @@ class Stimulus:
 
     def loadTexture(self) -> None:
         self.texture = [None]
+
+    def processTexture(self) -> None:
+        # normalise texture to lie within the range [-1, 1]
+        self.texture = normalise(self.texture)
+
+        # apply spherical warp (for nearscreen correction) if requested
+        if self.screenParams["warp"]:
+            self.applyWarp()
+
+        # pad frames with grey border if required
+        texFrameShape = self.texture.shape[1:]
+        windowFrameShape = self.window.getFrameShape()
+        if (not self.stimParams["fit screen"]) and (
+            (texFrameShape[0] < windowFrameShape[0])
+            or (texFrameShape[1] < windowFrameShape[1])
+        ):
+            self.texture = padWithGrey(
+                self.texture, [len(self.texture), *windowFrameShape]
+            )
 
     def applyWarp(self) -> None:
         if type(self.texture) != np.ndarray:

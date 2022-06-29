@@ -1,6 +1,6 @@
 from datetime import datetime
 from math import degrees, atan2
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, Iterable, List, Union
 import itertools
 
 import numpy as np
@@ -168,7 +168,8 @@ def rgb2grey(x: np.ndarray) -> np.ndarray:
     return np.dot(x[..., :3], [0.2989, 0.5870, 0.1140])
 
 
-def padWithGrey(x: np.ndarray, shape: Union[np.ndarray, tuple]) -> np.ndarray:
-    rowDiff = round((shape[0] - x.shape[0]) / 2)
-    colDiff = round((shape[1] - x.shape[1]) / 2)
-    return np.pad(x, ((rowDiff, rowDiff), (colDiff, colDiff)))
+def padWithGrey(x: np.ndarray, shape: Iterable) -> np.ndarray:
+    diffs = [(shape[i] - x.shape[i]) // 2 for i in range(len(x.shape))]
+    padWidth = [(d, d) for d in diffs]
+    print(f"padWidth = {padWidth}")
+    return np.pad(x, padWidth)
