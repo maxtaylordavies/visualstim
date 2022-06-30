@@ -21,10 +21,8 @@ class Movie(Stimulus):
         screenParams: Dict = DEFAULT_SCREEN_PARAMS,
         logGenerator=None,
     ) -> None:
-        self.reader = FFMPEG_VideoReader(
-            str(pathlib.Path().resolve().joinpath(f"movies/{stimParams['filename']}")),
-            target_resolution=None,
-        )
+        self.parseFileName(stimParams["filename"])
+        self.reader = FFMPEG_VideoReader(self.fileLocation, target_resolution=None)
         self.nframes = self.reader.nframes
         super().__init__(
             window, stimParams, screenParams, logGenerator, self.reader.duration
@@ -32,6 +30,14 @@ class Movie(Stimulus):
         self.setUpdateInterval(
             round((self.duration * self.window.frameRate) / self.nframes)
         )
+
+    def parseFileName(self, filename: str) -> None:
+        if filename.startswith("http"):
+            self.fileLocation = filename
+        else:
+            self.fileLocation = str(
+                pathlib.Path().resolve().joinpath(f"movies/{filename}")
+            )
 
     def loadTexture(self) -> None:
         self.texture = np.array(
