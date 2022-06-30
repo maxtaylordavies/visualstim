@@ -58,7 +58,6 @@ class Movie2(Stimulus):
         self.setUpdateInterval(
             round((self.duration * self.window.frameRate) / self.nframes)
         )
-        print(f"self.updateInterval = {self.updateInterval}")
 
     def loadTexture(self) -> None:
         self.texture = np.array(

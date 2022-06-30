@@ -90,7 +90,6 @@ class Window(_Window):
         self._toDraw = []
 
     def setBackgroundColor(self, color: List[int]) -> None:
-        print(f"setting background color: {color}")
         self.color = color
 
     def setShowSyncSquares(self, show: bool) -> None:

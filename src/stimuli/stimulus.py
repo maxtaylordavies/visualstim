@@ -32,8 +32,6 @@ class Stimulus:
 
         self.loadTexture()
         self.processTexture()
-        print(f"TEXTURE SHAPE = {self.texture.shape}")
-        print(f"TEXTURE RANGE = [{np.min(self.texture)}, {np.max(self.texture)}]")
 
         self._stim = GratingStim(
             win=self.window,
@@ -48,12 +46,12 @@ class Stimulus:
         self.texture = [None]
 
     def processTexture(self) -> None:
-        # normalise texture to lie within the range [-1, 1]
-        self.texture = normalise(self.texture)
-
         # apply spherical warp (for nearscreen correction) if requested
         if self.screenParams["warp"]:
             self.applyWarp()
+
+        # normalise texture to lie within the range [-1, 1]
+        self.texture = normalise(self.texture)
 
         # pad frames with grey border if required
         texFrameShape = self.texture.shape[1:]
@@ -96,7 +94,6 @@ def playStimulus(
     experimentFrameIdx: int = 0,
 ) -> bool:
     duration = stimulus["stimulus"].duration or stimulus["params"]["stim duration"]
-    print(f"duration = {duration}")
 
     stimulus["stimulus"].frameIdx = experimentFrameIdx
 

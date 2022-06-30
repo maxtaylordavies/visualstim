@@ -171,5 +171,4 @@ def rgb2grey(x: np.ndarray) -> np.ndarray:
 def padWithGrey(x: np.ndarray, shape: Iterable) -> np.ndarray:
     diffs = [(shape[i] - x.shape[i]) // 2 for i in range(len(x.shape))]
     padWidth = [(d, d) for d in diffs]
-    print(f"padWidth = {padWidth}")
     return np.pad(x, padWidth)
