@@ -73,13 +73,6 @@ class Interface(Component):
                 pos=[-145, 120],
                 callback=self.selectStimulusType,
             ),
-            ParametersPanel(
-                self.controlWindow,
-                "stim-params-panel",
-                pos=[-167, -20],
-                callback=self.setStimulusParameter,
-                initialParams=self.filterStimulusParams(),
-            ),
             SyncPanel(
                 self.controlWindow,
                 "sync-params-panel",
@@ -93,6 +86,13 @@ class Interface(Component):
                 pos=[-15, -170],
                 callback=self.setScreenParameter,
                 initialParams=copy.deepcopy(self.experiment.screenSettings),
+            ),
+            ParametersPanel(
+                self.controlWindow,
+                "stim-params-panel",
+                pos=[-167, -20],
+                callback=self.setStimulusParameter,
+                initialParams=self.filterStimulusParams(),
             ),
             ScriptSelector(
                 self.controlWindow,

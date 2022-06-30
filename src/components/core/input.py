@@ -31,7 +31,7 @@ class TextInput(Component):
             self.window,
             f"{self.id}-input",
             pos=self.pos,
-            text=text if text != "$" else str(self.value),
+            text=text if text != "$" else self.truncate(self.value),
             fill=self.fill,
             borderColor=COLORS["green"]
             if (self.active and self.highlight)
@@ -90,6 +90,10 @@ class TextInput(Component):
             pos=[self.input.pos[0] - (self.input.size[0] / 2), self.input.pos[1]],
         )
         self.children = [self.label, self.input, self.mask]
+
+    def truncate(self, x: Any):
+        x = str(x)
+        return x if len(x) < 10 else x[:7] + "..."
 
     def toggle(self):
         if self.active:
