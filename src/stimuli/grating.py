@@ -21,19 +21,6 @@ class StaticGrating(Stimulus):
             self.window, self.stimParams, self.screenParams, self.logGenerator,
         )
 
-    def updatePhase(self):
-        pass
-
-    def drawFrame(self) -> None:
-        # draw the grating to the screen
-        self._stim.draw()
-
-        # increment frame counter
-        self.frameIdx += 1
-
-        # update the phase of the grating in order to drift it
-        self.updatePhase()
-
 
 class DriftingGrating(StaticGrating):
     def loadTexture(self):
@@ -44,9 +31,6 @@ class DriftingGrating(StaticGrating):
             logGenerator=self.logGenerator,
         )
 
-    def updatePhase(self):
-        self._stim.tex = self.texture[self.frameIdx % len(self.texture)]
-
 
 class OscillatingGrating(StaticGrating):
     def loadTexture(self):
@@ -56,7 +40,4 @@ class OscillatingGrating(StaticGrating):
             self.screenParams,
             logGenerator=self.logGenerator,
         )
-
-    def updatePhase(self):
-        self._stim.tex = self.texture[self.frameIdx % len(self.texture)]
 

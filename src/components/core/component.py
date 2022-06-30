@@ -34,13 +34,14 @@ class Component:
         self.clickable = clickable
         self.listenForKeyPresses = listenForKeyPresses
 
-        if self.listenForKeyPresses:
-            for i in range(len(self.children)):
+        # propagate certain attributes to children
+        for i in range(len(self.children)):
+            if self.listenForKeyPresses:
                 self.children[i].listenForKeyPresses = True
-
-        if self.hide:
-            for i in range(len(self.children)):
+            if self.hide:
                 self.children[i].hide = True
+            if self.zIndex:
+                self.children[i].zIndex = True
 
     def register(self) -> None:
         for c in self.children:

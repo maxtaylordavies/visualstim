@@ -34,14 +34,18 @@ class Window(_Window):
         self.compressionFactor = 2
         self.screenParams = None
 
+    def getFrameShape(self):
+        return self.clientSize[::-1]
+
     def setScreenParams(self, screenParams):
         self.screenParams = screenParams
-        self.syncSquareSize = (
-            self.screenParams["h res"] / self.screenParams["width"]
-        ) * SYNC_SQUARE_SIZE_MM
+        # self.syncSquareSize = (
+        #     self.screenParams["h res"] / self.screenParams["width"]
+        # ) * SYNC_SQUARE_SIZE_MM
+        self.syncSquareSize = 50
         self.createSyncSquares()
 
-    def createSyncSquares(self):        
+    def createSyncSquares(self):
         self.syncSquares = Component(
             self,
             "sync-squares",
@@ -86,7 +90,6 @@ class Window(_Window):
         self._toDraw = []
 
     def setBackgroundColor(self, color: List[int]) -> None:
-        print(f"setting background color: {color}")
         self.color = color
 
     def setShowSyncSquares(self, show: bool) -> None:

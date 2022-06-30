@@ -4,7 +4,7 @@
     "height": 270,
     "h res": 1400,
     "v res": 900,
-    "dist": 300,
+    "dist": 150,
     "background": "grey",
     "warp": false,
     "blank": 0
@@ -23,8 +23,8 @@
         "temp freq": 0.2,
         "orientation": 0.0,
         "stim duration": 10.0,
-        "filename": "test.mp4",
-        "fit screen": false,
+        "filename": "https://raw.githubusercontent.com/maxtaylordavies/visualstim/master/movies/test.mp4",
+        "fit screen": true,
         "scale": 0.02,
         "sparseness": 0.7
       }

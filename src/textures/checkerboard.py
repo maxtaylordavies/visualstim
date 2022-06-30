@@ -6,7 +6,7 @@ from src.constants import (
     DEFAULT_SCREEN_PARAMS,
     DEFAULT_STIMULUS_PARAMS,
 )
-from src.utils import roundToPowerOf2, scaleUp
+from src.utils import scaleUp
 
 
 def checkerboard(
@@ -19,9 +19,6 @@ def checkerboard(
         logGenerator = window.reportProgress
     logGenerator([None], f"{stimParams['label']}: generating frames")
 
-    dim = max(screenParams["v res"], screenParams["h res"])
-
-    n = roundToPowerOf2(dim)
-    l = roundToPowerOf2(dim * stimParams["scale"])
-
-    return np.array([scaleUp(2 * (np.indices((l, l)).sum(axis=0) % 2) - 1, int(n / l))])
+    (r, c), blockSize = window.getFrameShape(), int(1 / stimParams["scale"])
+    r, c = r // blockSize, c // blockSize
+    return np.array([scaleUp(np.indices((r, c)).sum(axis=0) % 2, blockSize)])

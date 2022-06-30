@@ -1,13 +1,12 @@
 from datetime import datetime
 from math import degrees, atan2
-from typing import Any, Dict, List
+from typing import Any, Dict, Iterable, List, Union
 import itertools
 
 import numpy as np
 import scipy.ndimage.interpolation as spndi
 from psychopy import event
 from pyglet.canvas import get_display
-
 
 
 # from src.window import Window
@@ -165,5 +164,11 @@ def warpTexture(
     return warped
 
 
-def rgb2grey(x):
-    return np.dot(x[...,:3], [0.2989, 0.5870, 0.1140])
+def rgb2grey(x: np.ndarray) -> np.ndarray:
+    return np.dot(x[..., :3], [0.2989, 0.5870, 0.1140])
+
+
+def padWithGrey(x: np.ndarray, shape: Iterable) -> np.ndarray:
+    diffs = [(shape[i] - x.shape[i]) // 2 for i in range(len(x.shape))]
+    padWidth = [(d, d) for d in diffs]
+    return np.pad(x, padWidth)

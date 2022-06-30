@@ -1,6 +1,7 @@
 from typing import Any
 
 from psychopy.visual import rect
+import pyperclip
 
 from src.components.core import Component, Textbox
 from src.constants import COLORS
@@ -23,13 +24,14 @@ class TextInput(Component):
         self.onChange = onChange
         self.highlight = highlight
         self.active = False
+        self.ctrlPressed = False
 
     def register(self, text="$"):
         self.input = Textbox(
             self.window,
             f"{self.id}-input",
             pos=self.pos,
-            text=text if text != "$" else str(self.value),
+            text=text if text != "$" else self.truncate(self.value),
             fill=self.fill,
             borderColor=COLORS["green"]
             if (self.active and self.highlight)
@@ -89,6 +91,10 @@ class TextInput(Component):
         )
         self.children = [self.label, self.input, self.mask]
 
+    def truncate(self, x: Any):
+        x = str(x)
+        return x if len(x) < 10 else x[:7] + "..."
+
     def toggle(self):
         if self.active:
             self.input.setText(
@@ -120,11 +126,25 @@ class TextInput(Component):
     def onClick(self, *args):
         self.toggle()
 
+    def handleControlKey(self, key):
+        if key == "c":
+            print("copying!")
+            pyperclip.copy(self.value)
+        elif key == "v":
+            print("pasting!")
+            self.value = pyperclip.paste()
+            print(self.value)
+        self.ctrlPressed = False
+
     def onKeyPress(self, key):
         if not self.active:
             return
         if key == "return":
             self.input.deleteCaret()
             self.toggle()
+        elif "command" in key or "ctrl" in key:
+            self.ctrlPressed = True
+        elif self.ctrlPressed:
+            self.handleControlKey(key)
         else:
             self.update()

@@ -10,19 +10,20 @@ from src.constants import (
 from src.utils import sinDeg, deg2pix
 
 
-def gratingFrame(n: int, sf: float, phase: float) -> np.ndarray:
-    return np.tile(sinDeg((360 * sf * np.arange(n)) + phase), (n, 1))
+def gratingFrame(r: int, c: int, sf: float, phase: float) -> np.ndarray:
+    return np.tile(sinDeg((360 * sf * np.arange(c)) + phase), (r, 1))
 
 
 def staticGrating(
     window: Window,
     stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
     screenParams: Dict[str, Any] = DEFAULT_SCREEN_PARAMS,
+    logGenerator=None,
 ):
-    n = screenParams["h res"] // window.compressionFactor
+    r, c = window.getFrameShape()
+    r, c = r // window.compressionFactor, c // window.compressionFactor
     sf = deg2pix(stimParams["spat freq"], screenParams) * window.compressionFactor
-
-    return np.array([gratingFrame(n, sf, 0)])
+    return np.array([gratingFrame(r, c, sf, 0)])
 
 
 def driftingGrating(
@@ -31,7 +32,8 @@ def driftingGrating(
     screenParams: Dict[str, Any] = DEFAULT_SCREEN_PARAMS,
     logGenerator=None,
 ):
-    n = screenParams["h res"] // window.compressionFactor
+    r, c = window.getFrameShape()
+    r, c = r // window.compressionFactor, c // window.compressionFactor
     sf = deg2pix(stimParams["spat freq"], screenParams) * window.compressionFactor
 
     # we first need to figure out how many frames we need to generate
@@ -49,11 +51,11 @@ def driftingGrating(
     phases = (360 * stimParams["temp freq"] / window.frameRate) * np.arange(nFrames)
 
     # then we map the array of phases to an array of frames
-    texture = np.zeros((nFrames, n, n), dtype=np.float16)
+    texture = np.zeros((nFrames, r, c), dtype=np.float16)
     if not logGenerator:
         logGenerator = window.reportProgress
     for i in logGenerator(range(nFrames), f"{stimParams['label']}: generating frames"):
-        texture[i] = gratingFrame(n, sf, phases[i])
+        texture[i] = gratingFrame(r, c, sf, phases[i])
 
     return texture
 
@@ -64,7 +66,8 @@ def oscGrating(
     screenParams: Dict[str, Any] = DEFAULT_SCREEN_PARAMS,
     logGenerator=None,
 ):
-    n = screenParams["h res"] // window.compressionFactor
+    r, c = window.getFrameShape()
+    r, c = r // window.compressionFactor, c // window.compressionFactor
     sf = deg2pix(stimParams["spat freq"], screenParams) * window.compressionFactor
     nFrames = round(window.frameRate / stimParams["temp freq"])
 
@@ -72,10 +75,10 @@ def oscGrating(
         (360 * stimParams["temp freq"] / window.frameRate) * np.arange(nFrames)
     )
 
-    texture = np.zeros((nFrames, n, n), dtype=np.float16)
+    texture = np.zeros((nFrames, r, c), dtype=np.float16)
     if not logGenerator:
         logGenerator = window.reportProgress
     for i in logGenerator(range(nFrames), f"{stimParams['label']}: generating frames"):
-        texture[i] = gratingFrame(n, sf, phases[i])
+        texture[i] = gratingFrame(r, c, sf, phases[i])
 
     return texture
