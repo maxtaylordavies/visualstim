@@ -1,0 +1,33 @@
+{
+  "screen settings": {
+    "width": 337,
+    "height": 270,
+    "h res": 1400,
+    "v res": 900,
+    "dist": 150,
+    "background": "grey",
+    "warp": false,
+    "blank": 0
+  },
+  "sync settings": {
+    "sync": false,
+    "trigger duration": 5.0,
+    "sync interval": 60,
+    "pulse length": 3
+  },
+  "stimuli": [
+    {
+      "name": "movie",
+      "params": {
+        "spat freq": 0.1,
+        "temp freq": 0.2,
+        "orientation": 0.0,
+        "stim duration": 10.0,
+        "filename": "https://raw.githubusercontent.com/maxtaylordavies/visualstim/master/movies/test.mp4",
+        "fit screen": true,
+        "scale": 0.02,
+        "sparseness": 0.7
+      }
+    }
+  ]
+}
