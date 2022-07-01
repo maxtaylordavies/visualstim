@@ -49,9 +49,6 @@ class Interface(Component):
         # load default experiment
         self.loadExperiment("default.json")
 
-        # get screen resolution and update screen params if necessary
-        self.setResolution()
-
         # create + register children
         self.register()
 
@@ -130,6 +127,7 @@ class Interface(Component):
 
     def loadExperiment(self, filename):
         self.experiment = _loadExperiment(self.displayWindow, filename)
+        self.setResolution()
         self.displayWindow.setShowSyncSquares(self.experiment.syncSettings["sync"])
 
     def filterStimulusParams(self):
