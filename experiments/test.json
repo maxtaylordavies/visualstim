@@ -39,7 +39,7 @@
       "params": {
         "temp freq": 0.2,
         "stim duration": 5,
-        "scale": 0.04,
+        "block size": 50,
         "sparseness": 0.75
       }
     },
@@ -48,7 +48,7 @@
       "params": {
         "temp freq": 0.2,
         "stim duration": 5,
-        "scale": 0.04
+        "block size": 50
       }
     }
   ]

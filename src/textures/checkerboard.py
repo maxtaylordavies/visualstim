@@ -19,6 +19,8 @@ def checkerboard(
         logGenerator = window.reportProgress
     logGenerator([None], f"{stimParams['label']}: generating frames")
 
-    (r, c), blockSize = window.getFrameShape(), int(1 / stimParams["scale"])
-    r, c = r // blockSize, c // blockSize
-    return np.array([scaleUp(np.indices((r, c)).sum(axis=0) % 2, blockSize)])
+    (r, c) = window.getFrameShape()
+    r, c = r // stimParams["block size"], c // stimParams["block size"]
+    return np.array(
+        [scaleUp(np.indices((r, c)).sum(axis=0) % 2, stimParams["block size"])]
+    )

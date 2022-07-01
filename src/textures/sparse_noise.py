@@ -21,8 +21,8 @@ def sparseNoise(
         window.frameRate * stimParams["stim duration"] * stimParams["temp freq"]
     )
 
-    (r, c), blockSize = window.getFrameShape(), int(1 / stimParams["scale"])
-    r, c = r // blockSize, c // blockSize
+    r, c = window.getFrameShape()
+    r, c = r // stimParams["block size"], c // stimParams["block size"]
 
     def randomMatrix():
         x = (
@@ -31,9 +31,14 @@ def sparseNoise(
             else (1 / (1 - stimParams["sparseness"])) - 1
         )
         edges = np.array([-np.inf, -x, x, np.inf])
-        return scaleUp(np.digitize(rng.standard_normal((r, c)), edges), blockSize)
+        return scaleUp(
+            np.digitize(rng.standard_normal((r, c)), edges), stimParams["block size"]
+        )
 
-    texture = np.zeros((nFrames, r * blockSize, c * blockSize), dtype=np.float16)
+    texture = np.zeros(
+        (nFrames, r * stimParams["block size"], c * stimParams["block size"]),
+        dtype=np.float16,
+    )
     if not logGenerator:
         logGenerator = window.reportProgress
     for i in logGenerator(range(nFrames), f"{stimParams['label']}: generating frames"):

@@ -25,7 +25,7 @@
         "stim duration": 10.0,
         "filename": "https://raw.githubusercontent.com/maxtaylordavies/visualstim/master/movies/test.mp4",
         "fit screen": true,
-        "scale": 0.02,
+        "block size": 50,
         "sparseness": 0.7
       }
     }

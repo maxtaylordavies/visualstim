@@ -30,8 +30,8 @@ STIMULUS_PARAMETER_MAP = {
     "static grating": {"spat freq", "orientation", "stim duration"},
     "drift grating": {"spat freq", "temp freq", "orientation", "stim duration",},
     "osc grating": {"spat freq", "temp freq", "orientation", "stim duration",},
-    "sparse noise": {"temp freq", "scale", "sparseness", "stim duration"},
-    "checkerboard": {"temp freq", "scale", "stim duration"},
+    "sparse noise": {"temp freq", "block size", "sparseness", "stim duration"},
+    "checkerboard": {"temp freq", "block size", "stim duration"},
     "movie": {"filename", "fit screen", "stim duration"},
 }
 UNITS_MAP = {
@@ -44,6 +44,7 @@ UNITS_MAP = {
     "temp freq": "Hz",
     "orientation": "deg",
     "stim duration": "s",
+    "block size": "pix",
     "trigger duration": "s",
     "sync interval": "frames",
     "pulse length": "frames",
