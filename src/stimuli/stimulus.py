@@ -35,8 +35,8 @@ class Stimulus:
 
         self._stim = GratingStim(
             win=self.window,
-            # size=[self.screenParams["h res"], self.screenParams["h res"]],
-            size=self.window.clientSize,
+            # size=self.window.clientSize,
+            size=self.computeSize(),
             units="pix",
             ori=self.stimParams["orientation"],
             tex=self.texture[0],
@@ -63,6 +63,12 @@ class Stimulus:
             self.texture = padWithGrey(
                 self.texture, [len(self.texture), *windowFrameShape]
             )
+
+    def computeSize(self):
+        if self.stimParams["orientation"] == 0:
+            return self.window.clientSize
+        frameShape = self.texture.shape[1:]
+        return [dim * self.window.compressionFactor for dim in frameShape[::-1]]
 
     def applyWarp(self) -> None:
         if type(self.texture) != np.ndarray:

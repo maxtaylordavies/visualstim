@@ -14,14 +14,23 @@ def gratingFrame(r: int, c: int, sf: float, phase: float) -> np.ndarray:
     return np.tile(sinDeg((360 * sf * np.arange(c)) + phase), (r, 1))
 
 
+def computeShape(window: Window, ori: float):
+    r, c = window.getFrameShape()
+    r, c = r // window.compressionFactor, c // window.compressionFactor
+
+    if ori != 0:
+        r = c = round(((r ** 2) + (c ** 2)) ** 0.5)
+
+    return r, c
+
+
 def staticGrating(
     window: Window,
     stimParams: Dict[str, Any] = DEFAULT_STIMULUS_PARAMS,
     screenParams: Dict[str, Any] = DEFAULT_SCREEN_PARAMS,
     logGenerator=None,
 ):
-    r, c = window.getFrameShape()
-    r, c = r // window.compressionFactor, c // window.compressionFactor
+    r, c = computeShape(window, stimParams["orientation"])
     sf = deg2pix(stimParams["spat freq"], screenParams) * window.compressionFactor
     return np.array([gratingFrame(r, c, sf, 0)])
 
@@ -32,8 +41,7 @@ def driftingGrating(
     screenParams: Dict[str, Any] = DEFAULT_SCREEN_PARAMS,
     logGenerator=None,
 ):
-    r, c = window.getFrameShape()
-    r, c = r // window.compressionFactor, c // window.compressionFactor
+    r, c = computeShape(window, stimParams["orientation"])
     sf = deg2pix(stimParams["spat freq"], screenParams) * window.compressionFactor
 
     # we first need to figure out how many frames we need to generate
@@ -66,8 +74,7 @@ def oscGrating(
     screenParams: Dict[str, Any] = DEFAULT_SCREEN_PARAMS,
     logGenerator=None,
 ):
-    r, c = window.getFrameShape()
-    r, c = r // window.compressionFactor, c // window.compressionFactor
+    r, c = computeShape(window, stimParams["orientation"])
     sf = deg2pix(stimParams["spat freq"], screenParams) * window.compressionFactor
     nFrames = round(window.frameRate / stimParams["temp freq"])
 
