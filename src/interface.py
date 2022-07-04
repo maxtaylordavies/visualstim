@@ -46,8 +46,10 @@ class Interface(Component):
         # flag for whether we're currently playing and experiment
         self.playing = False
 
-        # load default experiment
+        # load default experiment and make record
+        # of default params in case we need to reset
         self.loadExperiment("default.json")
+        self.defaultParams = copy.deepcopy(self.experiment.stimuli[0]["params"])
 
         # create + register children
         self.register()
@@ -140,6 +142,10 @@ class Interface(Component):
     def selectStimulusType(self, x):
         # set stimulus type
         self.experiment.stimuli[0]["name"] = x
+
+        # reset stim params
+        self.experiment.stimuli[0]["params"] = copy.deepcopy(self.defaultParams)
+
         # update the parameters shown in the params panel
         paramsPanel = self.getComponentById("stim-params-panel")
         if paramsPanel:
