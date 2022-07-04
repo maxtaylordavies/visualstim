@@ -234,7 +234,7 @@ class Interface(Component):
                 self.playing = not self.playing
 
     def onClick(self) -> None:
-        for c in self.children:
+        for c in self.sortChildren()[::-1]:
             if c.contains(self.mouse) and hasattr(c, "onClick") and not c.hide:
                 c.onClick(self.mouse, c)
                 break

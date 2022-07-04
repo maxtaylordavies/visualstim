@@ -51,7 +51,11 @@ class Panel(Component):
             y -= self.children[0].getSize()[1] / 2
 
         self.box = Box(
-            self.window, f"{id}-box", pos=self.pos, size=self.size, color=self.fill,
+            self.window,
+            f"{self.id}-box",
+            pos=self.pos,
+            size=self.size,
+            color=self.fill,
         )
         children = [self.box]
 
@@ -59,7 +63,7 @@ class Panel(Component):
             children.append(
                 Label(
                     self.window,
-                    f"{id}-label",
+                    f"{self.id}-label",
                     text=self.labelText,
                     pos=self.pos,
                     size=self.size,
