@@ -39,10 +39,9 @@ class Window(_Window):
 
     def setScreenParams(self, screenParams):
         self.screenParams = screenParams
-        # self.syncSquareSize = (
-        #     self.screenParams["h res"] / self.screenParams["width"]
-        # ) * SYNC_SQUARE_SIZE_MM
-        self.syncSquareSize = 50
+        self.syncSquareSize = (
+            self.screenParams["h res"] / self.screenParams["width"]
+        ) * SYNC_SQUARE_SIZE_MM
         self.createSyncSquares()
 
     def createSyncSquares(self):
