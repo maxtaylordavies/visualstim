@@ -23,6 +23,7 @@ class Window(_Window):
             colorSpace="rgb255",
             **kwargs,
         )
+        self.winHandle.set_caption("visualstim")
 
         self.fullscreen = fullscreen
         self.sync = sync

@@ -42,10 +42,13 @@ The visualstim software has two different usage modes: **interactive** and **scr
 ### Stimulus type
 
 The **stimulus type** panel lets you choose the stimulus you want to display. Currently, the options are
-
-- _drift grating_: a sinusoidal grating that moves across the display window
-- _static grating_: a sinusoidal grating that does not move (i.e. is static)
-- _movie_: an arbitrary video file - should be placed in the `movies/` folder and be in a format supported by [AVbin](https://avbin.github.io/docs/) (e.g. `.mp4`, `.avi`, `.mov` etc)
+- **gratings**
+  - _static grating_: a sinusoidal grating that does not move (i.e. is static)
+  - _drift grating_: a sinusoidal grating that moves across the display window in one direction
+  - _osc grating_: a sinusoidal grating that oscillates back and forth across the display window ![grating](./screenshots/v0.1/grating.png)
+- **sparse noise**: a noise movie showing black and white blocks placed randomly against a grey background ![sparse noise](./screenshots/v0.1/sparsenoise.png)
+- **checkerboard**: a black and white checkerboard that flips colors back and forth ![checkerboard](./screenshots/v0.1/checkerboard.png)
+- **movie**: an arbitrary video loaded either from a local file or a url. Local files should be placed in the `movies/` folder. Works for any format supported by [AVbin](https://avbin.github.io/docs/) (e.g. `.mp4`, `.avi`, `.mov` etc)
 
 More stimulus types will be added in future updates.
 

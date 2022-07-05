@@ -44,15 +44,15 @@ class HeaderBar(Component):
                     Button(
                         self.window,
                         "logo-button",
-                        text="visualstim v0.1",
-                        pos=[self.left + 80, self.pos[1]],
+                        text="visualstim",
+                        pos=[self.left + 60, self.pos[1]],
                         color=COLORS["purple"],
                         fill=self.fill,
                     ),
                     ModeSelector(
                         self.window,
                         "mode-selector",
-                        pos=[self.left + 250, self.pos[1]],
+                        pos=[self.left + 205, self.pos[1]],
                         mode=self.mode,
                         callback=self.onToggleModeClicked,
                         fill=self.fill,
