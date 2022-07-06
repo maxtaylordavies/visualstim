@@ -11,6 +11,7 @@
     - [Stimulus type](#stimulus-type)
     - [Stimulus parameters](#stimulus-parameters)
     - [Sync parameters](#sync-parameters)
+    - [Screen parameters](#screen-parameters)
     - [Saving parameters](#saving-parameters)
     - [Scripting mode and experiment files](#scripting-mode-and-experiment-files)
 
@@ -66,7 +67,7 @@ If you set multiple values for more than one parameter, then the stimulation wil
 
 The **sync parameters** panel contains controls for synchronisation/triggering. If you don't need to synchronise your visual stimulation with any external system (e.g. 2P imaging, behavioural recording etc) then you can safely ignore this panel.
 
-**Sync mode** is disabled by default. If you enable it by toggling ![sync: FALSE](./screenshots/v0.1/sync-false.png) to ![sync: TRUE](./screenshots/v0.1/sync-true.png), you should see two small black squares appear in the bottom left corner of the **display window**. These are the **trigger square** and **sync square**, and are intended to provide an interface to external systems via the use of photodiodes attached to the stimulus display monitor.
+**Sync mode** is disabled by default. If you enable it by toggling ![sync: FALSE](./screenshots/v0.1/sync-false.png) to ![sync: TRUE](./screenshots/v0.1/sync-true.png), you should see two black squares appear in the bottom of the **display window**. These are the **trigger square** (left corner) and **sync square** (right corner), and are intended to provide an interface to external systems via the use of photodiodes attached to the stimulus display monitor.
 
 In **sync mode**, clicking ![play](./screenshots/v0.1/play.png) will not begin playing the visual stimulus immediately, but will instead activate a **trigger period**
 
@@ -76,6 +77,10 @@ In **sync mode**, clicking ![play](./screenshots/v0.1/play.png) will not begin p
 - This photodiode should be connected to the appropriate input(s) of whatever external system(s) you want to trigger
 
 After the user-defined trigger duration has elapsed, the selected stimulus will begin playing as normal. In **sync mode**, while the stimulus is playing, the **sync square** will flash white every `n` frames (where `n` is the value supplied for `sync interval`). This allows the user to send a regular synchronisation pulse to an external clock system, in order to align the stimulus frame timestamps with data from any other systems (e.g. 2P imaging data).
+
+### Screen parameters
+
+The **screen parameters** panel houses parameters relating to the visual display itself. These include the physical dimensions of the display monitor (width, height, distance from subject),which must be set manually, and the vertical and horizontal resolution of the display monitor, which are set automatically. The `blank` parameter controls the duration (in seconds) of the blank period shown between stimuli - where a blank screen (with colour determined by `background`) is shown. Finally, the `warp` switch controls whether or not a spherical warping is applied to the stimuli. This is done in order to correct for the visual distortion that occurs when the distance between display and subject is very small.
 
 ### Saving parameters
 
@@ -89,10 +94,20 @@ When running the visualstim software, you start in interactive mode by default. 
 
 The panel labeled "load experiment" shows a list of all the files contained in the top-level `experiments/` folder. To load an experiment, just click on the name of its file. You can then run the experiment by clicking ![play](./screenshots/v0.1/play.png).
 
-An experiment consists basically of two things: a set of _sync settings_, and sequence of _stimuli_ (where each stimulus has an associated set of parameters). Experiment files are written using [the JSON data format](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/JSON). Here's a basic example of an experiment file with only one stimulus and no sync:
+An experiment consists of three components: a set of _screen settings_, a set of _sync settings_, and sequence of _stimuli_ (where each stimulus has an associated set of parameters). Experiment files are written using [the JSON data format](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/JSON). Here's a basic example of an experiment file with only one stimulus and no sync:
 
 ```JSON
 {
+    "screen settings": {
+        "width": 257,
+        "height": 145,
+        "h res": 1400,
+        "v res": 900,
+        "dist": 150,
+        "background": "grey",
+        "warp": false,
+        "blank": 0
+    },
     "sync settings": {
         "sync": false
     },
@@ -114,6 +129,16 @@ Here's an example with sync and multiple stimuli:
 
 ```JSON
 {
+    "screen settings": {
+        "width": 257,
+        "height": 145,
+        "h res": 1400,
+        "v res": 900,
+        "dist": 150,
+        "background": "grey",
+        "warp": false,
+        "blank": 0
+    },
     "sync settings": {
         "sync": true,
         "trigger duration": 5.0,
