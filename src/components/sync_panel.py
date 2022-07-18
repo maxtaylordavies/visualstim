@@ -37,7 +37,7 @@ class SyncPanel(Component):
                         value=v,
                         pos=self.pos,
                         callback=self.makeFunc(k),
-                        leftSpaces=11,
+                        leftSpaces=11 if k == "sync" else 8,
                     )
                     if type(v) == bool
                     else TextInput(
@@ -50,7 +50,7 @@ class SyncPanel(Component):
                     )
                     for k, v in list(self.params.items())
                 ],
-                rows=4,
+                rows=5,
                 listenForKeyPresses=self.listenForKeyPresses,
                 fill=COLORS["lightgrey"],
             )

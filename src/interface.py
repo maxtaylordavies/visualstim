@@ -220,8 +220,8 @@ class Interface(Component):
             playExperiment(
                 self.displayWindow,
                 self.experiment,
-                callback=self.handleInput,
-                shouldTerminate=self.shouldTerminateStimulation,
+                _callback=self.handleInput,
+                _shouldTerminate=self.shouldTerminateStimulation,
                 logGenerator=self.controlWindow.reportProgress,
             )
 

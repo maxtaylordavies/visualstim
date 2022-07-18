@@ -16,7 +16,7 @@ from src.stimuli import (
     playStimulus,
 )
 
-from src.utils import checkForEsc, parseParams
+from src.utils import checkForEsc, parseParams, createUDPSocket, readUDPData
 from src.constants import COLORS
 
 
@@ -105,7 +105,7 @@ def unrollExperiment(exp: Experiment) -> Experiment:
 def playExperiment(
     window: Window,
     experiment: Experiment,
-    callback: Any = None,
+    _callback: Any = None,
     shouldTerminate: Any = checkForEsc,
     logGenerator=None,
 ):
@@ -126,7 +126,26 @@ def playExperiment(
             )
         )
 
-    def _callback(frameIdx: int):
+    # if we want to monitor trackball, create a socket and
+    # a lambda function for parsing stop signals sent over UDP
+    if experiment.syncSettings["trackball"]:
+        udpSocket = createUDPSocket("192.168.0.23", 8888)
+
+        def checkSwitchSignal():
+            isPacket, data = readUDPData(udpSocket)
+            if not isPacket:
+                return None
+            return int(data)
+
+    else:
+        checkSwitchSignal = lambda: None
+
+    def callback(frameIdx: int):
+        # check for switch or termination signal
+        signal = checkSwitchSignal()
+        if signal or shouldTerminate():
+            return signal or -1
+
         # send a sync pulse if needed
         if (
             experiment.syncSettings["sync"]
@@ -135,7 +154,7 @@ def playExperiment(
             in {0, experiment.syncSettings["pulse length"]}
         ):
             window.toggleSyncSquare(1)
-        callback()
+        _callback()
 
     def _draw():
         window.flip()
@@ -151,13 +170,9 @@ def playExperiment(
         for i in range(
             int(window.frameRate * experiment.syncSettings["trigger duration"])
         ):
-            # check if we should terminate
-            if shouldTerminate():
-                break
-
             # execute per-frame callback
-            if callback:
-                callback()
+            if callback and callback(i):
+                break
 
             if i == experiment.syncSettings["pulse length"]:
                 window.toggleSyncSquare(0)  # turn off trigger square
@@ -165,16 +180,12 @@ def playExperiment(
             _draw()
 
     # cycle through + display stimuli
-    stop, experimentFrameIdx = False, 0
+    stimIdx, signal, experimentFrameIdx = 0, None, 0
     blankFrames = int(window.frameRate * experiment.screenSettings["blank"])
-    for stimulus in stimuli:
+    while stimIdx < len(stimuli):
         # display the stimulus
-        stop, experimentFrameIdx = playStimulus(
-            window,
-            stimulus,
-            _callback,
-            shouldTerminate=shouldTerminate,
-            experimentFrameIdx=experimentFrameIdx,
+        signal, experimentFrameIdx = playStimulus(
+            window, stimuli[stimIdx], callback, experimentFrameIdx,
         )
 
         # make sure we don't leave the sync square on
@@ -182,18 +193,18 @@ def playExperiment(
         window.flip()
 
         # interstimulus blank
-        if not stop:
+        if signal == None:
             for i in range(experimentFrameIdx, experimentFrameIdx + blankFrames):
-                _callback(i)
+                callback(i)
                 _draw()
             experimentFrameIdx += blankFrames
+            window.turnOffSyncSquare(1)
+            window.flip()
 
-        # make sure we don't leave the sync square on
-        window.turnOffSyncSquare(1)
-        window.flip()
-
-        # if user wants to stop experiment, break out of loop
-        if stop:
+        # if we've recieved a signal to change stimulus or stop the experiment,
+        # then process it accordingly
+        stimIdx = signal or (stimIdx + 1)
+        if stimIdx == -1:
             break
 
     # reset window
