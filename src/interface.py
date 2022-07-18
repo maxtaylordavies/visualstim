@@ -221,7 +221,7 @@ class Interface(Component):
                 self.displayWindow,
                 self.experiment,
                 _callback=self.handleInput,
-                _shouldTerminate=self.shouldTerminateStimulation,
+                shouldTerminate=self.shouldTerminateStimulation,
                 logGenerator=self.controlWindow.reportProgress,
             )
 

@@ -16,7 +16,7 @@ from src.stimuli import (
     playStimulus,
 )
 
-from src.utils import checkForEsc, parseParams, createUDPSocket, readUDPData
+from src.utils import checkForEsc, parseParams, createUDPSocket, readUDPCommand
 from src.constants import COLORS
 
 
@@ -129,22 +129,17 @@ def playExperiment(
     # if we want to monitor trackball, create a socket and
     # a lambda function for parsing stop signals sent over UDP
     if experiment.syncSettings["trackball"]:
-        udpSocket = createUDPSocket("192.168.0.23", 8888)
-
-        def checkSwitchSignal():
-            isPacket, data = readUDPData(udpSocket)
-            if not isPacket:
-                return None
-            return int(data)
-
+        # udpSocket = createUDPSocket("192.168.0.23", 8888)
+        udpSocket = createUDPSocket("localhost", 9000)
+        checkUDPCommand = lambda: readUDPCommand(udpSocket)
     else:
-        checkSwitchSignal = lambda: None
+        checkUDPCommand = lambda: "", None
 
     def callback(frameIdx: int):
         # check for switch or termination signal
-        signal = checkSwitchSignal()
-        if signal or shouldTerminate():
-            return signal or -1
+        cmd, val = checkUDPCommand()
+        if cmd or shouldTerminate():
+            return (cmd or "stop", val)
 
         # send a sync pulse if needed
         if (
@@ -171,8 +166,10 @@ def playExperiment(
             int(window.frameRate * experiment.syncSettings["trigger duration"])
         ):
             # execute per-frame callback
-            if callback and callback(i):
-                break
+            if callback:
+                cmd, _ = callback(i)
+                if cmd == "stop":
+                    break
 
             if i == experiment.syncSettings["pulse length"]:
                 window.toggleSyncSquare(0)  # turn off trigger square
@@ -201,11 +198,16 @@ def playExperiment(
             window.turnOffSyncSquare(1)
             window.flip()
 
+        stimIdx += 1
+
         # if we've recieved a signal to change stimulus or stop the experiment,
         # then process it accordingly
-        stimIdx = signal or (stimIdx + 1)
-        if stimIdx == -1:
-            break
+        if signal != None:
+            cmd, val = signal
+            if cmd == "stop":
+                break
+            elif cmd == "switch":
+                stimIdx = int(val)
 
     # reset window
     window.setBackgroundColor(COLORS["white"])

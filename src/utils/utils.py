@@ -183,9 +183,10 @@ def createUDPSocket(addr: str, port: int) -> socket.socket:
     return sock
 
 
-def readUDPData(sock: socket.socket):
+def readUDPCommand(sock: socket.socket):
     try:
         data = sock.recv(1024)
-        return True, data.decode()
+        cmd, val = data.decode().split(" ")
+        return cmd, float(val)
     except BlockingIOError:
-        return False, None
+        return "", None
