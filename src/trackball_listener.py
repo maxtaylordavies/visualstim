@@ -3,6 +3,8 @@ import time
 
 from src.socket import UDPSocket
 from src.constants import (
+    INTERFACE_ADDR,
+    INTERFACE_PORT,
     TRACKBALL_ADDR,
     TRACKBALL_PORT,
     TRACKBALL_LISTENER_ADDR,
@@ -18,6 +20,9 @@ class TrackballListener:
 
         # the interval (in seconds) over which speed values should be computed
         self.interval = 0.2
+
+        # running speed threshold
+        self.threshold = 100
 
         # lists to hold timestamps + associated speed values
         self.timestamps = []
@@ -54,8 +59,8 @@ class TrackballListener:
     # and send consequent commands back to the interface object
     def _run(self):
         # send start signal to trackball
-        # print("sending start signal")
-        # self.sock.sendData("start", trackballIP, trackballPort)
+        print("sending start signal")
+        self.sock.sendData("start", TRACKBALL_ADDR, TRACKBALL_PORT)
 
         # initialise tPrev and disp
         tPrev = tStart = datetime.now()
@@ -71,7 +76,7 @@ class TrackballListener:
             if self.sock.readData() == "stop":
                 self.state = "idle"
                 print("sending stop signal")
-                # self.sock.sendData("stop", TRACKBALL_ADDR, TRACKBALL_PORT)
+                self.sock.sendData("stop", TRACKBALL_ADDR, TRACKBALL_PORT)
 
             d = self.sock.readData() or 0
             tDelta = self.elapsed(tPrev)
@@ -81,9 +86,19 @@ class TrackballListener:
             else:
                 self.timestamps.append(self.elapsed(tStart))
                 self.speeds.append(disp / self.interval)
+                self.processCurrentSpeed()
                 tPrev, disp = datetime.now(), 0
 
         print(f"len(timestamps): {len(self.timestamps)}")
         print(f"len(speeds): {len(self.speeds)}")
         print(f"timestamps[:10]: {self.timestamps[:10]}")
         print(f"speeds[:10]: {self.speeds[:10]}")
+
+    def processCurrentSpeed(self):
+        # if speed has not changed, do nothing
+        if len(self.speeds) < 2 or (self.speeds[-1] == self.speeds[-2]):
+            return
+
+        # otherwise, send "running" if speed reaches threshold, or "still" if not
+        message = "running" if self.speeds[-1] >= self.threshold else "still"
+        self.sock.sendData(message, INTERFACE_ADDR, INTERFACE_PORT)
