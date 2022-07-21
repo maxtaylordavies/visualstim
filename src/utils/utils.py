@@ -1,6 +1,6 @@
 from datetime import datetime
 from math import degrees, atan2
-from typing import Any, Dict, Iterable, List, Union
+from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 import itertools
 import socket
 
@@ -8,7 +8,6 @@ import numpy as np
 import scipy.ndimage.interpolation as spndi
 from psychopy import event
 from pyglet.canvas import get_display
-
 
 # from src.window import Window
 from src.constants import (
@@ -173,20 +172,3 @@ def padWithGrey(x: np.ndarray, shape: Iterable) -> np.ndarray:
     diffs = [(shape[i] - x.shape[i]) // 2 for i in range(len(x.shape))]
     padWidth = [(d, d) for d in diffs]
     return np.pad(x, padWidth)
-
-
-def createUDPSocket(addr: str, port: int) -> socket.socket:
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    sock.setblocking(False)
-    sock.bind((addr, port))
-    return sock
-
-
-def readUDPCommand(sock: socket.socket):
-    try:
-        data = sock.recv(1024)
-        cmd, val = data.decode().split(" ")
-        return cmd, float(val)
-    except BlockingIOError:
-        return "", None

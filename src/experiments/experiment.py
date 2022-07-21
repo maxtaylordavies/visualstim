@@ -15,9 +15,15 @@ from src.stimuli import (
     Checkerboard,
     playStimulus,
 )
-
-from src.utils import checkForEsc, parseParams, createUDPSocket, readUDPCommand
-from src.constants import COLORS
+from src.utils import checkForEsc, parseParams
+from src.constants import (
+    COLORS,
+    INTERFACE_ADDR,
+    INTERFACE_PORT,
+    TRACKBALL_LISTENER_ADDR,
+    TRACKBALL_LISTENER_PORT,
+)
+from src.socket import UDPSocket
 
 
 def str2Stim(s: str) -> Stimulus:
@@ -105,6 +111,7 @@ def unrollExperiment(exp: Experiment) -> Experiment:
 def playExperiment(
     window: Window,
     experiment: Experiment,
+    socket: UDPSocket,
     _callback: Any = None,
     shouldTerminate: Any = checkForEsc,
     logGenerator=None,
@@ -129,11 +136,10 @@ def playExperiment(
     # if we want to monitor trackball, create a socket and
     # a lambda function for parsing stop signals sent over UDP
     if experiment.syncSettings["trackball"]:
-        # udpSocket = createUDPSocket("192.168.0.23", 8888)
-        udpSocket = createUDPSocket("localhost", 9000)
-        checkUDPCommand = lambda: readUDPCommand(udpSocket)
+        socket.sendData("start", "localhost", 9001)
+        checkUDPCommand = lambda: socket.parseCommand()
     else:
-        checkUDPCommand = lambda: "", None
+        checkUDPCommand = lambda: ("", None)
 
     def callback(frameIdx: int):
         # check for switch or termination signal
@@ -166,8 +172,9 @@ def playExperiment(
             int(window.frameRate * experiment.syncSettings["trigger duration"])
         ):
             # execute per-frame callback
-            if callback:
-                cmd, _ = callback(i)
+            callbackResult = callback(i)
+            if callbackResult:
+                cmd, _ = callbackResult
                 if cmd == "stop":
                     break
 
@@ -208,6 +215,10 @@ def playExperiment(
                 break
             elif cmd == "switch":
                 stimIdx = int(val)
+
+    # stop trackball listener if running
+    if experiment.syncSettings["trackball"]:
+        socket.sendData("stop", "localhost", 9001)
 
     # reset window
     window.setBackgroundColor(COLORS["white"])

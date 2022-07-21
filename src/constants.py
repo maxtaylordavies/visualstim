@@ -51,3 +51,12 @@ UNITS_MAP = {
     "blank": "s",
 }
 CYCLEABLE_PARAMETERS = {"spat freq", "temp freq", "orientation"}
+
+INTERFACE_ADDR = "localhost"
+INTERFACE_PORT = 9000
+
+TRACKBALL_LISTENER_ADDR = "localhost"
+TRACKBALL_LISTENER_PORT = 9001
+
+TRACKBALL_ADDR = "192.168.0.21"
+TRACKBALL_PORT = 8888
