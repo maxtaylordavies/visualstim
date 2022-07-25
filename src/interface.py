@@ -4,7 +4,8 @@ from typing import Any
 from psychopy import event
 
 from src.window import Window
-from src.constants import STIMULUS_PARAMETER_MAP, COLORS
+from src.socket import UDPSocket
+from src.constants import STIMULUS_PARAMETER_MAP, COLORS, INTERFACE_ADDR, INTERFACE_PORT
 from src.components.core import Button, Component
 from src.components import (
     StimulusPanel,
@@ -53,6 +54,9 @@ class Interface(Component):
 
         # create + register children
         self.register()
+
+        # create socket for communicating with other services
+        self.socket = UDPSocket(INTERFACE_ADDR, INTERFACE_PORT)
 
     def register(self) -> None:
         self.children = [
@@ -220,7 +224,8 @@ class Interface(Component):
             playExperiment(
                 self.displayWindow,
                 self.experiment,
-                callback=self.handleInput,
+                self.socket,
+                _callback=self.handleInput,
                 shouldTerminate=self.shouldTerminateStimulation,
                 logGenerator=self.controlWindow.reportProgress,
             )

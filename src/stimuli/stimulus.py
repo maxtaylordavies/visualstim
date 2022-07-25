@@ -93,11 +93,7 @@ class Stimulus:
 
 
 def playStimulus(
-    window: Window,
-    stimulus: Dict,
-    callback: Any = None,
-    shouldTerminate: Any = checkForEsc,
-    experimentFrameIdx: int = 0,
+    window: Window, stimulus: Dict, callback: Any = None, experimentFrameIdx: int = 0,
 ) -> bool:
     duration = stimulus["stimulus"].duration or stimulus["params"]["stim duration"]
 
@@ -108,13 +104,12 @@ def playStimulus(
     while stimulus["stimulus"].frameIdx < experimentFrameIdx + int(
         window.frameRate * duration
     ):
-        # check if we should terminate
-        if shouldTerminate():
-            return True, stimulus["stimulus"].frameIdx + 1
-
-        # execute per-frame callback
+        # execute per-frame callback - if it returns a non-None value,
+        # terminate and pass the value up
         if callback:
-            callback(stimulus["stimulus"].frameIdx)
+            tmp = callback(stimulus["stimulus"].frameIdx)
+            if tmp != None:
+                return tmp, stimulus["stimulus"].frameIdx + 1
 
         # draw stimulus
         stimulus["stimulus"].drawFrame()
@@ -126,5 +121,4 @@ def playStimulus(
             stimulus["stimulus"].updateFrame()
 
     print(f"FINISHED AFTER {datetime.now() - startTime}")
-
-    return False, stimulus["stimulus"].frameIdx + 1
+    return None, stimulus["stimulus"].frameIdx + 1

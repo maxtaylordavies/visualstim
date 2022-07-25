@@ -15,9 +15,13 @@ from src.stimuli import (
     Checkerboard,
     playStimulus,
 )
-
 from src.utils import checkForEsc, parseParams
-from src.constants import COLORS
+from src.constants import (
+    COLORS,
+    TRACKBALL_LISTENER_ADDR,
+    TRACKBALL_LISTENER_PORT,
+)
+from src.socket import UDPSocket
 
 
 def str2Stim(s: str) -> Stimulus:
@@ -105,7 +109,8 @@ def unrollExperiment(exp: Experiment) -> Experiment:
 def playExperiment(
     window: Window,
     experiment: Experiment,
-    callback: Any = None,
+    socket: UDPSocket,
+    _callback: Any = None,
     shouldTerminate: Any = checkForEsc,
     logGenerator=None,
 ):
@@ -126,7 +131,20 @@ def playExperiment(
             )
         )
 
-    def _callback(frameIdx: int):
+    # if we want to monitor trackball, create a socket and
+    # a lambda function for parsing stop signals sent over UDP
+    if experiment.syncSettings["trackball"]:
+        socket.sendData("start", TRACKBALL_LISTENER_ADDR, TRACKBALL_LISTENER_PORT)
+        checkUDPCommand = lambda: socket.parseCommand()
+    else:
+        checkUDPCommand = lambda: ("", None)
+
+    def callback(frameIdx: int):
+        # check for switch or termination signal
+        cmd, val = checkUDPCommand()
+        if cmd or shouldTerminate():
+            return (cmd or "stop", val)
+
         # send a sync pulse if needed
         if (
             experiment.syncSettings["sync"]
@@ -135,7 +153,7 @@ def playExperiment(
             in {0, experiment.syncSettings["pulse length"]}
         ):
             window.toggleSyncSquare(1)
-        callback()
+        _callback()
 
     def _draw():
         window.flip()
@@ -151,13 +169,12 @@ def playExperiment(
         for i in range(
             int(window.frameRate * experiment.syncSettings["trigger duration"])
         ):
-            # check if we should terminate
-            if shouldTerminate():
-                break
-
             # execute per-frame callback
-            if callback:
-                callback()
+            callbackResult = callback(i)
+            if callbackResult:
+                cmd, _ = callbackResult
+                if cmd == "stop":
+                    break
 
             if i == experiment.syncSettings["pulse length"]:
                 window.toggleSyncSquare(0)  # turn off trigger square
@@ -165,16 +182,12 @@ def playExperiment(
             _draw()
 
     # cycle through + display stimuli
-    stop, experimentFrameIdx = False, 0
+    stimIdx, signal, experimentFrameIdx = 0, None, 0
     blankFrames = int(window.frameRate * experiment.screenSettings["blank"])
-    for stimulus in stimuli:
+    while stimIdx < len(stimuli):
         # display the stimulus
-        stop, experimentFrameIdx = playStimulus(
-            window,
-            stimulus,
-            _callback,
-            shouldTerminate=shouldTerminate,
-            experimentFrameIdx=experimentFrameIdx,
+        signal, experimentFrameIdx = playStimulus(
+            window, stimuli[stimIdx], callback, experimentFrameIdx,
         )
 
         # make sure we don't leave the sync square on
@@ -182,19 +195,28 @@ def playExperiment(
         window.flip()
 
         # interstimulus blank
-        if not stop:
+        if signal == None:
             for i in range(experimentFrameIdx, experimentFrameIdx + blankFrames):
-                _callback(i)
+                callback(i)
                 _draw()
             experimentFrameIdx += blankFrames
+            window.turnOffSyncSquare(1)
+            window.flip()
 
-        # make sure we don't leave the sync square on
-        window.turnOffSyncSquare(1)
-        window.flip()
+        stimIdx += 1
 
-        # if user wants to stop experiment, break out of loop
-        if stop:
-            break
+        # if we've recieved a signal to change stimulus or stop the experiment,
+        # then process it accordingly
+        if signal != None:
+            cmd, val = signal
+            if cmd == "stop":
+                break
+            elif cmd == "switch":
+                stimIdx = int(val)
+
+    # stop trackball listener if running
+    if experiment.syncSettings["trackball"]:
+        socket.sendData("stop", TRACKBALL_LISTENER_ADDR, TRACKBALL_LISTENER_PORT)
 
     # reset window
     window.setBackgroundColor(COLORS["white"])

@@ -13,7 +13,8 @@
     "sync": true,
     "trigger duration": 5.0,
     "sync interval": 60,
-    "pulse length": 3
+    "pulse length": 3,
+    "trackball": false
   },
   "stimuli": [
     {

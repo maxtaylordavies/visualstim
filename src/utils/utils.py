@@ -1,13 +1,13 @@
 from datetime import datetime
 from math import degrees, atan2
-from typing import Any, Dict, Iterable, List, Union
+from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 import itertools
+import socket
 
 import numpy as np
 import scipy.ndimage.interpolation as spndi
 from psychopy import event
 from pyglet.canvas import get_display
-
 
 # from src.window import Window
 from src.constants import (
