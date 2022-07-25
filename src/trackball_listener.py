@@ -22,14 +22,17 @@ class TrackballListener:
         self.interval = 0.2
 
         # running speed threshold
-        self.threshold = 100
+        self.threshold = 20
 
         # lists to hold timestamps + associated speed values
         self.timestamps = []
         self.speeds = []
 
-        # state flag - can be idle, waiting or running
+        # state flag - can be idle, waiting or recording
         self.state = "idle"
+
+        # tracks whether mouse is running
+        self.running = False
 
     # helper func to get the seconds elapsed since given datetime
     def elapsed(self, dt):
@@ -47,11 +50,11 @@ class TrackballListener:
             if signal == "stop":
                 self.state = "idle"
             elif signal == "start":
-                self.state = "running"
+                self.state = "recording"
 
             time.sleep(0.2)
 
-        if self.state == "running":
+        if self.state == "recording":
             self._run()
 
     # main function - we tell the trackball computer to start recording and
@@ -72,13 +75,16 @@ class TrackballListener:
         # trackball computer - if we've reached the end of another interval, then
         # we compute the running speed over the concluded interval and record it.
         # Otherwise, we add the new displacement value to the current interval's total
-        while self.state == "running":
-            if self.sock.readData() == "stop":
+        while self.state == "recording":
+            packet = self.sock.readData()
+
+            if packet == "stop":
                 self.state = "idle"
                 print("sending stop signal")
                 self.sock.sendData("stop", TRACKBALL_ADDR, TRACKBALL_PORT)
+                break
 
-            d = self.sock.readData() or 0
+            d = packet or 0
             tDelta = self.elapsed(tPrev)
 
             if tDelta < self.interval:
@@ -95,10 +101,14 @@ class TrackballListener:
         print(f"speeds[:10]: {self.speeds[:10]}")
 
     def processCurrentSpeed(self):
-        # if speed has not changed, do nothing
-        if len(self.speeds) < 2 or (self.speeds[-1] == self.speeds[-2]):
+        # threshold speed to see whether running
+        running = self.speeds[-1] > self.threshold
+
+        # if running state has not changed, do nothing
+        if running == self.running:
             return
 
-        # otherwise, send "running" if speed reaches threshold, or "still" if not
-        message = "running" if self.speeds[-1] >= self.threshold else "still"
+        # otherwise, update self.running and send switch command to interface
+        self.running = running
+        message = f"switch {int(self.running)}"
         self.sock.sendData(message, INTERFACE_ADDR, INTERFACE_PORT)

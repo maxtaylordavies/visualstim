@@ -12,6 +12,7 @@ class UDPSocket:
     def readData(self) -> Optional[str]:
         try:
             data = self.sock.recv(1024)
+            print(data.decode())
             return data.decode()
         except BlockingIOError:
             return None

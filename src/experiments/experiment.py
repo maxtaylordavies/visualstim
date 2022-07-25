@@ -18,8 +18,6 @@ from src.stimuli import (
 from src.utils import checkForEsc, parseParams
 from src.constants import (
     COLORS,
-    INTERFACE_ADDR,
-    INTERFACE_PORT,
     TRACKBALL_LISTENER_ADDR,
     TRACKBALL_LISTENER_PORT,
 )
@@ -136,7 +134,7 @@ def playExperiment(
     # if we want to monitor trackball, create a socket and
     # a lambda function for parsing stop signals sent over UDP
     if experiment.syncSettings["trackball"]:
-        socket.sendData("start", "localhost", 9001)
+        socket.sendData("start", TRACKBALL_LISTENER_ADDR, TRACKBALL_LISTENER_PORT)
         checkUDPCommand = lambda: socket.parseCommand()
     else:
         checkUDPCommand = lambda: ("", None)
@@ -218,7 +216,7 @@ def playExperiment(
 
     # stop trackball listener if running
     if experiment.syncSettings["trackball"]:
-        socket.sendData("stop", "localhost", 9001)
+        socket.sendData("stop", TRACKBALL_LISTENER_ADDR, TRACKBALL_LISTENER_PORT)
 
     # reset window
     window.setBackgroundColor(COLORS["white"])

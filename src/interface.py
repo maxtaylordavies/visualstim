@@ -224,6 +224,7 @@ class Interface(Component):
             playExperiment(
                 self.displayWindow,
                 self.experiment,
+                self.socket,
                 _callback=self.handleInput,
                 shouldTerminate=self.shouldTerminateStimulation,
                 logGenerator=self.controlWindow.reportProgress,
