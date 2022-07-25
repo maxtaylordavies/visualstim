@@ -24,7 +24,16 @@ class Stimulus:
         self.logGenerator = logGenerator or window.reportProgress
         self.duration = duration
         self.frameIdx = 0
+
+        # set the updateInterval - this determines per how many 'real' frame refreshes
+        # we should update the stimulus frame. defaults to 1
         self.updateInterval = 1
+        if self.stimParams["framerate"] != "auto":
+            print(f"requested playback rate: {self.stimParams['framerate']}")
+            self.updateInterval = max(
+                1, round(self.window.frameRate / self.stimParams["framerate"])
+            )
+            print(f"set updateInterval to {self.updateInterval}")
 
         # for logging purposes
         if "label" not in self.stimParams:

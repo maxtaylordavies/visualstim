@@ -27,7 +27,8 @@
         "filename": "test.mp4",
         "fit screen": true,
         "block size": 50,
-        "sparseness": 0.7
+        "sparseness": 0.7,
+        "framerate": "auto"
       }
     }
   ]

@@ -32,7 +32,7 @@ STIMULUS_PARAMETER_MAP = {
     "osc grating": {"spat freq", "temp freq", "orientation", "stim duration",},
     "sparse noise": {"temp freq", "block size", "sparseness", "stim duration"},
     "checkerboard": {"temp freq", "block size", "stim duration"},
-    "movie": {"filename", "fit screen", "stim duration"},
+    "movie": {"filename", "fit screen", "stim duration", "framerate"},
 }
 UNITS_MAP = {
     "width": "mm",
@@ -49,14 +49,18 @@ UNITS_MAP = {
     "sync interval": "frames",
     "pulse length": "frames",
     "blank": "s",
+    "framerate": "Hz"
 }
 CYCLEABLE_PARAMETERS = {"spat freq", "temp freq", "orientation"}
 
-INTERFACE_ADDR = "192.168.0.23"
+# INTERFACE_ADDR = "192.168.0.23"
+INTERFACE_ADDR = "localhost"
 INTERFACE_PORT = 9000
 
-TRACKBALL_LISTENER_ADDR = "192.168.0.23"
+# TRACKBALL_LISTENER_ADDR = "192.168.0.23"
+TRACKBALL_LISTENER_ADDR = "localhost"
 TRACKBALL_LISTENER_PORT = 9001
 
-TRACKBALL_ADDR = "192.168.0.21"
+# TRACKBALL_ADDR = "192.168.0.21"
+TRACKBALL_ADDR = "localhost"
 TRACKBALL_PORT = 8888

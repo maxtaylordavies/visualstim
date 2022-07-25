@@ -24,12 +24,17 @@ class Movie(Stimulus):
         self.parseFileName(stimParams["filename"])
         self.reader = FFMPEG_VideoReader(self.fileLocation, target_resolution=None)
         self.nframes = self.reader.nframes
+
+        # set playback framerate
+        stimParams["framerate"] = self.nframes / self.reader.duration
+
         super().__init__(
             window, stimParams, screenParams, logGenerator, self.reader.duration
         )
-        self.setUpdateInterval(
-            round((self.duration * self.window.frameRate) / self.nframes)
-        )
+        # if self.stimParams["framerate"] == "auto":
+        #     self.setUpdateInterval(
+        #         round((self.duration * self.window.frameRate) / self.nframes)
+        #     )
 
     def parseFileName(self, filename: str) -> None:
         if filename.startswith("http"):
