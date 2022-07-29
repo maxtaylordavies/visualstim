@@ -34,7 +34,8 @@ STIMULUS_PARAMETER_MAP = {
     "checkerboard": {"temp freq", "block size", "stim duration"},
     "movie": {"filename", "fit screen", "stim duration", "framerate"},
 }
-UNITS_MAP = {
+
+PARAMETER_UNITS_MAP = {
     "width": "mm",
     "height": "mm",
     "h res": "pix",
@@ -49,8 +50,37 @@ UNITS_MAP = {
     "sync interval": "frames",
     "pulse length": "frames",
     "blank": "s",
-    "framerate": "Hz"
+    "framerate": "Hz",
 }
+
+PARAMETER_TYPES_MAP = {
+    # screen param types
+    "width": int,
+    "height": int,
+    "h res": int,
+    "v res": int,
+    "dist": float,
+    "background": str,
+    "warp": bool,
+    "blank": float,
+    # sync param types
+    "sync": bool,
+    "trigger duration": float,
+    "sync interval": int,
+    "pulse length": int,
+    "trackball": bool,
+    # stim param types
+    "spat freq": float,
+    "temp freq": float,
+    "orientation": float,
+    "stim duration": float,
+    "filename": str,
+    "fit screen": bool,
+    "block size": int,
+    "sparseness": float,
+    "framerate": float,
+}
+
 CYCLEABLE_PARAMETERS = {"spat freq", "temp freq", "orientation"}
 
 # INTERFACE_ADDR = "192.168.0.23"
