@@ -4,7 +4,7 @@ from psychopy.visual import rect
 import pyperclip
 
 from src.components.core import Component, Textbox
-from src.constants import COLORS
+from src.constants import COLORS, PARAMETER_TYPES_MAP
 from src.utils import noOp
 
 
@@ -100,7 +100,10 @@ class TextInput(Component):
             self.input.setText(
                 self.input.getText() if self.input.getText() else str(self.initialValue)
             )
-            self.value = type(self.initialValue)(self.input.getText())
+            try:
+                self.value = PARAMETER_TYPES_MAP[self.labelText](self.input.getText())
+            except ValueError:
+                self.value = self.input.getText()
             self.onChange(self.value)
         self.active = not self.active
         self.update()

@@ -2,7 +2,7 @@ from datetime import datetime
 import itertools
 import json
 import pathlib
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from src.window import Window
 from src.stimuli import (
@@ -109,7 +109,7 @@ def unrollExperiment(exp: Experiment) -> Experiment:
 def playExperiment(
     window: Window,
     experiment: Experiment,
-    socket: UDPSocket,
+    socket: Optional[UDPSocket],
     _callback: Any = None,
     shouldTerminate: Any = checkForEsc,
     logGenerator=None,
@@ -133,7 +133,7 @@ def playExperiment(
 
     # if we want to monitor trackball, create a socket and
     # a lambda function for parsing stop signals sent over UDP
-    if experiment.syncSettings["trackball"]:
+    if socket and experiment.syncSettings["trackball"]:
         socket.sendData("start", TRACKBALL_LISTENER_ADDR, TRACKBALL_LISTENER_PORT)
         checkUDPCommand = lambda: socket.parseCommand()
     else:
@@ -215,7 +215,7 @@ def playExperiment(
                 stimIdx = int(val)
 
     # stop trackball listener if running
-    if experiment.syncSettings["trackball"]:
+    if socket and experiment.syncSettings["trackball"]:
         socket.sendData("stop", TRACKBALL_LISTENER_ADDR, TRACKBALL_LISTENER_PORT)
 
     # reset window

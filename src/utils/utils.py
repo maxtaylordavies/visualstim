@@ -13,7 +13,7 @@ from pyglet.canvas import get_display
 from src.constants import (
     DEFAULT_SCREEN_PARAMS,
     DEFAULT_STIMULUS_PARAMS,
-    UNITS_MAP,
+    PARAMETER_UNITS_MAP,
 )
 
 
@@ -58,7 +58,7 @@ def roundToPowerOf2(x: float) -> int:
 
 
 def paramLabelWithUnits(key: str) -> str:
-    return f"{key} ({UNITS_MAP[key]})" if key in UNITS_MAP else key
+    return f"{key} ({PARAMETER_UNITS_MAP[key]})" if key in PARAMETER_UNITS_MAP else key
 
 
 def deg2pix(pix, screenParams):

@@ -29,6 +29,7 @@ class Stimulus:
         # we should update the stimulus frame. defaults to 1
         self.updateInterval = 1
         if self.stimParams["framerate"] != "auto":
+            print(f"framerate type: {type(self.stimParams['framerate'])}")
             print(f"requested playback rate: {self.stimParams['framerate']}")
             self.updateInterval = max(
                 1, round(self.window.frameRate / self.stimParams["framerate"])

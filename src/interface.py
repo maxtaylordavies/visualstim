@@ -24,7 +24,7 @@ from src.experiments import (
 
 
 class Interface(Component):
-    def __init__(self, fullscreen=False):
+    def __init__(self, fullscreen=False, listenUDP=True):
         self.id = "root"
 
         # start in interactive mode by default
@@ -56,7 +56,7 @@ class Interface(Component):
         self.register()
 
         # create socket for communicating with other services
-        self.socket = UDPSocket(INTERFACE_ADDR, INTERFACE_PORT)
+        self.socket = UDPSocket(INTERFACE_ADDR, INTERFACE_PORT) if listenUDP else None
 
     def register(self) -> None:
         self.children = [

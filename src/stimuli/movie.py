@@ -26,7 +26,8 @@ class Movie(Stimulus):
         self.nframes = self.reader.nframes
 
         # set playback framerate
-        stimParams["framerate"] = self.nframes / self.reader.duration
+        if stimParams["framerate"] == "auto":
+            stimParams["framerate"] = self.nframes / self.reader.duration
 
         super().__init__(
             window, stimParams, screenParams, logGenerator, self.reader.duration
