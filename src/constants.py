@@ -32,9 +32,10 @@ STIMULUS_PARAMETER_MAP = {
     "osc grating": {"spat freq", "temp freq", "orientation", "stim duration",},
     "sparse noise": {"temp freq", "block size", "sparseness", "stim duration"},
     "checkerboard": {"temp freq", "block size", "stim duration"},
-    "movie": {"filename", "fit screen", "stim duration"},
+    "movie": {"filename", "fit screen", "stim duration", "framerate"},
 }
-UNITS_MAP = {
+
+PARAMETER_UNITS_MAP = {
     "width": "mm",
     "height": "mm",
     "h res": "pix",
@@ -49,17 +50,47 @@ UNITS_MAP = {
     "sync interval": "frames",
     "pulse length": "frames",
     "blank": "s",
+    "framerate": "Hz",
 }
+
+PARAMETER_TYPES_MAP = {
+    # screen param types
+    "width": int,
+    "height": int,
+    "h res": int,
+    "v res": int,
+    "dist": float,
+    "background": str,
+    "warp": bool,
+    "blank": float,
+    # sync param types
+    "sync": bool,
+    "trigger duration": float,
+    "sync interval": int,
+    "pulse length": int,
+    "trackball": bool,
+    # stim param types
+    "spat freq": float,
+    "temp freq": float,
+    "orientation": float,
+    "stim duration": float,
+    "filename": str,
+    "fit screen": bool,
+    "block size": int,
+    "sparseness": float,
+    "framerate": float,
+}
+
 CYCLEABLE_PARAMETERS = {"spat freq", "temp freq", "orientation"}
 
 # INTERFACE_ADDR = "192.168.0.23"
-INTERFACE_ADDR = "localhost"
+INTERFACE_ADDR = "172.20.10.4"
 INTERFACE_PORT = 9000
 
 # TRACKBALL_LISTENER_ADDR = "192.168.0.23"
-TRACKBALL_LISTENER_ADDR = "localhost"
+TRACKBALL_LISTENER_ADDR = "172.20.10.4"
 TRACKBALL_LISTENER_PORT = 9001
 
 # TRACKBALL_ADDR = "192.168.0.21"
-TRACKBALL_ADDR = "localhost"
+TRACKBALL_ADDR = "172.20.10.9"
 TRACKBALL_PORT = 8888

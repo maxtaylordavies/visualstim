@@ -4,7 +4,7 @@ from typing import Any, Dict
 from src.components.core import Component, Panel, Switch
 from .expandable_input import ExpandableInput
 from .core.input import TextInput
-from src.constants import CYCLEABLE_PARAMETERS, COLORS
+from src.constants import PARAMETER_TYPES_MAP, CYCLEABLE_PARAMETERS, COLORS
 from src.utils import paramLabelWithUnits
 
 
@@ -41,7 +41,7 @@ class ParametersPanel(Component):
                         pos=self.pos,
                         callback=self.makeFunc(k),
                     )
-                    if type(v) == bool
+                    if PARAMETER_TYPES_MAP[k] == bool
                     else (ExpandableInput if k in CYCLEABLE_PARAMETERS else TextInput)(
                         self.window,
                         f"{'-'.join(k.split(' '))}-input",
