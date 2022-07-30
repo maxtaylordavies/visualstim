@@ -25,17 +25,19 @@ class Movie(Stimulus):
         self.reader = FFMPEG_VideoReader(self.fileLocation, target_resolution=None)
         self.nframes = self.reader.nframes
 
+        duration = self.reader.duration
+        recordedFrameRate = self.nframes / duration
+
         # set playback framerate
         if stimParams["framerate"] == "auto":
-            stimParams["framerate"] = self.nframes / self.reader.duration
+            stimParams["framerate"] = recordedFrameRate
 
-        super().__init__(
-            window, stimParams, screenParams, logGenerator, self.reader.duration
-        )
-        # if self.stimParams["framerate"] == "auto":
-        #     self.setUpdateInterval(
-        #         round((self.duration * self.window.frameRate) / self.nframes)
-        #     )
+        # if requested playback framerate differs from the video's native framerate,
+        # we need to scale the duration accordingly - otherwise we'll show either
+        # a fraction or a multiple of the video file
+        duration *= recordedFrameRate / stimParams["framerate"]
+
+        super().__init__(window, stimParams, screenParams, logGenerator, duration)
 
     def parseFileName(self, filename: str) -> None:
         if filename.startswith("http"):

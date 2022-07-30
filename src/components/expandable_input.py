@@ -8,7 +8,7 @@ from src.utils import noOp
 
 class ExpandableInput(Component):
     def __init__(
-        self, *args, value: float, labelText: str, onChange=noOp, **kwargs,
+        self, *args, value: float, labelText: str, onChange=noOp, _type=None, **kwargs,
     ) -> None:
         super().__init__(*args, listenForKeyPresses=True, **kwargs)
         self.initialValue = self.start = self.stop = value
@@ -17,6 +17,7 @@ class ExpandableInput(Component):
         self.labelText = labelText
         self.onChange = onChange
         self.active = False
+        self.type = _type or type(value)
 
     def register(self):
         self.registerActive() if self.active else self.registerInactive()
@@ -95,6 +96,7 @@ class ExpandableInput(Component):
             fill=COLORS["lightgrey"],
             highlight=False,
             onChange=self.onStartChange,
+            _type=self.type,
         )
         self.stopInput = TextInput(
             self.window,
@@ -106,6 +108,7 @@ class ExpandableInput(Component):
             fill=COLORS["lightgrey"],
             highlight=False,
             onChange=self.onStopChange,
+            _type=self.type,
         )
         self.stepsInput = TextInput(
             self.window,
@@ -117,6 +120,7 @@ class ExpandableInput(Component):
             fill=COLORS["lightgrey"],
             highlight=False,
             onChange=self.onStepsChange,
+            _type=int,
         )
         self.randomiseButton = Button(
             self.window,

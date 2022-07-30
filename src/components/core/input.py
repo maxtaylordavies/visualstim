@@ -4,7 +4,7 @@ from psychopy.visual import rect
 import pyperclip
 
 from src.components.core import Component, Textbox
-from src.constants import COLORS, PARAMETER_TYPES_MAP
+from src.constants import COLORS
 from src.utils import noOp
 
 
@@ -16,6 +16,7 @@ class TextInput(Component):
         labelText: str,
         onChange=noOp,
         highlight=True,
+        _type=None,
         **kwargs,
     ) -> None:
         super().__init__(*args, **kwargs)
@@ -25,6 +26,7 @@ class TextInput(Component):
         self.highlight = highlight
         self.active = False
         self.ctrlPressed = False
+        self.type = _type or type(value)
 
     def register(self, text="$"):
         self.input = Textbox(
@@ -101,7 +103,7 @@ class TextInput(Component):
                 self.input.getText() if self.input.getText() else str(self.initialValue)
             )
             try:
-                self.value = PARAMETER_TYPES_MAP[self.labelText](self.input.getText())
+                self.value = self.type(self.input.getText())
             except ValueError:
                 self.value = self.input.getText()
             self.onChange(self.value)

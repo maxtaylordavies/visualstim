@@ -50,6 +50,7 @@ class ParametersPanel(Component):
                         pos=self.pos,
                         onChange=self.makeFunc(k),
                         zIndex=l - i,
+                        _type=PARAMETER_TYPES_MAP[k],
                     )
                     for i, (k, v) in enumerate(self.params.items())
                 ],
