@@ -31,7 +31,7 @@ void setup() {
     lcd.createChar(0, off);
     lcd.createChar(1, on);
     lcd.clear();
-    delay(1000);
+    delay(5000);
 
     // initialise SD
     writeStatus("initialising SD", 1000);
