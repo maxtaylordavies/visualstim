@@ -2,7 +2,7 @@
 #include <LiquidCrystal.h>
 #include <SD.h>
 #include <SPI.h>
-#include <Streaming.h>
+//#include <Streaming.h>
 
 const int maxTimestampCount = 10;
 const int numInputs = 2;
@@ -54,7 +54,7 @@ void setup() {
         pinMode(inputPins[i], INPUT);
     }
 
-    writeStatus("waiting", 0);
+    writeStatus("waiting!", 0);
 }
 
 void loop() {
@@ -102,7 +102,7 @@ bool checkPin(int pin, int *valPtr) {
 }
 
 // helper function to handle a signal at one of the defined
-// input pins. We get the current timestamp in microseconds
+// input pins. We get the current timestamp in micros conds
 // (should have 1ms resolution on the Due) and record it in
 // the array for the specified input pin. If the array is
 // full, we instead just print it out.
@@ -155,16 +155,44 @@ void flash(int idx) {
     lcd.write(byte(0));
 }
 
+// helper function to get number of next session file to write data to
+int getSessNum() {
+  File dir = SD.open("/sessions/");
+  int sessNum = 0;
+  
+  while (true) {
+    File entry = dir.openNextFile();
+    if (!entry) {
+      break;
+    }
+
+    String name = entry.name();
+    int cutoff = name.lastIndexOf(".");
+    int tmp = name.substring(7, cutoff).toInt();
+
+    if (tmp > sessNum) {
+      sessNum = tmp;
+    }
+
+    entry.close();
+  }
+
+  dir.close();
+  return sessNum + 1;
+}
+
 // write the timestamps data to file (on SD card)
 void saveData() {
     writeStatus("saving to SD...", 1000);
 
-    // open the file
-    File f = SD.open("test.txt", FILE_WRITE);
+    // create the file
+    char filename[30];
+    sprintf(filename, "/sessions/session%d.txt", getSessNum());
+    File f = SD.open(filename, FILE_WRITE);
 
     // if the file failed to open, log and return
     if (!f) {
-        writeStatus("error opening file", 1000);
+        writeStatus("error creating file", 1000);
         return;
     }
 
