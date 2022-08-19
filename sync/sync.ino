@@ -5,16 +5,18 @@
 //#include <Streaming.h>
 
 const int maxTimestampCount = 10;
-const int numInputs = 2;
+const int inputPinsStart = 3;
+const int maxNumInputs = 6;
 const int controlPin = 2;
 
-int inputPins[numInputs];
-int inputVals[numInputs];
-int indices[numInputs];
-int timestamps[numInputs][maxTimestampCount];
+int inputPins[maxNumInputs];
+int inputVals[maxNumInputs];
+int indices[maxNumInputs];
+int timestamps[maxNumInputs][maxTimestampCount];
 
 bool running = false;
 int controlVal = 0;
+int numInputs = 0;
 
 byte off[8] = {B00000, B00000, B00000, B00000, B00000, B00000, B00000, B11111};
 byte on[8] = {B11111, B11111, B11111, B11111, B11111, B11111, B11111, B11111};
@@ -46,13 +48,27 @@ void setup() {
     // initialise control pin
     pinMode(controlPin, INPUT);
 
-    // initialise input pins, values and indices
-    for (int i = 0; i < numInputs; i++) {
-        inputPins[i] = 3 + i;
-        inputVals[i] = 0;
-        indices[i] = 0;
-        pinMode(inputPins[i], INPUT);
+    // automatically determine which input pins are in use
+    for (int i = inputPinsStart; i <= inputPinsStart + maxNumInputs; i++) {
+        pinMode(i, INPUT);
+        if (digitalRead(i) == 0) {
+            Serial.println(i);
+
+            inputPins[numInputs] = i;
+            inputVals[numInputs] = 0;
+            indices[numInputs] = 0;
+
+            numInputs += 1;
+        }
     }
+
+    // initialise input pins, values and indices
+    // for (int i = 0; i < numInputs; i++) {
+    //     inputPins[i] = 3 + i;
+    //     inputVals[i] = 0;
+    //     indices[i] = 0;
+    //     pinMode(inputPins[i], INPUT);
+    // }
 
     writeStatus("waiting!", 0);
 }
@@ -157,28 +173,28 @@ void flash(int idx) {
 
 // helper function to get number of next session file to write data to
 int getSessNum() {
-  File dir = SD.open("/sessions/");
-  int sessNum = 0;
-  
-  while (true) {
-    File entry = dir.openNextFile();
-    if (!entry) {
-      break;
+    File dir = SD.open("/sessions/");
+    int sessNum = 0;
+
+    while (true) {
+        File entry = dir.openNextFile();
+        if (!entry) {
+            break;
+        }
+
+        String name = entry.name();
+        int cutoff = name.lastIndexOf(".");
+        int tmp = name.substring(7, cutoff).toInt();
+
+        if (tmp > sessNum) {
+            sessNum = tmp;
+        }
+
+        entry.close();
     }
 
-    String name = entry.name();
-    int cutoff = name.lastIndexOf(".");
-    int tmp = name.substring(7, cutoff).toInt();
-
-    if (tmp > sessNum) {
-      sessNum = tmp;
-    }
-
-    entry.close();
-  }
-
-  dir.close();
-  return sessNum + 1;
+    dir.close();
+    return sessNum + 1;
 }
 
 // write the timestamps data to file (on SD card)
