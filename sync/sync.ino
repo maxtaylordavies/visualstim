@@ -17,6 +17,7 @@ int timestamps[maxNumInputs][maxTimestampCount];
 bool running = false;
 int controlVal = 0;
 int numInputs = 0;
+int startTimeStamp = 0;
 
 byte off[8] = {B00000, B00000, B00000, B00000, B00000, B00000, B00000, B11111};
 byte on[8] = {B11111, B11111, B11111, B11111, B11111, B11111, B11111, B11111};
@@ -83,7 +84,9 @@ void loop() {
         //      the input flash indicators
         //      - if we've just stopped running, also call onStop
         if (running) {
+            startTimeStamp = micros();
             writeStatus("running", 0);
+
             int start = 15 - numInputs + 1;
             for (int i = 0; i < numInputs; i++) {
                 lcd.setCursor(start + i, 0);
@@ -94,6 +97,7 @@ void loop() {
         } else {
             onStop();
             writeStatus("waiting", 0);
+            startTimeStamp = 0;
         }
     }
 }
@@ -120,7 +124,7 @@ bool checkPin(int pin, int *valPtr) {
 // full, we instead just print it out.
 void handleInput(int i) {
     if (indices[i] < maxTimestampCount) {
-        timestamps[i][indices[i]] = micros();
+        timestamps[i][indices[i]] = micros() - startTimeStamp;
         indices[i] = indices[i] + 1;
     }
     flash(i);
