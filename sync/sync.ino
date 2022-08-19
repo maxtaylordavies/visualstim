@@ -38,9 +38,7 @@ void setup() {
     // initialise SD
     writeStatus("initialising SD", 1000);
     if (!SD.begin(52)) {
-        writeStatus("failed!", 0);
-        while (1)
-            ;
+        writeError("failed!");
     }
 
     writeStatus("done!", 1000);
@@ -52,23 +50,12 @@ void setup() {
     for (int i = inputPinsStart; i <= inputPinsStart + maxNumInputs; i++) {
         pinMode(i, INPUT);
         if (digitalRead(i) == 0) {
-            Serial.println(i);
-
             inputPins[numInputs] = i;
             inputVals[numInputs] = 0;
             indices[numInputs] = 0;
-
             numInputs += 1;
         }
     }
-
-    // initialise input pins, values and indices
-    // for (int i = 0; i < numInputs; i++) {
-    //     inputPins[i] = 3 + i;
-    //     inputVals[i] = 0;
-    //     indices[i] = 0;
-    //     pinMode(inputPins[i], INPUT);
-    // }
 
     writeStatus("waiting!", 0);
 }
@@ -91,10 +78,19 @@ void loop() {
     if (checkPin(controlPin, &controlVal)) {
         running = !running;
 
-        // if we've just received stop signal, then
-        // run onStop function
+        // write new state to LCD
+        //      - if we've just started running, also set up
+        //      the input flash indicators
+        //      - if we've just stopped running, also call onStop
         if (running) {
             writeStatus("running", 0);
+            int start = 15 - numInputs + 1;
+            for (int i = 0; i < numInputs; i++) {
+                lcd.setCursor(start + i, 0);
+                lcd.print(inputPins[i]);
+                lcd.setCursor(start + i, 1);
+                lcd.write(byte(0));
+            }
         } else {
             onStop();
             writeStatus("waiting", 0);
@@ -146,18 +142,15 @@ void writeStatus(char *status, int delayMs) {
     lcd.clear();
     lcd.setCursor(0, 0);  // first row
     lcd.print(status);
-
-    if (status == "running") {
-        int start = 15 - numInputs + 1;
-        for (int i = 0; i < numInputs; i++) {
-            lcd.setCursor(start + i, 0);
-            lcd.print(i + 1);
-            lcd.setCursor(start + i, 1);
-            lcd.write(byte(0));
-        }
-    }
-
     delay(delayMs);
+}
+
+// helper function to write error message
+// and then enter infinite loop
+void writeError(char *error) {
+    writeStatus(error, 0);
+    while (1)
+        ;
 }
 
 // helper function to flash the LCD indicator
@@ -184,7 +177,7 @@ int getSessNum() {
 
         String name = entry.name();
         int cutoff = name.lastIndexOf(".");
-        int tmp = name.substring(7, cutoff).toInt();
+        int tmp = name.substring(4, cutoff).toInt();
 
         if (tmp > sessNum) {
             sessNum = tmp;
@@ -203,16 +196,14 @@ void saveData() {
 
     // create the file
     char filename[30];
-    sprintf(filename, "/sessions/session%d.txt", getSessNum());
+    sprintf(filename, "/sessions/sess%d.txt", getSessNum());
     File f = SD.open(filename, FILE_WRITE);
 
-    // if the file failed to open, log and return
     if (!f) {
-        writeStatus("error creating file", 1000);
-        return;
+        writeError("failed!");
     }
 
-    // otherwise, write the data to file
+    // write the data to file
     for (int i = 0; i < numInputs; i++) {
         for (int j = 0; j < maxTimestampCount; j++) {
             f.print(timestamps[i][j]);
